@@ -1,0 +1,80 @@
+[
+  {
+    "id": "mandi_nashik_lasalgaon",
+    "name": "Lasalgaon APMC Mandi",
+    "district": "Nashik",
+    "state": "Maharashtra",
+    "latitude": 20.1472,
+    "longitude": 74.2257,
+    "distanceKm": 18,
+    "transportCostPerQuintal": 35,
+    "commodities": {
+      "onion": { "minPrice": 1600, "maxPrice": 2450, "modalPrice": 2150, "trend": "UP", "arrivalQuintals": 8200 },
+      "tomato": { "minPrice": 1400, "maxPrice": 2100, "modalPrice": 1850, "trend": "STABLE", "arrivalQuintals": 3400 },
+      "soybean": { "minPrice": 4600, "maxPrice": 5100, "modalPrice": 4900, "trend": "UP", "arrivalQuintals": 1200 },
+      "wheat": { "minPrice": 2300, "maxPrice": 2550, "modalPrice": 2450, "trend": "STABLE", "arrivalQuintals": 950 }
+    }
+  },
+  {
+    "id": "mandi_nashik_pimpalgaon",
+    "name": "Pimpalgaon Baswant APMC",
+    "district": "Nashik",
+    "state": "Maharashtra",
+    "latitude": 20.1706,
+    "longitude": 73.9856,
+    "distanceKm": 34,
+    "transportCostPerQuintal": 65,
+    "commodities": {
+      "onion": { "minPrice": 1700, "maxPrice": 2550, "modalPrice": 2280, "trend": "UP", "arrivalQuintals": 6100 },
+      "tomato": { "minPrice": 1550, "maxPrice": 2250, "modalPrice": 1980, "trend": "UP", "arrivalQuintals": 4800 },
+      "soybean": { "minPrice": 4550, "maxPrice": 5050, "modalPrice": 4850, "trend": "DOWN", "arrivalQuintals": 800 },
+      "wheat": { "minPrice": 2280, "maxPrice": 2500, "modalPrice": 2410, "trend": "STABLE", "arrivalQuintals": 620 }
+    }
+  },
+  {
+    "id": "mandi_akola_main",
+    "name": "Akola Cotton & Grain Mandi",
+    "district": "Akola",
+    "state": "Maharashtra",
+    "latitude": 20.7002,
+    "longitude": 77.0082,
+    "distanceKm": 42,
+    "transportCostPerQuintal": 80,
+    "commodities": {
+      "cotton": { "minPrice": 6700, "maxPrice": 7450, "modalPrice": 7200, "trend": "UP", "arrivalQuintals": 5400 },
+      "soybean": { "minPrice": 4700, "maxPrice": 5150, "modalPrice": 4950, "trend": "UP", "arrivalQuintals": 7100 },
+      "chickpea": { "minPrice": 5500, "maxPrice": 6100, "modalPrice": 5850, "trend": "UP", "arrivalQuintals": 3200 }
+    }
+  },
+  {
+    "id": "mandi_khanna_punjab",
+    "name": "Khanna Grain Market (Asia's Largest)",
+    "district": "Ludhiana",
+    "state": "Punjab",
+    "latitude": 30.7073,
+    "longitude": 76.2163,
+    "distanceKm": 25,
+    "transportCostPerQuintal": 45,
+    "commodities": {
+      "wheat": { "minPrice": 2350, "maxPrice": 2600, "modalPrice": 2520, "trend": "UP", "arrivalQuintals": 14500 },
+      "rice_paddy": { "minPrice": 2250, "maxPrice": 2480, "modalPrice": 2410, "trend": "STABLE", "arrivalQuintals": 18200 },
+      "mustard": { "minPrice": 5700, "maxPrice": 6200, "modalPrice": 6050, "trend": "UP", "arrivalQuintals": 2900 }
+    }
+  },
+  {
+    "id": "mandi_indore_choithram",
+    "name": "Indore Choithram Mandi",
+    "district": "Indore",
+    "state": "Madhya Pradesh",
+    "latitude": 22.6841,
+    "longitude": 75.8454,
+    "distanceKm": 20,
+    "transportCostPerQuintal": 40,
+    "commodities": {
+      "soybean": { "minPrice": 4750, "maxPrice": 5200, "modalPrice": 5020, "trend": "UP", "arrivalQuintals": 11200 },
+      "wheat": { "minPrice": 2400, "maxPrice": 2680, "modalPrice": 2560, "trend": "UP", "arrivalQuintals": 8400 },
+      "potato": { "minPrice": 1250, "maxPrice": 1600, "modalPrice": 1450, "trend": "STABLE", "arrivalQuintals": 9300 },
+      "chickpea": { "minPrice": 5600, "maxPrice": 6150, "modalPrice": 5900, "trend": "UP", "arrivalQuintals": 4100 }
+    }
+  }
+]

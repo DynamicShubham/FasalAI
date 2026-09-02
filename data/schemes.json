@@ -1,0 +1,107 @@
+[
+  {
+    "id": "pm_kisan",
+    "name": "PM-KISAN (Pradhan Mantri Kisan Samman Nidhi)",
+    "type": "Central Government",
+    "category": "Direct Income Support",
+    "benefit": "₹6,000 per year directly transferred to bank account in 3 equal installments of ₹2,000.",
+    "eligibilityRules": {
+      "maxLandholdingAcres": 100,
+      "requiresLandOwnership": true,
+      "excludedCategories": ["Institutional landholders", "Serving/retired government officers", "Income tax payers"]
+    },
+    "documentsRequired": [
+      "Aadhaar Card linked with Bank Account",
+      "Land Ownership Document (7/12 extract / Khasra / Khatoni)",
+      "Bank Account Passbook / IFSC Code"
+    ],
+    "applicationUrl": "https://pmkisan.gov.in",
+    "processingTimeDays": 21,
+    "status": "Active (Next installment release soon)",
+    "importance": "High"
+  },
+  {
+    "id": "pmfby_crop_insurance",
+    "name": "PMFBY (Pradhan Mantri Fasal Bima Yojana)",
+    "type": "Central Government",
+    "category": "Crop Insurance / Risk Protection",
+    "benefit": "Comprehensive insurance coverage against non-preventable natural risks from pre-sowing to post-harvest. Farmer premium capped at 1.5% for Rabi, 2.0% for Kharif, 5.0% for Commercial crops.",
+    "eligibilityRules": {
+      "requiresCultivationProof": true,
+      "coveredCrops": ["Wheat", "Rice", "Cotton", "Soybean", "Mustard", "Chickpea", "Potato", "Tomato"]
+    },
+    "documentsRequired": [
+      "Aadhaar Card",
+      "Land Record / Sowing Certificate (Patwari / Gram Sevak verification)",
+      "Bank Passbook linked to Aadhaar",
+      "Crop Sowing Declaration"
+    ],
+    "applicationUrl": "https://pmfby.gov.in",
+    "processingTimeDays": 14,
+    "status": "Open for Season Enrollment",
+    "importance": "High"
+  },
+  {
+    "id": "pmksy_micro_irrigation",
+    "name": "PMKSY - Per Drop More Crop (Drip/Sprinkler Subsidy)",
+    "type": "Central + State Scheme",
+    "category": "Irrigation Infrastructure",
+    "benefit": "Up to 55% subsidy for Small & Marginal Farmers (up to 5 acres) and 45% for other farmers for installing Drip / Micro-Sprinkler irrigation systems.",
+    "eligibilityRules": {
+      "requiresAssuredWaterSource": true,
+      "smallFarmerBonus": true
+    },
+    "documentsRequired": [
+      "Aadhaar Card",
+      "Land Record 7/12 & 8-A",
+      "Electricity Bill / Solar Pump Proof",
+      "Quotation from Authorized Micro-Irrigation Vendor",
+      "Soil / Water Testing Report"
+    ],
+    "applicationUrl": "https://pmksy.gov.in",
+    "processingTimeDays": 30,
+    "status": "Active",
+    "importance": "High"
+  },
+  {
+    "id": "smam_farm_mechanization",
+    "name": "SMAM (Sub-Mission on Agricultural Mechanization)",
+    "type": "Central Scheme",
+    "category": "Machinery & Equipment Subsidy",
+    "benefit": "40% to 50% financial subsidy on purchase of Tractors, Power Tillers, Rotavators, Seed Drills, Drone Sprayers, and Harvesters.",
+    "eligibilityRules": {
+      "minLandholdingAcres": 0.5,
+      "subsidyPriority": ["Small/Marginal Farmers", "Women Farmers", "SC/ST Categories"]
+    },
+    "documentsRequired": [
+      "Aadhaar Card",
+      "Caste Certificate (if applicable)",
+      "Land Ownership Records",
+      "Bank Passbook copy",
+      "Dealer Quotation for Machinery"
+    ],
+    "applicationUrl": "https://agrimachinery.nic.in",
+    "processingTimeDays": 45,
+    "status": "Application Window Open",
+    "importance": "Medium"
+  },
+  {
+    "id": "soil_health_card",
+    "name": "Soil Health Card Scheme",
+    "type": "Central Scheme",
+    "category": "Soil Testing & Fertilizer Advisory",
+    "benefit": "Free 12-parameter soil fertility analysis (N, P, K, S, Zn, Fe, Cu, Mn, B, pH, EC, OC) with tailored crop-specific fertilizer recommendations every 2 years.",
+    "eligibilityRules": {
+      "allFarmersEligible": true
+    },
+    "documentsRequired": [
+      "Aadhaar Card",
+      "Khasra / Plot Number",
+      "Soil sample collection form"
+    ],
+    "applicationUrl": "https://soilhealth.dac.gov.in",
+    "processingTimeDays": 10,
+    "status": "Free Sample Collection Active at Krishi Vigyan Kendra",
+    "importance": "High"
+  }
+]

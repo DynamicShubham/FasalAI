@@ -1,0 +1,22 @@
+{
+  "name": "fasalai-monorepo",
+  "version": "1.0.0",
+  "description": "FasalAI - AI Personalized Agriculture Decision Support Platform",
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "start": "npm --prefix frontend run start",
+    "test:backend": "cd backend && python -m pytest tests/test_backend.py"
+  },
+  "keywords": [
+    "fasalai",
+    "nexora",
+    "agriculture",
+    "ai",
+    "fastapi",
+    "nextjs"
+  ],
+  "author": "Team Genzcoderz (NXH036)",
+  "license": "MIT"
+}
