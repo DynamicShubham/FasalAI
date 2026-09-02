@@ -104,7 +104,7 @@ export default function AssistantPage() {
   const quickQuestions = [
     "Should I spray pesticide today?",
     "When is the next watering needed?",
-    "Best mandi price for my wheat?",
+    `Best mandi price for my ${farmData.currentCrop.toLowerCase()}?`,
     "How to treat yellow spots on leaves?",
   ];
 

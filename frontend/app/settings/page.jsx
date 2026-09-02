@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Sidebar from "../../components/layout/Sidebar";
 import Header from "../../components/layout/Header";
 import BottomNav from "../../components/layout/BottomNav";
@@ -10,9 +11,22 @@ import { useAuth } from "../../context/AuthContext";
 import { useFarm } from "../../context/FarmContext";
 
 export default function SettingsPage() {
+  const router = useRouter();
   const { language, setLanguage } = useLanguage();
-  const { user } = useAuth();
+  const { user, farmerProfile, logout, isSupabaseConfigured } = useAuth();
   const { farmData } = useFarm();
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    await logout();
+    router.push("/login");
+  };
+
+  const displayName = farmerProfile?.name || user?.name || "Farmer";
+  const displayPhone = farmerProfile?.phone || user?.phone || user?.email || "Account Active";
+  const displayDistrict = farmData.district || farmerProfile?.district || user?.district || "Nashik";
+  const displayState = farmData.state || farmerProfile?.state || user?.state || "Maharashtra";
 
   return (
     <div className="min-h-screen bg-surface flex flex-col md:flex-row antialiased">
@@ -37,9 +51,20 @@ export default function SettingsPage() {
               👨‍🌾
             </div>
             <div>
-              <h3 className="font-bold text-content text-base">{user?.name || "Ramesh Patil"}</h3>
-              <p className="text-xs text-content-muted">{user?.phone || "+91 98765 43210"} · {farmData.district}, {farmData.state}</p>
-              <p className="text-[11px] text-brand-800 font-medium mt-0.5">{farmData.acreage} Acres · {farmData.soilType}</p>
+              <div className="flex items-center gap-2">
+                <h3 className="font-bold text-content text-base">{displayName}</h3>
+                {user?.isDemo && (
+                  <span className="text-[10px] font-bold bg-amber-50 text-amber-800 px-2 py-0.5 rounded border border-amber-200">
+                    Demo Mode
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-content-muted">
+                {displayPhone} · {displayDistrict}, {displayState}
+              </p>
+              <p className="text-[11px] text-brand-800 font-medium mt-0.5">
+                {farmData.acreage} Acres · {farmData.soilType} · Standing {farmData.currentCrop}
+              </p>
             </div>
           </div>
 
@@ -73,6 +98,26 @@ export default function SettingsPage() {
           </div>
         </div>
 
+        {/* Sign Out Button */}
+        <div className="bg-white p-5 rounded-2xl border border-stone-200/80 shadow-subtle flex items-center justify-between">
+          <div>
+            <h4 className="font-bold text-content text-sm">Account Session</h4>
+            <p className="text-xs text-content-muted mt-0.5">
+              {isSupabaseConfigured ? "Connected to Supabase Auth" : "Running in evaluation mode"}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleLogout}
+            disabled={loggingOut}
+            className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 font-semibold text-xs rounded-xl border border-red-200 transition-colors flex items-center gap-1.5 disabled:opacity-50"
+          >
+            <span className="material-symbols-outlined text-base">logout</span>
+            <span>{loggingOut ? "Signing Out..." : "Sign Out"}</span>
+          </button>
+        </div>
+
         {/* Information */}
         <div className="bg-white p-5 rounded-2xl border border-stone-200/80 shadow-subtle flex flex-col gap-2.5 text-xs text-content-muted">
           <div className="flex justify-between py-1 border-b border-stone-100">
@@ -85,7 +130,7 @@ export default function SettingsPage() {
           </div>
           <div className="flex justify-between py-1">
             <span>Version</span>
-            <span className="font-medium text-content">1.0 Production Ready</span>
+            <span className="font-medium text-content">1.0 Production Ready (Supabase Connected)</span>
           </div>
         </div>
       </main>

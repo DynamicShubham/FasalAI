@@ -6,13 +6,15 @@ import { useFarm } from "../../context/FarmContext";
 
 export default function FarmSetupPage() {
   const router = useRouter();
-  const { farmData, updateFarm } = useFarm();
+  const { farmData, saveFarmParcel } = useFarm();
 
   const [acreage, setAcreage] = useState(farmData.acreage || 3.5);
   const [soilType, setSoilType] = useState(farmData.soilType || "Black Clay Loam");
   const [irrigation, setIrrigation] = useState(farmData.irrigationSource || "Drip + Borewell");
   const [waterAvailability, setWaterAvailability] = useState(farmData.waterAvailability || "Medium");
   const [currentCrop, setCurrentCrop] = useState(farmData.currentCrop || "Wheat");
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   const soils = [
     { id: "Black Clay Loam", label: "Black Soil / Regur", desc: "Moisture retentive, rich in clay" },
@@ -25,15 +27,26 @@ export default function FarmSetupPage() {
 
   const crops = ["Wheat", "Rice / Paddy", "Cotton", "Soybean", "Mustard", "Chickpea / Gram", "Tomato", "Potato", "Onion"];
 
-  const handleSaveAndEnter = () => {
-    updateFarm({
-      acreage: parseFloat(acreage),
-      soilType,
-      irrigationSource: irrigation,
-      waterAvailability,
-      currentCrop,
-    });
-    router.push("/dashboard");
+  const handleSaveAndEnter = async () => {
+    setErrorMsg("");
+    setLoading(true);
+    try {
+      await saveFarmParcel({
+        acreage: parseFloat(acreage),
+        soilType,
+        irrigationSource: irrigation,
+        waterAvailability,
+        currentCrop,
+        sowingDate: new Date().toISOString().split("T")[0],
+      });
+      router.push("/dashboard");
+    } catch (err) {
+      console.error("Farm parcel save error:", err);
+      setErrorMsg(err.message || "Failed to save farm to Supabase. Continuing to dashboard...");
+      setTimeout(() => router.push("/dashboard"), 1500);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -51,6 +64,13 @@ export default function FarmSetupPage() {
             Crop recommendations and water schedules are calculated from these details.
           </p>
         </div>
+
+        {errorMsg && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-xl text-xs flex items-center gap-2">
+            <span className="material-symbols-outlined text-sm">error</span>
+            <span>{errorMsg}</span>
+          </div>
+        )}
 
         {/* Acreage Selector */}
         <div className="flex flex-col gap-2">
@@ -146,8 +166,10 @@ export default function FarmSetupPage() {
         <button
           type="button"
           onClick={handleSaveAndEnter}
-          className="w-full py-3.5 bg-brand-900 hover:bg-brand-950 text-white font-semibold text-sm rounded-full shadow-sm transition-colors flex items-center justify-center gap-1.5 mt-2"
+          disabled={loading}
+          className="w-full py-3.5 bg-brand-900 hover:bg-brand-950 text-white font-semibold text-sm rounded-full shadow-sm transition-colors flex items-center justify-center gap-1.5 mt-2 disabled:opacity-50"
         >
+          {loading && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>}
           <span>Save Farm & Open Dashboard</span>
           <span className="material-symbols-outlined text-base">check</span>
         </button>

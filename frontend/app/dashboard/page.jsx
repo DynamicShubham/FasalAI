@@ -33,10 +33,10 @@ export default function DashboardPage() {
     async function loadDashboardData() {
       try {
         const [planRes, weatherRes, marketRes, schemeRes] = await Promise.all([
-          fetchApi("/decisions/daily-plan?crop=Wheat&sowing_days_ago=22"),
-          fetchApi(`/weather/forecast?district=${farmData.district}`),
-          fetchApi(`/market/compare?crop=Onion&quantity=20&district=${farmData.district}`),
-          fetchApi(`/schemes/matched?acres=${farmData.acreage}&crop=Wheat`),
+          fetchApi(`/decisions/daily-plan?crop=${encodeURIComponent(farmData.currentCrop)}&sowing_days_ago=${farmData.sowingDaysAgo || 22}`),
+          fetchApi(`/weather/forecast?district=${encodeURIComponent(farmData.district)}`),
+          fetchApi(`/market/compare?crop=Onion&quantity=20&district=${encodeURIComponent(farmData.district)}`),
+          fetchApi(`/schemes/matched?acres=${farmData.acreage}&crop=${encodeURIComponent(farmData.currentCrop)}`),
         ]);
 
         setDailyPlan(planRes);

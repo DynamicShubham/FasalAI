@@ -5,10 +5,15 @@ import Link from "next/link";
 import Sidebar from "../../components/layout/Sidebar";
 import Header from "../../components/layout/Header";
 import BottomNav from "../../components/layout/BottomNav";
+import { useAuth } from "../../context/AuthContext";
 import { useFarm } from "../../context/FarmContext";
 
 export default function MyFarmPage() {
+  const { user, farmerProfile } = useAuth();
   const { farmData } = useFarm();
+
+  const farmerName = farmerProfile?.name || user?.name || "Farmer";
+  const farmName = farmData.farmName || `${farmerName}'s Farm`;
 
   return (
     <div className="min-h-screen bg-surface flex flex-col md:flex-row antialiased">
@@ -19,11 +24,18 @@ export default function MyFarmPage() {
         {/* Header */}
         <section className="bg-white p-5 md:p-6 rounded-2xl border border-stone-200/80 shadow-subtle flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="font-display text-2xl md:text-3xl font-bold text-content">
-              {farmData.farmName || "Patil Farm"}
-            </h1>
-            <p className="text-xs md:text-sm text-content-muted mt-0.5">
-              {farmData.district}, {farmData.state} · Land Record Verified
+            <div className="flex items-center gap-2 mb-0.5">
+              <h1 className="font-display text-2xl md:text-3xl font-bold text-content">
+                {farmName}
+              </h1>
+              {user?.isDemo && (
+                <span className="text-[10px] font-bold bg-amber-50 text-amber-800 px-2 py-0.5 rounded border border-amber-200">
+                  Demo Land Record
+                </span>
+              )}
+            </div>
+            <p className="text-xs md:text-sm text-content-muted">
+              {farmData.district}, {farmData.state} · Managed by {farmerName}
             </p>
           </div>
 
@@ -39,10 +51,10 @@ export default function MyFarmPage() {
         {/* Overview Numbers */}
         <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-white p-5 rounded-2xl border border-stone-200/80 shadow-subtle flex flex-col justify-between gap-3">
-            <span className="text-xs font-semibold text-content-muted">Total Farm Size</span>
+            <span className="text-xs font-semibold text-content-muted">Total Land Area</span>
             <div>
               <p className="text-3xl font-bold text-content">{farmData.acreage} Acres</p>
-              <p className="text-xs text-content-muted mt-0.5">2 Active Parcels</p>
+              <p className="text-xs text-content-muted mt-0.5">Active Field Parcel</p>
             </div>
             <div className="bg-stone-50 p-2.5 rounded-lg text-xs text-content-muted">
               Irrigation: {farmData.irrigationSource}
@@ -56,7 +68,7 @@ export default function MyFarmPage() {
               <p className="text-xs text-content-muted mt-0.5">{farmData.soilType} · pH {farmData.soilPh}</p>
             </div>
             <div className="bg-stone-50 p-2.5 rounded-lg text-xs text-content-muted">
-              Organic Carbon: 0.72% (Optimal)
+              Water: {farmData.waterAvailability} Availability
             </div>
           </div>
 
@@ -64,10 +76,10 @@ export default function MyFarmPage() {
             <span className="text-xs font-semibold text-content-muted">Standing Crop</span>
             <div>
               <p className="text-3xl font-bold text-content">{farmData.currentCrop}</p>
-              <p className="text-xs text-content-muted mt-0.5">Day 22 · Crown Root Node</p>
+              <p className="text-xs text-content-muted mt-0.5">Day {farmData.sowingDaysAgo || 22} · Vegetative Stage</p>
             </div>
             <div className="bg-stone-50 p-2.5 rounded-lg text-xs text-content-muted">
-              Expected Harvest: Mid-March
+              Sowing Date: {farmData.sowingDate}
             </div>
           </div>
         </section>
@@ -79,43 +91,21 @@ export default function MyFarmPage() {
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Parcel A */}
+            {/* Primary Parcel */}
             <div className="bg-stone-50 p-4 rounded-xl border border-stone-200 flex flex-col gap-2.5">
               <div className="flex justify-between items-center">
-                <h4 className="font-bold text-content text-sm">Parcel A (North Field)</h4>
+                <h4 className="font-bold text-content text-sm">{farmData.farmName || "Primary Parcel"}</h4>
                 <span className="text-xs font-semibold bg-white px-2.5 py-0.5 rounded border border-stone-200">
-                  2.0 Acres
+                  {farmData.acreage} Acres
                 </span>
               </div>
               <p className="text-xs text-content-muted">
-                Crop: Wheat (HD-2967) · Sown Aug 11 · Drip Line Active
+                Crop: {farmData.currentCrop} · Soil: {farmData.soilType} · {farmData.irrigationSource}
               </p>
               <div className="flex items-center justify-between text-xs pt-2 border-t border-stone-200">
                 <span className="text-brand-800 font-semibold flex items-center gap-1">
                   <span className="material-symbols-outlined text-[15px]">check_circle</span>
-                  Healthy
-                </span>
-                <Link href="/scanner" className="text-brand-900 font-semibold hover:underline">
-                  Check Leaf →
-                </Link>
-              </div>
-            </div>
-
-            {/* Parcel B */}
-            <div className="bg-stone-50 p-4 rounded-xl border border-stone-200 flex flex-col gap-2.5">
-              <div className="flex justify-between items-center">
-                <h4 className="font-bold text-content text-sm">Parcel B (South Field)</h4>
-                <span className="text-xs font-semibold bg-white px-2.5 py-0.5 rounded border border-stone-200">
-                  1.5 Acres
-                </span>
-              </div>
-              <p className="text-xs text-content-muted">
-                Crop: Mustard Intercrop · Sown Aug 14 · Sprinkler Line
-              </p>
-              <div className="flex items-center justify-between text-xs pt-2 border-t border-stone-200">
-                <span className="text-brand-800 font-semibold flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[15px]">check_circle</span>
-                  Healthy
+                  Active & Monitored
                 </span>
                 <Link href="/scanner" className="text-brand-900 font-semibold hover:underline">
                   Check Leaf →

@@ -7,25 +7,52 @@ import { useAuth } from "../../../context/AuthContext";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { loginDemo } = useAuth();
-  const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
-  const [step, setStep] = useState("PHONE");
+  const {
+    loginDemo,
+    signInWithGoogle,
+    signInWithEmail,
+    signUpWithEmail,
+    isSupabaseConfigured,
+  } = useAuth();
 
-  const [demoNotice, setDemoNotice] = useState("");
+  const [authMode, setAuthMode] = useState("SIGNIN"); // "SIGNIN" | "SIGNUP"
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
 
-  const handleSendOtp = (e) => {
-    e.preventDefault();
-    if (phone.length >= 10) {
-      setStep("OTP");
-      setDemoNotice("Demo Mode: Enter any 4-digit code to continue.");
+  const handleGoogleLogin = async () => {
+    setErrorMsg("");
+    setLoading(true);
+    try {
+      await signInWithGoogle();
+    } catch (err) {
+      console.error("Google sign in error:", err);
+      setErrorMsg(err.message || "Failed to initiate Google Sign-In.");
+      setLoading(false);
     }
   };
 
-  const handleVerifyOtp = (e) => {
+  const handleEmailAuth = async (e) => {
     e.preventDefault();
-    if (otp.length >= 4) {
-      router.push("/dashboard");
+    setErrorMsg("");
+    setSuccessMsg("");
+    setLoading(true);
+
+    try {
+      if (authMode === "SIGNUP") {
+        await signUpWithEmail(email, password, fullName);
+        setSuccessMsg("Account created! Please check your email for confirmation or sign in.");
+      } else {
+        await signInWithEmail(email, password);
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      setErrorMsg(err.message || "Authentication failed. Please check your credentials.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -42,102 +69,147 @@ export default function LoginPage() {
           <div className="w-12 h-12 rounded-xl bg-brand-900 text-white flex items-center justify-center text-2xl mb-2 shadow-sm">
             🌱
           </div>
-          <h1 className="font-display text-xl font-bold text-content">Sign In to FasalAI</h1>
-          <p className="text-xs text-content-muted mt-0.5">Enter your mobile number to view your farm status</p>
+          <h1 className="font-display text-xl font-bold text-content">
+            {authMode === "SIGNIN" ? "Sign In to FasalAI" : "Create Farmer Account"}
+          </h1>
+          <p className="text-xs text-content-muted mt-0.5">
+            AI personalized agricultural decision companion
+          </p>
         </div>
 
-        {/* Demo Shortcut */}
+        {/* Google Sign-In Button */}
         <button
-          onClick={handleInstantDemo}
-          className="w-full py-3 px-4 bg-brand-900 hover:bg-brand-950 text-white font-semibold text-xs md:text-sm rounded-full shadow-sm flex items-center justify-center gap-2 transition-colors"
+          type="button"
+          onClick={handleGoogleLogin}
+          disabled={loading}
+          className="w-full py-3 px-4 bg-white hover:bg-stone-50 text-stone-800 font-semibold text-xs md:text-sm rounded-xl border border-stone-300 shadow-subtle flex items-center justify-center gap-3 transition-colors active:scale-98 disabled:opacity-50"
         >
-          <span className="material-symbols-outlined text-base">account_circle</span>
-          Demo Farmer Quick Access (Ramesh Patil)
+          <svg className="w-4 h-4" viewBox="0 0 24 24">
+            <path
+              fill="#4285F4"
+              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+            />
+            <path
+              fill="#34A853"
+              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+            />
+            <path
+              fill="#FBBC05"
+              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+            />
+            <path
+              fill="#EA4335"
+              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+            />
+          </svg>
+          <span>Continue with Google</span>
         </button>
-
-        {demoNotice && (
-          <div className="bg-amber-50 border border-amber-200 text-amber-800 px-3 py-2 rounded-xl text-xs flex items-center gap-2">
-            <span className="material-symbols-outlined text-sm">info</span>
-            {demoNotice}
-          </div>
-        )}
 
         <div className="flex items-center gap-3 my-0.5">
           <div className="flex-1 h-px bg-stone-200"></div>
-          <span className="text-[11px] text-content-muted font-medium uppercase">Or with mobile OTP</span>
+          <span className="text-[11px] text-content-muted font-medium uppercase">Or with Email</span>
           <div className="flex-1 h-px bg-stone-200"></div>
         </div>
 
-        {/* OTP Form */}
-        {step === "PHONE" ? (
-          <form onSubmit={handleSendOtp} className="flex flex-col gap-3.5">
-            <div>
-              <label className="block text-xs font-semibold text-content mb-1 ml-0.5">
-                Mobile Number
-              </label>
-              <div className="relative">
-                <span className="absolute left-3.5 top-3 text-content-muted text-xs font-medium">
-                  +91
-                </span>
-                <input
-                  type="tel"
-                  required
-                  placeholder="98765 43210"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full pl-12 pr-4 py-2.5 bg-stone-50 text-content text-sm rounded-xl border border-stone-300 focus:outline-none focus:border-brand-800"
-                />
-              </div>
-            </div>
+        {/* Error / Success Notifications */}
+        {errorMsg && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-xl text-xs flex items-center gap-2">
+            <span className="material-symbols-outlined text-sm">error</span>
+            <span>{errorMsg}</span>
+          </div>
+        )}
+        {successMsg && (
+          <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-2 rounded-xl text-xs flex items-center gap-2">
+            <span className="material-symbols-outlined text-sm">check_circle</span>
+            <span>{successMsg}</span>
+          </div>
+        )}
 
-            <button
-              type="submit"
-              className="w-full py-2.5 bg-stone-100 hover:bg-stone-200 text-content font-semibold text-xs rounded-full border border-stone-300 transition-colors"
-            >
-              Get OTP SMS
-            </button>
-          </form>
-        ) : (
-          <form onSubmit={handleVerifyOtp} className="flex flex-col gap-3.5">
+        {/* Email / Password Form */}
+        <form onSubmit={handleEmailAuth} className="flex flex-col gap-3">
+          {authMode === "SIGNUP" && (
             <div>
               <label className="block text-xs font-semibold text-content mb-1 ml-0.5">
-                Enter 4-digit code sent to +91 {phone}
+                Full Name
               </label>
               <input
                 type="text"
                 required
-                maxLength={4}
-                placeholder="1234"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                className="w-full text-center tracking-widest text-lg font-bold py-2.5 bg-stone-50 text-brand-900 rounded-xl border border-stone-300 focus:outline-none focus:border-brand-800"
+                placeholder="e.g. Ramesh Patil"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full px-3.5 py-2.5 bg-stone-50 text-content text-xs md:text-sm rounded-xl border border-stone-300 focus:outline-none focus:border-brand-800"
               />
             </div>
+          )}
 
-            <button
-              type="submit"
-              className="w-full py-3 bg-brand-900 hover:bg-brand-950 text-white font-semibold text-xs rounded-full transition-colors"
-            >
-              Verify & Enter Farm
-            </button>
+          <div>
+            <label className="block text-xs font-semibold text-content mb-1 ml-0.5">
+              Email Address
+            </label>
+            <input
+              type="email"
+              required
+              placeholder="farmer@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-3.5 py-2.5 bg-stone-50 text-content text-xs md:text-sm rounded-xl border border-stone-300 focus:outline-none focus:border-brand-800"
+            />
+          </div>
 
-            <button
-              type="button"
-              onClick={() => setStep("PHONE")}
-              className="text-xs text-brand-800 text-center hover:underline"
-            >
-              Change mobile number
-            </button>
-          </form>
-        )}
+          <div>
+            <label className="block text-xs font-semibold text-content mb-1 ml-0.5">
+              Password
+            </label>
+            <input
+              type="password"
+              required
+              minLength={6}
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-3.5 py-2.5 bg-stone-50 text-content text-xs md:text-sm rounded-xl border border-stone-300 focus:outline-none focus:border-brand-800"
+            />
+          </div>
 
-        <div className="text-center pt-1 border-t border-stone-100">
-          <p className="text-xs text-content-muted">
-            New farmer?{" "}
-            <Link href="/onboarding" className="text-brand-800 font-semibold hover:underline">
-              Create Farm Profile
-            </Link>
-          </p>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 bg-brand-900 hover:bg-brand-950 text-white font-semibold text-xs md:text-sm rounded-xl shadow-sm transition-colors mt-1 disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            {loading && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>}
+            <span>{authMode === "SIGNIN" ? "Sign In" : "Create Account"}</span>
+          </button>
+        </form>
+
+        {/* Toggle Mode */}
+        <div className="flex justify-between items-center text-xs text-content-muted pt-1">
+          <span>
+            {authMode === "SIGNIN" ? "Don't have an account?" : "Already have an account?"}
+          </span>
+          <button
+            type="button"
+            onClick={() => {
+              setAuthMode(authMode === "SIGNIN" ? "SIGNUP" : "SIGNIN");
+              setErrorMsg("");
+              setSuccessMsg("");
+            }}
+            className="text-brand-800 font-bold hover:underline"
+          >
+            {authMode === "SIGNIN" ? "Sign Up" : "Sign In"}
+          </button>
+        </div>
+
+        {/* Demo Farmer Quick Access */}
+        <div className="pt-2 border-t border-stone-100 flex flex-col gap-2">
+          <button
+            type="button"
+            onClick={handleInstantDemo}
+            className="w-full py-2.5 px-3 bg-stone-100 hover:bg-stone-200 text-content-muted hover:text-content font-medium text-xs rounded-xl border border-stone-200 transition-colors flex items-center justify-center gap-1.5"
+          >
+            <span className="material-symbols-outlined text-base">person</span>
+            Demo Quick Access (Offline / Evaluation Mode)
+          </button>
         </div>
       </div>
     </div>

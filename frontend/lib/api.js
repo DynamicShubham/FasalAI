@@ -1,11 +1,26 @@
+import { supabase, isSupabaseConfigured } from "./supabase";
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
 export async function fetchApi(endpoint, options = {}) {
   try {
+    let authHeaders = {};
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.access_token) {
+          authHeaders["Authorization"] = `Bearer ${session.access_token}`;
+        }
+      } catch (e) {
+        // Continue unauthenticated
+      }
+    }
+
     const res = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
       headers: {
         "Content-Type": "application/json",
+        ...authHeaders,
         ...(options.headers || {}),
       },
     });

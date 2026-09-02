@@ -43,18 +43,30 @@ Legend:
 - [x] 3.3 Mandi transport margin optimizer ([market_optimizer.py](file:///d:/Hackathon%20nexora/backend/app/decision_engine/market_optimizer.py))
 - [x] 3.4 Scheme matching rule engine ([scheme_matcher.py](file:///d:/Hackathon%20nexora/backend/app/decision_engine/scheme_matcher.py))
 - [x] 3.5 Daily farm task checklist generator ([daily_planner.py](file:///d:/Hackathon%20nexora/backend/app/decision_engine/daily_planner.py))
-- [x] 3.6 Real-time Computer Vision disease diagnostic pipeline ([detector.py](file:///d:/Hackathon%20nexora/backend/app/vision/detector.py))
+- [x] 3.6 Real-time Computer Vision disease diagnostic pipeline with trained OpenCV model (92.7% accuracy across 29 classes)
 - [x] 3.7 Grok AI conversational advisory integration ([grok_service.py](file:///d:/Hackathon%20nexora/backend/app/ai/grok_service.py))
 
-## 4. Production Deployment Configuration (Render + Vercel)
-- [x] 4.1 Render Blueprint configuration (`render.yaml`) for FastAPI Web Service + Render Redis KeyValue
-- [x] 4.2 Python runtime pinned via `.python-version` (`3.11.8`)
-- [x] 4.3 Dedicated `GET /health` endpoint for Render health monitoring
-- [x] 4.4 Dynamic CORS configuration with support for Vercel preview environments
-- [x] 4.5 Vercel configuration (`vercel.json`) with dynamic backend proxy routing
-- [x] 4.6 Production deployment documentation in `DEPLOYMENT.md`
+## 4. Supabase Integration, Auth & Persistence
+- [x] 4.1 Install `@supabase/supabase-js` and implement browser-safe singleton client in `frontend/lib/supabase.js`
+- [x] 4.2 Upgrade `AuthContext.jsx` with Supabase Auth, Google OAuth, Email/Password sign-up/in, and `farmers` profile table sync
+- [x] 4.3 Upgrade `FarmContext.jsx` with Supabase `farm_parcels` table persistence
+- [x] 4.4 Implement Next.js OAuth callback route (`/auth/callback`) with smart onboarding/dashboard routing
+- [x] 4.5 Add Google Sign-In and Email/Password auth UI to login page while preserving demo access
+- [x] 4.6 Persist Onboarding (Farmer Profile) and Farm Setup (Land Parcels) to Supabase PostgreSQL
+- [x] 4.7 Implement backend FastAPI authentication dependencies (`get_current_user_optional`, `get_current_user_required`)
+- [x] 4.8 Protect and user-scope backend farmer endpoints with Supabase Auth token validation
+- [x] 4.9 Document Google OAuth setup in `GOOGLE_AUTH_SETUP.md`
+- [x] 4.10 Document complete Supabase integration in `SUPABASE_INTEGRATION_AUDIT.md`
 
-## 5. Verification & Testing
-- [x] 5.1 Pytest test suite passing 100% (7/7 tests including `/health`)
-- [x] 5.2 Next.js production build compiling cleanly (17/17 static & dynamic routes)
-- [x] 5.3 Verified live HTTP 200 OK responses across all local endpoints
+## 5. Production Deployment Configuration (Render + Vercel)
+- [x] 5.1 Render Blueprint configuration (`render.yaml`) for FastAPI Web Service + Render Redis KeyValue
+- [x] 5.2 Python runtime pinned via `.python-version` (`3.11.8`)
+- [x] 5.3 Dedicated `GET /health` endpoint for Render health monitoring
+- [x] 5.4 Dynamic CORS configuration with support for Vercel preview environments
+- [x] 5.5 Vercel configuration (`vercel.json`) with dynamic backend proxy routing
+- [x] 5.6 Production deployment documentation in `DEPLOYMENT.md`
+
+## 6. Verification & Testing
+- [x] 6.1 Pytest test suite passing 100% (8/8 tests including vision scanner and health checks)
+- [x] 6.2 Next.js production build compiling cleanly (18/18 static & dynamic routes)
+- [x] 6.3 Verified live HTTP 200 OK responses across all local endpoints

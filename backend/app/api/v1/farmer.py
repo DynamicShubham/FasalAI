@@ -1,11 +1,13 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional, Dict, Any
+from ...core.dependencies import get_current_user_optional
+from ...services.supabase_service import supabase_service
 
 router = APIRouter()
 
 class FarmerProfile(BaseModel):
-    id: str = "farmer_demo_1"
+    id: Optional[str] = "farmer_demo_1"
     name: str = "Ramesh Patil"
     phone: str = "+91 98765 43210"
     state: str = "Maharashtra"
@@ -20,25 +22,86 @@ class FarmerProfile(BaseModel):
     currentCrop: str = "Wheat"
     sowingDaysAgo: int = 22
 
-# In-memory session store for demo responsiveness
-_current_profile = FarmerProfile()
+_demo_profile = FarmerProfile()
 
 @router.get("/profile")
-def get_profile():
-    return _current_profile
+async def get_profile(current_user: Optional[Dict[str, Any]] = Depends(get_current_user_optional)):
+    """
+    Returns farmer profile for the authenticated Supabase user,
+    or falls back to demo profile if unauthenticated.
+    """
+    if current_user and not current_user.get("is_demo") and current_user.get("id"):
+        auth_id = current_user["id"]
+        farmer = await supabase_service.get_farmer_by_auth_id(auth_id)
+        if farmer:
+            farm = await supabase_service.get_farm_parcel(farmer["id"])
+            return {
+                "id": farmer.get("id"),
+                "authUserId": farmer.get("auth_user_id"),
+                "name": farmer.get("full_name"),
+                "phone": farmer.get("phone_number"),
+                "state": farmer.get("state"),
+                "district": farmer.get("district"),
+                "language": farmer.get("language"),
+                "experienceYears": farmer.get("experience_years"),
+                "acreage": float(farm.get("acreage", 3.5)) if farm else 3.5,
+                "soilType": farm.get("soil_type", "Black Clay Loam") if farm else "Black Clay Loam",
+                "soilPh": float(farm.get("soil_ph", 6.8)) if farm else 6.8,
+                "irrigationSource": farm.get("irrigation_source", "Drip + Borewell") if farm else "Drip + Borewell",
+                "waterAvailability": farm.get("water_availability", "Medium") if farm else "Medium",
+                "currentCrop": farm.get("current_crop", "Wheat") if farm else "Wheat",
+                "sowingDaysAgo": 22,
+                "isAuthenticated": True,
+                "isDemo": False,
+            }
+
+    return _demo_profile
 
 @router.post("/profile")
-def update_profile(profile: FarmerProfile):
-    global _current_profile
-    _current_profile = profile
-    return {"status": "success", "profile": _current_profile}
+async def update_profile(
+    profile: FarmerProfile,
+    current_user: Optional[Dict[str, Any]] = Depends(get_current_user_optional)
+):
+    """
+    Saves farmer profile and farm parcel to Supabase Postgres,
+    scoped strictly to the authenticated user's ID.
+    """
+    if current_user and not current_user.get("is_demo") and current_user.get("id"):
+        auth_id = current_user["id"]
+        farmer_payload = {
+            "auth_user_id": auth_id,
+            "full_name": profile.name,
+            "phone_number": profile.phone,
+            "state": profile.state,
+            "district": profile.district,
+            "language": profile.language,
+            "experience_years": profile.experienceYears,
+        }
+        saved_farmer = await supabase_service.save_farmer_profile(farmer_payload)
+        
+        if saved_farmer and saved_farmer.get("id"):
+            parcel_payload = {
+                "farmer_id": saved_farmer["id"],
+                "parcel_name": "Main Field",
+                "acreage": profile.acreage,
+                "soil_type": profile.soilType,
+                "soil_ph": profile.soilPh,
+                "irrigation_source": profile.irrigationSource,
+                "water_availability": profile.waterAvailability,
+                "current_crop": profile.currentCrop,
+            }
+            await supabase_service.save_farm_parcel(parcel_payload)
+
+        return {"status": "success", "profile": profile, "persisted": True}
+
+    global _demo_profile
+    _demo_profile = profile
+    return {"status": "success", "profile": _demo_profile, "persisted": False}
 
 @router.post("/demo-login")
 def demo_login():
-    global _current_profile
-    _current_profile = FarmerProfile()
     return {
         "status": "success",
         "token": "demo_jwt_token_fasalai_2026",
-        "farmer": _current_profile
+        "farmer": _demo_profile
     }
