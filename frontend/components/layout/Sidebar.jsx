@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useLanguage } from "../../context/LanguageContext";
 import { useAuth } from "../../context/AuthContext";
 import { useFarm } from "../../context/FarmContext";
+import ThemeToggle from "../ui/ThemeToggle";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -74,6 +75,11 @@ export default function Sidebar() {
 
       {/* Language & Profile Footer */}
       <div className="mt-auto pt-3 border-t border-stone-100 flex flex-col gap-2.5">
+        <div className="flex items-center justify-between text-[12px] text-content-muted px-1">
+          <span>Appearance:</span>
+          <ThemeToggle variant="button" />
+        </div>
+
         <div className="flex items-center justify-between text-[12px] text-content-muted px-1">
           <span>Language:</span>
           <select

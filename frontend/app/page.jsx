@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useLanguage } from "../context/LanguageContext";
 import { useAuth } from "../context/AuthContext";
 import { useRouter } from "next/navigation";
+import ThemeToggle from "../components/ui/ThemeToggle";
 
 export default function LandingPage() {
   const { language, setLanguage } = useLanguage();
@@ -32,6 +33,8 @@ export default function LandingPage() {
         </div>
 
         <div className="flex items-center gap-3">
+          <ThemeToggle />
+
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}

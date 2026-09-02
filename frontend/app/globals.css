@@ -9,7 +9,20 @@
   --background: #FBFBFA;
   --foreground: #191C1D;
   --card: #FFFFFF;
+  --card-subtle: #F8F9F7;
   --border: #E5E7EB;
+  --border-subtle: #F0F2EE;
+  --muted: #5A625D;
+}
+
+html.dark {
+  --background: #0C140F;
+  --foreground: #EBF1ED;
+  --card: #131F18;
+  --card-subtle: #18261E;
+  --border: #22352A;
+  --border-subtle: #1A2A20;
+  --muted: #9EABA3;
 }
 
 body {
@@ -18,6 +31,7 @@ body {
   font-family: 'Noto Sans', 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-tap-highlight-color: transparent;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .material-symbols-outlined {
@@ -29,24 +43,76 @@ body {
   font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
 }
 
-/* Clean, modern card elevation without heavy clay or neon */
+/* Global Dark Mode Overrides for Existing Components */
+.dark .bg-surface {
+  background-color: #0C140F !important;
+}
+
+.dark .bg-white {
+  background-color: #131F18 !important;
+}
+
+.dark .bg-stone-50 {
+  background-color: #18261E !important;
+}
+
+.dark .bg-stone-100 {
+  background-color: #1E3026 !important;
+}
+
+.dark .bg-stone-200 {
+  background-color: #293F33 !important;
+}
+
+.dark .text-content {
+  color: #EBF1ED !important;
+}
+
+.dark .text-content-muted {
+  color: #9EABA3 !important;
+}
+
+.dark .border-stone-100 {
+  border-color: #1A2B21 !important;
+}
+
+.dark .border-stone-200,
+.dark .border-stone-200\/80,
+.dark .border-stone-200\/60,
+.dark .border-stone-300 {
+  border-color: #24382D !important;
+}
+
+.dark select {
+  background-color: #18261E !important;
+  color: #EBF1ED !important;
+  border-color: #24382D !important;
+}
+
+.dark input {
+  background-color: #18261E !important;
+  color: #EBF1ED !important;
+  border-color: #24382D !important;
+}
+
+/* Clean, modern card elevation */
 .farm-card {
-  background-color: #FFFFFF;
+  background-color: var(--card);
   border-radius: 1.125rem;
-  border: 1px solid #EAECE8;
-  box-shadow: 0 2px 6px -1px rgba(25, 28, 29, 0.05), 0 1px 3px -1px rgba(25, 28, 29, 0.03);
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.05), 0 1px 3px -1px rgba(0, 0, 0, 0.03);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .farm-card:hover {
-  border-color: #D4D9D2;
-  box-shadow: 0 4px 12px -2px rgba(25, 28, 29, 0.07), 0 2px 5px -2px rgba(25, 28, 29, 0.04);
+  border-color: #2D4738;
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.12), 0 2px 5px -2px rgba(0, 0, 0, 0.06);
 }
 
 .farm-card-subtle {
-  background-color: #F8F9F7;
+  background-color: var(--card-subtle);
   border-radius: 1rem;
-  border: 1px solid #EAECE8;
+  border: 1px solid var(--border-subtle);
 }
 
 /* Farm-friendly Buttons */
@@ -68,44 +134,44 @@ body {
 }
 
 .btn-secondary {
-  background-color: #FFFFFF;
-  color: #1B4332;
+  background-color: var(--card);
+  color: #22C55E;
   font-weight: 600;
   border-radius: 9999px;
-  border: 1.5px solid #1B4332;
+  border: 1.5px solid #22C55E;
   transition: all 0.15s ease;
 }
 
 .btn-secondary:hover {
-  background-color: #F0FDF4;
+  background-color: rgba(34, 197, 94, 0.1);
 }
 
 .btn-subtle {
-  background-color: #F4F5F2;
-  color: #191C1D;
+  background-color: var(--card-subtle);
+  color: var(--foreground);
   font-weight: 500;
   border-radius: 9999px;
-  border: 1px solid #E2E5E1;
+  border: 1px solid var(--border);
   transition: all 0.15s ease;
 }
 
 .btn-subtle:hover {
-  background-color: #EAECE7;
+  background-color: var(--border);
 }
 
 /* Form controls */
 .farm-input {
-  background-color: #FFFFFF;
-  border: 1.5px solid #D4D9D2;
-  color: #191C1D;
+  background-color: var(--card);
+  border: 1.5px solid var(--border);
+  color: var(--foreground);
   border-radius: 0.75rem;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .farm-input:focus {
   outline: none;
-  border-color: #1B4332;
-  box-shadow: 0 0 0 3px rgba(27, 67, 50, 0.12);
+  border-color: #22C55E;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
 }
 
 /* Subtle Scrollbar */
@@ -114,12 +180,12 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #F4F5F2;
+  background: var(--background);
 }
 ::-webkit-scrollbar-thumb {
-  background: #CBD2C9;
+  background: #3A4E42;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #9EA89A;
+  background: #506859;
 }

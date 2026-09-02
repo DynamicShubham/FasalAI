@@ -9,10 +9,12 @@ import BottomNav from "../../components/layout/BottomNav";
 import { useLanguage } from "../../context/LanguageContext";
 import { useAuth } from "../../context/AuthContext";
 import { useFarm } from "../../context/FarmContext";
+import { useTheme } from "../../context/ThemeContext";
 
 export default function SettingsPage() {
   const router = useRouter();
   const { language, setLanguage } = useLanguage();
+  const { theme, setTheme, isDark } = useTheme();
   const { user, farmerProfile, logout, isSupabaseConfigured, hasProfile } = useAuth();
   const { farmData, hasFarm } = useFarm();
   const [loggingOut, setLoggingOut] = useState(false);
@@ -94,6 +96,44 @@ export default function SettingsPage() {
                 {language === l && <span className="material-symbols-outlined text-brand-900 text-base">check</span>}
               </button>
             ))}
+          </div>
+        </div>
+
+        {/* Appearance / Theme Selection */}
+        <div className="bg-white p-5 rounded-2xl border border-stone-200/80 shadow-subtle flex flex-col gap-3">
+          <h3 className="font-bold text-content text-sm">Appearance</h3>
+          <div className="grid grid-cols-2 gap-2.5">
+            <button
+              type="button"
+              onClick={() => setTheme("light")}
+              className={`p-3 rounded-xl flex items-center justify-between border transition-colors ${
+                !isDark
+                  ? "bg-brand-50 border-brand-900 text-brand-900 font-bold"
+                  : "bg-white border-stone-200 text-content hover:bg-stone-50"
+              }`}
+            >
+              <span className="text-xs flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-base text-amber-600">light_mode</span>
+                Light Mode
+              </span>
+              {!isDark && <span className="material-symbols-outlined text-brand-900 text-base">check</span>}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setTheme("dark")}
+              className={`p-3 rounded-xl flex items-center justify-between border transition-colors ${
+                isDark
+                  ? "bg-brand-50 border-brand-800 text-brand-900 font-bold"
+                  : "bg-white border-stone-200 text-content hover:bg-stone-50"
+              }`}
+            >
+              <span className="text-xs flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-base text-amber-500">dark_mode</span>
+                Dark Mode
+              </span>
+              {isDark && <span className="material-symbols-outlined text-brand-900 text-base">check</span>}
+            </button>
           </div>
         </div>
 

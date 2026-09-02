@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useLanguage } from "../../context/LanguageContext";
 import { useFarm } from "../../context/FarmContext";
+import ThemeToggle from "../ui/ThemeToggle";
 
 export default function Header() {
   const { language, setLanguage } = useLanguage();
@@ -64,6 +65,9 @@ export default function Header() {
             </div>
           )}
         </div>
+
+        {/* Theme Toggle Button */}
+        <ThemeToggle />
 
         {/* Alerts Notification Bell */}
         <Link
