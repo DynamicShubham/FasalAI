@@ -51,10 +51,9 @@ def test_vision_scan_empty_image():
     assert response.status_code == 200
     data = response.json()
     assert data["success"] is False
-    assert data["isDemoMode"] is True
 
 def test_vision_scan_valid_image():
-    """A valid image should return a demo-mode detection result"""
+    """A valid image should return a trained OpenCV model detection result"""
     import base64
     from PIL import Image
     import io
@@ -68,5 +67,7 @@ def test_vision_scan_valid_image():
     assert response.status_code == 200
     data = response.json()
     assert data["success"] is True
-    assert data["isDemoMode"] is True
+    assert data["isTrainedModel"] is True
     assert "diseaseName" in data
+    assert "confidencePercentage" in data
+    assert "organicRemedy" in data

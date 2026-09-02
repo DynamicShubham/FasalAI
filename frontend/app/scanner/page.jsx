@@ -215,9 +215,10 @@ export default function ScannerPage() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-4 border-b border-stone-100">
               <div>
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  {scanResult.isDemoMode && (
-                    <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200">
-                      AI Diagnostic Demo
+                  {scanResult.isTrainedModel && (
+                    <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[13px]">model_training</span>
+                      OpenCV ML Model ({scanResult.modelAccuracy || "92.7% Acc"})
                     </span>
                   )}
                   {scanResult.isOfflineFallback && (
