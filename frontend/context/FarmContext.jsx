@@ -4,32 +4,36 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { supabase, isSupabaseConfigured } from "../lib/supabase";
 import { useAuth } from "./AuthContext";
 
-const FarmContext = createContext();
-
-const DEFAULT_FARM_DATA = {
-  farmName: "Patil Organic Farm",
-  acreage: 3.5,
-  state: "Maharashtra",
-  district: "Nashik",
-  soilType: "Black Clay Loam",
+const EMPTY_FARM_DATA = {
+  id: null,
+  farmerId: null,
+  farmName: "",
+  acreage: 0,
+  state: "",
+  district: "",
+  soilType: "",
   soilPh: 6.8,
-  irrigationSource: "Drip + Borewell",
-  waterAvailability: "Medium",
-  currentCrop: "Wheat",
-  sowingDate: "2026-08-11",
-  sowingDaysAgo: 22,
-  organicCertified: true,
-  healthScore: 92,
+  irrigationSource: "",
+  waterAvailability: "",
+  currentCrop: "",
+  sowingDate: "",
+  sowingDaysAgo: 0,
+  hasFarm: false,
 };
 
+const FarmContext = createContext();
+
 export function FarmProvider({ children }) {
-  const { user, farmerProfile, session } = useAuth();
-  const [farmData, setFarmData] = useState(DEFAULT_FARM_DATA);
+  const { farmerProfile } = useAuth();
+  const [farmData, setFarmData] = useState(EMPTY_FARM_DATA);
   const [loading, setLoading] = useState(false);
 
-  // Load farm parcels from Supabase for current farmer
+  // Load farm parcels from Supabase for current authenticated farmer
   const loadFarmData = useCallback(async (farmerId) => {
-    if (!isSupabaseConfigured || !supabase || !farmerId) return null;
+    if (!isSupabaseConfigured || !supabase || !farmerId) {
+      setFarmData(EMPTY_FARM_DATA);
+      return null;
+    }
     try {
       setLoading(true);
       const { data, error } = await supabase
@@ -42,12 +46,12 @@ export function FarmProvider({ children }) {
 
       if (error) {
         console.warn("Farm query error:", error.message);
+        setFarmData(EMPTY_FARM_DATA);
         return null;
       }
 
       if (data) {
-        // Calculate days since sowing if sowing_date present
-        let sowingDays = 22;
+        let sowingDays = 0;
         if (data.sowing_date) {
           const diffTime = Math.abs(new Date() - new Date(data.sowing_date));
           sowingDays = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
@@ -56,25 +60,27 @@ export function FarmProvider({ children }) {
         const mapped = {
           id: data.id,
           farmerId: data.farmer_id,
-          farmName: data.parcel_name || `${farmerProfile?.name || "My"} Farm`,
-          acreage: parseFloat(data.acreage) || 3.5,
-          state: farmerProfile?.state || "Maharashtra",
-          district: farmerProfile?.district || "Nashik",
-          soilType: data.soil_type || "Black Clay Loam",
+          farmName: data.parcel_name || "Primary Farm",
+          acreage: parseFloat(data.acreage) || 0,
+          state: farmerProfile?.state || "",
+          district: farmerProfile?.district || "",
+          soilType: data.soil_type || "",
           soilPh: parseFloat(data.soil_ph) || 6.8,
-          irrigationSource: data.irrigation_source || "Drip + Borewell",
-          waterAvailability: data.water_availability || "Medium",
-          currentCrop: data.current_crop || "Wheat",
-          sowingDate: data.sowing_date || "2026-08-11",
+          irrigationSource: data.irrigation_source || "",
+          waterAvailability: data.water_availability || "",
+          currentCrop: data.current_crop || "",
+          sowingDate: data.sowing_date || "",
           sowingDaysAgo: sowingDays,
-          organicCertified: true,
-          healthScore: 92,
+          hasFarm: true,
         };
-        setFarmData((prev) => ({ ...prev, ...mapped }));
+        setFarmData(mapped);
         return mapped;
+      } else {
+        setFarmData(EMPTY_FARM_DATA);
       }
     } catch (err) {
       console.warn("Failed to load farm parcel from Supabase:", err);
+      setFarmData(EMPTY_FARM_DATA);
     } finally {
       setLoading(false);
     }
@@ -82,49 +88,34 @@ export function FarmProvider({ children }) {
   }, [farmerProfile]);
 
   useEffect(() => {
-    if (farmerProfile?.id && !farmerProfile.isDemo) {
+    if (farmerProfile?.id) {
       loadFarmData(farmerProfile.id);
     } else {
-      const savedDemoFarm = localStorage.getItem("fasalai_demo_farm");
-      if (savedDemoFarm) {
-        try {
-          setFarmData((prev) => ({ ...prev, ...JSON.parse(savedDemoFarm) }));
-        } catch {}
-      }
+      setFarmData(EMPTY_FARM_DATA);
     }
   }, [farmerProfile, loadFarmData]);
 
   const updateFarm = (newProps) => {
-    setFarmData((prev) => {
-      const updated = { ...prev, ...newProps };
-      if (!isSupabaseConfigured || user?.isDemo) {
-        localStorage.setItem("fasalai_demo_farm", JSON.stringify(updated));
-      }
-      return updated;
-    });
+    setFarmData((prev) => ({ ...prev, ...newProps }));
   };
 
   const saveFarmParcel = async (parcelProps) => {
-    const combined = { ...farmData, ...parcelProps };
-    updateFarm(combined);
-
-    if (!isSupabaseConfigured || !supabase || !farmerProfile?.id || farmerProfile.isDemo) {
-      localStorage.setItem("fasalai_demo_farm", JSON.stringify(combined));
-      return combined;
+    if (!isSupabaseConfigured || !supabase || !farmerProfile?.id) {
+      throw new Error("Farmer profile required to save farm parcels.");
     }
 
     try {
       setLoading(true);
       const payload = {
         farmer_id: farmerProfile.id,
-        parcel_name: combined.farmName || "Main Field",
-        acreage: parseFloat(combined.acreage) || 3.5,
-        soil_type: combined.soilType || "Black Clay Loam",
-        soil_ph: parseFloat(combined.soilPh) || 6.8,
-        irrigation_source: combined.irrigationSource || "Drip + Borewell",
-        water_availability: combined.waterAvailability || "Medium",
-        current_crop: combined.currentCrop || "Wheat",
-        sowing_date: combined.sowingDate || new Date().toISOString().split("T")[0],
+        parcel_name: parcelProps.farmName || "Primary Farm",
+        acreage: parseFloat(parcelProps.acreage) || 1.0,
+        soil_type: parcelProps.soilType || "Alluvial",
+        soil_ph: parseFloat(parcelProps.soilPh) || 6.8,
+        irrigation_source: parcelProps.irrigationSource || "Borewell",
+        water_availability: parcelProps.waterAvailability || "Medium",
+        current_crop: parcelProps.currentCrop || "Wheat",
+        sowing_date: parcelProps.sowingDate || new Date().toISOString().split("T")[0],
       };
 
       const { data, error } = await supabase
@@ -134,7 +125,31 @@ export function FarmProvider({ children }) {
         .single();
 
       if (error) throw error;
-      return data;
+
+      let sowingDays = 0;
+      if (data.sowing_date) {
+        const diffTime = Math.abs(new Date() - new Date(data.sowing_date));
+        sowingDays = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+      }
+
+      const formatted = {
+        id: data.id,
+        farmerId: data.farmer_id,
+        farmName: data.parcel_name,
+        acreage: parseFloat(data.acreage),
+        state: farmerProfile?.state || "",
+        district: farmerProfile?.district || "",
+        soilType: data.soil_type,
+        soilPh: parseFloat(data.soil_ph),
+        irrigationSource: data.irrigation_source,
+        waterAvailability: data.water_availability,
+        currentCrop: data.current_crop,
+        sowingDate: data.sowing_date,
+        sowingDaysAgo: sowingDays,
+        hasFarm: true,
+      };
+      setFarmData(formatted);
+      return formatted;
     } catch (err) {
       console.error("Failed to save farm parcel to Supabase:", err);
       throw err;
@@ -144,7 +159,16 @@ export function FarmProvider({ children }) {
   };
 
   return (
-    <FarmContext.Provider value={{ farmData, updateFarm, saveFarmParcel, loadFarmData, loading }}>
+    <FarmContext.Provider
+      value={{
+        farmData,
+        hasFarm: Boolean(farmData?.id && farmData?.acreage > 0),
+        updateFarm,
+        saveFarmParcel,
+        loadFarmData,
+        loading,
+      }}
+    >
       {children}
     </FarmContext.Provider>
   );
@@ -154,7 +178,8 @@ export function useFarm() {
   const context = useContext(FarmContext);
   if (!context) {
     return {
-      farmData: DEFAULT_FARM_DATA,
+      farmData: EMPTY_FARM_DATA,
+      hasFarm: false,
       updateFarm: () => {},
       saveFarmParcel: async () => {},
       loadFarmData: async () => {},

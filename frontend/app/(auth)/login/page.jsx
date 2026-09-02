@@ -8,7 +8,6 @@ import { useAuth } from "../../../context/AuthContext";
 export default function LoginPage() {
   const router = useRouter();
   const {
-    loginDemo,
     signInWithGoogle,
     signInWithEmail,
     signUpWithEmail,
@@ -59,11 +58,6 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleInstantDemo = async () => {
-    await loginDemo();
-    router.push("/dashboard");
   };
 
   return (
@@ -140,7 +134,7 @@ export default function LoginPage() {
               <input
                 type="text"
                 required
-                placeholder="e.g. Ramesh Patil"
+                placeholder="Enter your full name"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-stone-50 text-content text-xs md:text-sm rounded-xl border border-stone-300 focus:outline-none focus:border-brand-800"
@@ -202,18 +196,6 @@ export default function LoginPage() {
             className="text-brand-800 font-bold hover:underline"
           >
             {authMode === "SIGNIN" ? "Sign Up" : "Sign In"}
-          </button>
-        </div>
-
-        {/* Demo Farmer Quick Access */}
-        <div className="pt-2 border-t border-stone-100 flex flex-col gap-2">
-          <button
-            type="button"
-            onClick={handleInstantDemo}
-            className="w-full py-2.5 px-3 bg-stone-100 hover:bg-stone-200 text-content-muted hover:text-content font-medium text-xs rounded-xl border border-stone-200 transition-colors flex items-center justify-center gap-1.5"
-          >
-            <span className="material-symbols-outlined text-base">person</span>
-            Demo Quick Access (Offline / Evaluation Mode)
           </button>
         </div>
       </div>

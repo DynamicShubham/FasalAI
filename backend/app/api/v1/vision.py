@@ -11,7 +11,7 @@ router = APIRouter()
 
 class ScanBase64Request(BaseModel):
     imageBase64: str
-    cropHint: Optional[str] = "Tomato"
+    cropHint: Optional[str] = ""
 
 @router.post("/scan-frame")
 def scan_frame(payload: ScanBase64Request):
@@ -31,8 +31,7 @@ def scan_frame(payload: ScanBase64Request):
         logger.error(f"Scan frame processing error: {e}")
         return {
             "success": False,
-            "isDemoMode": True,
-            "error": "Failed to process scan request. Please try again.",
+            "error": "Failed to process scan request. Please capture a clear photo.",
             "diseaseName": None,
             "confidenceScore": 0,
         }
@@ -47,7 +46,6 @@ async def upload_image(file: UploadFile = File(...), cropHint: Optional[str] = F
         logger.error(f"Upload processing error: {e}")
         return {
             "success": False,
-            "isDemoMode": True,
             "error": "Failed to process uploaded image. Please try again.",
             "diseaseName": None,
             "confidenceScore": 0,

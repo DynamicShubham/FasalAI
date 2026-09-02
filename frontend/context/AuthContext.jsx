@@ -2,21 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { supabase, isSupabaseConfigured } from "../lib/supabase";
-import { fetchApi } from "../lib/api";
 
 const AuthContext = createContext();
-
-const DEMO_FARMER = {
-  id: "farmer_demo_1",
-  name: "Ramesh Patil",
-  phone: "+91 98765 43210",
-  state: "Maharashtra",
-  district: "Nashik",
-  language: "English",
-  experienceYears: 14,
-  isAuthenticated: true,
-  isDemo: true,
-};
 
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
@@ -25,7 +12,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState(null);
 
-  // Fetch farmer profile from Supabase
+  // Fetch authenticated farmer profile from Supabase PostgreSQL
   const loadFarmerProfile = useCallback(async (authUserId) => {
     if (!isSupabaseConfigured || !supabase || !authUserId) return null;
     try {
@@ -42,15 +29,15 @@ export function AuthProvider({ children }) {
       if (data) {
         const formatted = {
           id: data.id,
-          name: data.full_name || "Farmer",
+          name: data.full_name || "",
+          email: data.email || "",
           phone: data.phone_number || "",
-          state: data.state || "Maharashtra",
-          district: data.district || "Nashik",
+          state: data.state || "",
+          district: data.district || "",
           language: data.language || "English",
-          experienceYears: data.experience_years || 5,
+          experienceYears: data.experience_years || 0,
           authUserId: data.auth_user_id,
-          isAuthenticated: true,
-          isDemo: false,
+          hasProfile: true,
         };
         setFarmerProfile(formatted);
         return formatted;
@@ -64,23 +51,11 @@ export function AuthProvider({ children }) {
   // Initialize and listen to Supabase Auth state changes
   useEffect(() => {
     if (!isSupabaseConfigured || !supabase) {
-      // In offline / unconfigured mode, check local storage for demo user
-      const savedDemo = localStorage.getItem("fasalai_demo_user");
-      if (savedDemo) {
-        try {
-          const parsed = JSON.parse(savedDemo);
-          setUser(parsed);
-          setFarmerProfile(parsed);
-        } catch {
-          setUser(DEMO_FARMER);
-          setFarmerProfile(DEMO_FARMER);
-        }
-      }
       setLoading(false);
       return;
     }
 
-    // Get current active session
+    // Get current active session from Supabase
     supabase.auth.getSession().then(async ({ data: { session: activeSession }, error }) => {
       if (error) {
         console.warn("Session restore error:", error.message);
@@ -90,29 +65,17 @@ export function AuthProvider({ children }) {
         const profile = await loadFarmerProfile(activeSession.user.id);
         const mappedUser = {
           id: activeSession.user.id,
-          email: activeSession.user.email,
+          email: activeSession.user.email || "",
           name: profile?.name || activeSession.user.user_metadata?.full_name || activeSession.user.email?.split("@")[0] || "Farmer",
           phone: profile?.phone || activeSession.user.phone || "",
-          state: profile?.state || "Maharashtra",
-          district: profile?.district || "Nashik",
-          isAuthenticated: true,
-          isDemo: false,
+          state: profile?.state || "",
+          district: profile?.district || "",
+          hasProfile: Boolean(profile?.id),
         };
         setUser(mappedUser);
       } else {
-        // No active Supabase session; check demo user
-        const savedDemo = localStorage.getItem("fasalai_demo_user");
-        if (savedDemo) {
-          try {
-            const parsed = JSON.parse(savedDemo);
-            setUser(parsed);
-            setFarmerProfile(parsed);
-          } catch {
-            setUser(null);
-          }
-        } else {
-          setUser(null);
-        }
+        setUser(null);
+        setFarmerProfile(null);
       }
       setLoading(false);
     });
@@ -126,19 +89,17 @@ export function AuthProvider({ children }) {
         const profile = await loadFarmerProfile(currentSession.user.id);
         const mappedUser = {
           id: currentSession.user.id,
-          email: currentSession.user.email,
+          email: currentSession.user.email || "",
           name: profile?.name || currentSession.user.user_metadata?.full_name || currentSession.user.email?.split("@")[0] || "Farmer",
           phone: profile?.phone || currentSession.user.phone || "",
-          state: profile?.state || "Maharashtra",
-          district: profile?.district || "Nashik",
-          isAuthenticated: true,
-          isDemo: false,
+          state: profile?.state || "",
+          district: profile?.district || "",
+          hasProfile: Boolean(profile?.id),
         };
         setUser(mappedUser);
       } else if (event === "SIGNED_OUT") {
         setUser(null);
         setFarmerProfile(null);
-        localStorage.removeItem("fasalai_demo_user");
       }
     });
 
@@ -227,27 +188,19 @@ export function AuthProvider({ children }) {
   // Save/Upsert Farmer Profile to Supabase
   const saveFarmerProfile = async (profileData) => {
     if (!isSupabaseConfigured || !supabase || !session?.user) {
-      // Offline fallback
-      const updated = {
-        ...(user || DEMO_FARMER),
-        ...profileData,
-        isAuthenticated: true,
-      };
-      setUser(updated);
-      setFarmerProfile(updated);
-      localStorage.setItem("fasalai_demo_user", JSON.stringify(updated));
-      return updated;
+      throw new Error("Authentication required to save profile.");
     }
 
     try {
       const payload = {
         auth_user_id: session.user.id,
-        full_name: profileData.name || profileData.fullName || "Farmer",
+        full_name: profileData.name || profileData.fullName || user?.name || "Farmer",
+        email: session.user.email || "",
         phone_number: profileData.phone || profileData.phoneNumber || "",
-        state: profileData.state || "Maharashtra",
-        district: profileData.district || "Nashik",
+        state: profileData.state || "",
+        district: profileData.district || "",
         language: profileData.language || "English",
-        experience_years: parseInt(profileData.experienceYears || 5, 10),
+        experience_years: parseInt(profileData.experienceYears || 0, 10),
         updated_at: new Date().toISOString(),
       };
 
@@ -262,34 +215,21 @@ export function AuthProvider({ children }) {
       const formatted = {
         id: data.id,
         name: data.full_name,
+        email: data.email,
         phone: data.phone_number,
         state: data.state,
         district: data.district,
         language: data.language,
         experienceYears: data.experience_years,
         authUserId: data.auth_user_id,
-        isAuthenticated: true,
-        isDemo: false,
+        hasProfile: true,
       };
       setFarmerProfile(formatted);
       setUser((prev) => ({ ...(prev || {}), ...formatted }));
       return formatted;
     } catch (err) {
-      console.error("Failed to save farmer profile:", err);
+      console.error("Failed to save farmer profile to Supabase:", err);
       throw err;
-    }
-  };
-
-  // Instant Demo Farmer Login
-  const loginDemo = async () => {
-    setLoading(true);
-    try {
-      const demoUser = { ...DEMO_FARMER, isAuthenticated: true };
-      setUser(demoUser);
-      setFarmerProfile(demoUser);
-      localStorage.setItem("fasalai_demo_user", JSON.stringify(demoUser));
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -305,7 +245,6 @@ export function AuthProvider({ children }) {
     setUser(null);
     setSession(null);
     setFarmerProfile(null);
-    localStorage.removeItem("fasalai_demo_user");
   };
 
   return (
@@ -317,12 +256,13 @@ export function AuthProvider({ children }) {
         loading,
         authError,
         isSupabaseConfigured,
+        isAuthenticated: Boolean(session?.user),
+        hasProfile: Boolean(farmerProfile?.id),
         signUpWithEmail,
         signInWithEmail,
         signInWithGoogle,
         saveFarmerProfile,
         loadFarmerProfile,
-        loginDemo,
         logout,
         accessToken: session?.access_token || null,
       }}
@@ -337,17 +277,18 @@ export function useAuth() {
   if (!context) {
     return {
       session: null,
-      user: DEMO_FARMER,
-      farmerProfile: DEMO_FARMER,
+      user: null,
+      farmerProfile: null,
       loading: false,
       authError: null,
       isSupabaseConfigured: false,
+      isAuthenticated: false,
+      hasProfile: false,
       signUpWithEmail: async () => {},
       signInWithEmail: async () => {},
       signInWithGoogle: async () => {},
       saveFarmerProfile: async () => {},
       loadFarmerProfile: async () => {},
-      loginDemo: () => {},
       logout: () => {},
       accessToken: null,
     };

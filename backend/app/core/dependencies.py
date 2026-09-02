@@ -1,8 +1,6 @@
 import logging
-import httpx
 from fastapi import Header, HTTPException, status
 from typing import Optional, Dict, Any
-from .config import settings
 from ..services.supabase_service import supabase_service
 
 logger = logging.getLogger("fasalai.auth")
@@ -10,18 +8,14 @@ logger = logging.getLogger("fasalai.auth")
 async def get_current_user_optional(authorization: Optional[str] = Header(None)) -> Optional[Dict[str, Any]]:
     """
     Extracts and validates Supabase JWT token from Authorization header if present.
-    Returns authenticated user dict or None for public/demo fallback.
+    Returns authenticated user dict or None if no token provided.
     """
     if not authorization or not authorization.startswith("Bearer "):
         return None
 
     token = authorization.split(" ")[1].strip()
-    if not token or token.startswith("demo_"):
-        return {
-            "id": "farmer_demo_1",
-            "email": "demo@fasalai.org",
-            "is_demo": True
-        }
+    if not token:
+        return None
 
     user = await supabase_service.validate_user_token(token)
     return user

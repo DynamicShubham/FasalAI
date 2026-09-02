@@ -10,20 +10,28 @@ import { sendChatMessage } from "../../lib/api";
 
 export default function AssistantPage() {
   const { language, setLanguage } = useLanguage();
-  const { farmData } = useFarm();
+  const { farmData, hasFarm } = useFarm();
 
-  const [messages, setMessages] = useState([
-    {
-      id: "m1",
-      sender: "assistant",
-      text: `Namaste! I am your FasalAI Field Advisor. I have context on your ${farmData.acreage} Acre farm in ${farmData.district} with standing ${farmData.currentCrop} at Day 22. What would you like to know about watering, sprays, or market prices today?`,
-      time: "Just now",
-    },
-  ]);
+  const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState("");
   const [loading, setLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    const greeting = hasFarm && farmData?.currentCrop
+      ? `Namaste! I am your FasalAI Field Advisor. I have context on your ${farmData.acreage} Acre farm in ${farmData.district} with standing ${farmData.currentCrop}. What would you like to know about watering, sprays, or market prices today?`
+      : "Namaste! I am your FasalAI Field Advisor. How can I help you with crop advice, weather forecasts, or mandi prices today?";
+
+    setMessages([
+      {
+        id: "m1",
+        sender: "assistant",
+        text: greeting,
+        time: "Just now",
+      },
+    ]);
+  }, [hasFarm, farmData]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

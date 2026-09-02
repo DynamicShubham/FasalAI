@@ -27,7 +27,7 @@ export default function Header() {
           className="flex items-center gap-1 bg-stone-100 px-2.5 py-1 rounded-full text-xs text-content-muted border border-stone-200"
         >
           <span className="material-symbols-outlined text-[15px] text-brand-700">location_on</span>
-          <span className="max-w-[70px] truncate">{farmData.district}</span>
+          <span className="max-w-[70px] truncate">{farmData?.district || "My Farm"}</span>
         </Link>
 
         {/* Language Button */}

@@ -39,7 +39,7 @@ export async function fetchApi(endpoint, options = {}) {
   }
 }
 
-export async function scanCropImage(base64Image, cropHint = "Tomato") {
+export async function scanCropImage(base64Image, cropHint = "") {
   try {
     const res = await fetch(`${API_BASE_URL}/vision/scan-frame`, {
       method: "POST",
@@ -52,26 +52,13 @@ export async function scanCropImage(base64Image, cropHint = "Tomato") {
       return data;
     }
   } catch (e) {
-    console.warn("[FasalAI Scan] Backend unavailable, using offline fallback.");
+    console.warn("[FasalAI Scan] Backend analysis error:", e.message);
   }
   return {
-    success: true,
-    isDemoMode: true,
-    isOfflineFallback: true,
-    demoNote: "Offline fallback diagnosis — backend was unavailable. Connect to backend for real analysis.",
-    diseaseId: "tomato_early_blight",
-    diseaseName: "Tomato Early Blight (टमाटर का अगेती झुलसा)",
-    crop: "Tomato",
-    pathogen: "Alternaria solani (Fungus)",
-    severity: "Moderate",
-    confidenceScore: 0.94,
-    confidencePercentage: "94%",
-    symptoms: "Concentric brown rings on lower foliage with yellow halos.",
-    organicRemedy: "Apply Neem Oil (5ml/L) or Trichoderma viride (5g/L). Pluck and bury infected bottom leaves.",
-    chemicalRemedy: "Mancozeb 75% WP @ 2.5g/L during late afternoon (after 4:30 PM).",
-    prevention: "Improve plant spacing for airflow and switch to drip irrigation to prevent splash spore dispersal.",
-    boundingBoxes: [{ x: 120, y: 150, width: 340, height: 260, label: "Early Blight", confidence: 0.94 }],
-    imageResolution: "640x480"
+    success: false,
+    error: "Leaf diagnostic service is currently unreachable. Please verify server connection.",
+    diseaseName: null,
+    confidenceScore: 0,
   };
 }
 
@@ -88,37 +75,23 @@ export async function sendChatMessage(message, language = "English", contextData
       return data;
     }
   } catch (e) {
-    console.warn("[FasalAI Chat] Backend unavailable, using offline fallback.");
+    console.warn("[FasalAI Chat] Advisory connection error.");
   }
   return {
-    reply: "I'm currently unable to connect to the advisory service. Please check your internet connection and try again. In the meantime, you can browse the Crop Advice, Mandi Prices, and Government Schemes sections for helpful information.",
+    reply: "I am unable to reach the agricultural advisory server at the moment. Please check your internet connection and try again.",
     language,
-    poweredBy: "FasalAI (Offline Mode)",
+    poweredBy: "FasalAI Advisory",
     isOfflineFallback: true,
   };
 }
 
 function getFallbackData(endpoint) {
-  // All fallback data is clearly marked with isOfflineFallback: true
-  // These are used ONLY when the backend API is unavailable
-  
+  // Pure agricultural reference data only — ZERO fake farmer user data
   if (endpoint.includes("/farmer/profile")) {
     return {
       isOfflineFallback: true,
-      id: "farmer_demo_1",
-      name: "Ramesh Patil",
-      phone: "+91 98765 43210",
-      state: "Maharashtra",
-      district: "Nashik",
-      language: "English",
-      experienceYears: 14,
-      acreage: 3.5,
-      soilType: "Black Clay Loam",
-      soilPh: 6.8,
-      irrigationSource: "Drip + Borewell",
-      waterAvailability: "Medium",
-      currentCrop: "Wheat",
-      sowingDaysAgo: 22
+      hasProfile: false,
+      profile: null,
     };
   }
   if (endpoint.includes("/crops/recommendations")) {

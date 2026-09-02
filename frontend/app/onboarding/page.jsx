@@ -135,7 +135,7 @@ export default function OnboardingPage() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="e.g. Ramesh Patil"
+                  placeholder="Enter your full name"
                   className="w-full px-4 py-2.5 bg-stone-50 text-content text-xs md:text-sm rounded-xl border border-stone-300 focus:outline-none focus:border-brand-800"
                 />
               </div>

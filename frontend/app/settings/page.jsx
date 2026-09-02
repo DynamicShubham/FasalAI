@@ -13,8 +13,8 @@ import { useFarm } from "../../context/FarmContext";
 export default function SettingsPage() {
   const router = useRouter();
   const { language, setLanguage } = useLanguage();
-  const { user, farmerProfile, logout, isSupabaseConfigured } = useAuth();
-  const { farmData } = useFarm();
+  const { user, farmerProfile, logout, isSupabaseConfigured, hasProfile } = useAuth();
+  const { farmData, hasFarm } = useFarm();
   const [loggingOut, setLoggingOut] = useState(false);
 
   const handleLogout = async () => {
@@ -25,8 +25,8 @@ export default function SettingsPage() {
 
   const displayName = farmerProfile?.name || user?.name || "Farmer";
   const displayPhone = farmerProfile?.phone || user?.phone || user?.email || "Account Active";
-  const displayDistrict = farmData.district || farmerProfile?.district || user?.district || "Nashik";
-  const displayState = farmData.state || farmerProfile?.state || user?.state || "Maharashtra";
+  const displayDistrict = farmData?.district || farmerProfile?.district || user?.district || "";
+  const displayState = farmData?.state || farmerProfile?.state || user?.state || "";
 
   return (
     <div className="min-h-screen bg-surface flex flex-col md:flex-row antialiased">
@@ -40,39 +40,38 @@ export default function SettingsPage() {
             Settings & Farm Profile
           </h1>
           <p className="text-xs md:text-sm text-content-muted mt-0.5">
-            Manage your language preferences and land details
+            Manage your language preferences and registered land details
           </p>
         </section>
 
         {/* Profile Card */}
-        <div className="bg-white p-5 rounded-2xl border border-stone-200/80 shadow-subtle flex items-center justify-between">
+        <div className="bg-white p-5 rounded-2xl border border-stone-200/80 shadow-subtle flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
             <div className="w-12 h-12 rounded-full bg-brand-50 text-brand-900 flex items-center justify-center text-xl font-bold">
               👨‍🌾
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h3 className="font-bold text-content text-base">{displayName}</h3>
-                {user?.isDemo && (
-                  <span className="text-[10px] font-bold bg-amber-50 text-amber-800 px-2 py-0.5 rounded border border-amber-200">
-                    Demo Mode
-                  </span>
-                )}
-              </div>
+              <h3 className="font-bold text-content text-base">{displayName}</h3>
               <p className="text-xs text-content-muted">
-                {displayPhone} · {displayDistrict}, {displayState}
+                {displayPhone} {displayDistrict ? `· ${displayDistrict}${displayState ? `, ${displayState}` : ""}` : ""}
               </p>
-              <p className="text-[11px] text-brand-800 font-medium mt-0.5">
-                {farmData.acreage} Acres · {farmData.soilType} · Standing {farmData.currentCrop}
-              </p>
+              {hasFarm ? (
+                <p className="text-[11px] text-brand-800 font-medium mt-0.5">
+                  {farmData.acreage} Acres · {farmData.soilType || "Configured"} · Standing {farmData.currentCrop}
+                </p>
+              ) : (
+                <p className="text-[11px] text-amber-800 font-medium mt-0.5">
+                  Farm not configured yet
+                </p>
+              )}
             </div>
           </div>
 
           <Link
-            href="/farm-setup"
+            href={hasProfile ? "/farm-setup" : "/onboarding"}
             className="px-3.5 py-1.5 bg-stone-100 hover:bg-stone-200 rounded-lg text-xs font-semibold text-brand-900 transition-colors"
           >
-            Edit Farm
+            {hasFarm ? "Edit Farm" : "Configure Farm"}
           </Link>
         </div>
 
@@ -103,7 +102,7 @@ export default function SettingsPage() {
           <div>
             <h4 className="font-bold text-content text-sm">Account Session</h4>
             <p className="text-xs text-content-muted mt-0.5">
-              {isSupabaseConfigured ? "Connected to Supabase Auth" : "Running in evaluation mode"}
+              {user?.email ? `Signed in as ${user.email}` : isSupabaseConfigured ? "Connected to Supabase Auth" : "Guest Mode"}
             </p>
           </div>
 
@@ -130,7 +129,7 @@ export default function SettingsPage() {
           </div>
           <div className="flex justify-between py-1">
             <span>Version</span>
-            <span className="font-medium text-content">1.0 Production Ready (Supabase Connected)</span>
+            <span className="font-medium text-content">1.0 Production (Supabase Connected)</span>
           </div>
         </div>
       </main>

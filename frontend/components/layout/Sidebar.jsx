@@ -90,8 +90,12 @@ export default function Sidebar() {
             👨‍🌾
           </div>
           <div className="overflow-hidden">
-            <p className="text-xs font-bold text-content truncate">{user?.name || "Ramesh Patil"}</p>
-            <p className="text-[10px] text-content-muted">{farmData.acreage} Acres · {farmData.currentCrop}</p>
+            <p className="text-xs font-bold text-content truncate">{user?.name || "Farmer Profile"}</p>
+            {farmData?.acreage && farmData?.currentCrop ? (
+              <p className="text-[10px] text-content-muted truncate">{farmData.acreage} Acres · {farmData.currentCrop}</p>
+            ) : (
+              <p className="text-[10px] text-brand-800 font-semibold">Farm Setup Needed</p>
+            )}
           </div>
         </div>
       </div>

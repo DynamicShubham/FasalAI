@@ -8,13 +8,8 @@ import { useRouter } from "next/navigation";
 
 export default function LandingPage() {
   const { language, setLanguage } = useLanguage();
-  const { loginDemo } = useAuth();
+  const { isAuthenticated } = useAuth();
   const router = useRouter();
-
-  const handleDemoStart = async () => {
-    await loginDemo();
-    router.push("/dashboard");
-  };
 
   return (
     <div className="min-h-screen bg-surface flex flex-col justify-between p-4 md:p-8 max-w-6xl mx-auto">
@@ -73,13 +68,13 @@ export default function LandingPage() {
 
           {/* Action CTAs */}
           <div className="flex flex-col sm:flex-row items-center gap-3 pt-2 justify-center lg:justify-start">
-            <button
-              onClick={handleDemoStart}
+            <Link
+              href="/login"
               className="w-full sm:w-auto px-7 py-3.5 bg-brand-900 hover:bg-brand-950 text-white font-semibold text-sm rounded-full shadow-sm flex items-center justify-center gap-2 transition-colors"
             >
-              <span className="material-symbols-outlined text-[18px]">play_circle</span>
-              Try Demo Farm (Ramesh Patil)
-            </button>
+              <span className="material-symbols-outlined text-[18px]">login</span>
+              Get Started / Sign In
+            </Link>
 
             <Link
               href="/onboarding"
@@ -115,8 +110,8 @@ export default function LandingPage() {
                 🌾
               </div>
               <div>
-                <h3 className="font-bold text-content text-sm">Patil Farm, Nashik</h3>
-                <p className="text-xs text-content-muted">3.5 Acres · Black Soil · Wheat Day 22</p>
+                <h3 className="font-bold text-content text-sm">Farm Decision Preview</h3>
+                <p className="text-xs text-content-muted">Real-time Soil, Weather & Market Synthesis</p>
               </div>
             </div>
             <span className="px-2.5 py-1 bg-emerald-50 text-emerald-800 text-xs font-semibold rounded-full">
