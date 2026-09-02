@@ -45,22 +45,22 @@ export default function ScannerPage() {
   const startCamera = async () => {
     setErrorMsg("");
     try {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      if (typeof window !== "undefined" && typeof navigator !== "undefined" && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: cameraFacing, width: { ideal: 1280 }, height: { ideal: 720 } },
           audio: false,
         });
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
-          videoRef.current.play();
+          videoRef.current.play().catch((e) => console.warn("Video play error:", e));
           setCameraActive(true);
         }
       } else {
-        setErrorMsg("Camera access not supported on this device. Please upload a photo.");
+        setErrorMsg("Camera access not available on this browser. You can upload a photo or use sample leaves.");
       }
     } catch (err) {
       console.warn("Camera stream error:", err);
-      setErrorMsg("Camera permission unavailable. You can upload a photo or use the sample leaves below.");
+      setErrorMsg("Camera permission not granted. You can upload a photo or use the sample leaves below.");
       setCameraActive(false);
     }
   };
