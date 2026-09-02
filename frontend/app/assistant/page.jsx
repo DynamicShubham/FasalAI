@@ -121,11 +121,11 @@ export default function AssistantPage() {
       <Sidebar />
       <Header />
 
-      <main className="flex-grow flex flex-col w-full max-w-3xl mx-auto p-4 md:p-6 gap-3 pb-24 md:pb-12 h-[calc(100vh-64px)] md:h-screen">
+      <main className="flex-grow flex flex-col w-full max-w-3xl mx-auto p-4 md:p-6 gap-3 pb-24 md:pb-6 min-h-[calc(100dvh-56px)] md:h-screen">
         {/* Header */}
         <div className="bg-white p-4 rounded-2xl border border-stone-200/80 shadow-subtle flex justify-between items-center flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-brand-900 text-white flex items-center justify-center font-bold text-sm">
+            <div className="w-9 h-9 rounded-xl bg-brand-900 dark:bg-emerald-800 text-white flex items-center justify-center font-bold text-sm">
               👨‍🌾
             </div>
             <div>
@@ -137,7 +137,7 @@ export default function AssistantPage() {
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
-            className="bg-stone-100 text-brand-900 font-semibold text-xs rounded-lg px-3 py-1.5 border border-stone-200 outline-none cursor-pointer"
+            className="bg-stone-100 dark:bg-stone-800 text-brand-900 dark:text-emerald-400 font-semibold text-xs rounded-lg px-3 py-1.5 border border-stone-200 dark:border-stone-700 outline-none cursor-pointer"
           >
             <option value="English">English</option>
             <option value="Hindi">हिंदी (Hindi)</option>
@@ -155,15 +155,15 @@ export default function AssistantPage() {
                 className={`flex gap-2.5 max-w-[85%] ${isUser ? "self-end flex-row-reverse" : "self-start"}`}
               >
                 {!isUser && (
-                  <div className="w-7 h-7 rounded-full bg-brand-50 text-brand-900 flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                  <div className="w-7 h-7 rounded-full bg-brand-50 dark:bg-emerald-950/60 text-brand-900 dark:text-emerald-400 flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
                     🌱
                   </div>
                 )}
                 <div
                   className={`p-3.5 rounded-2xl text-xs md:text-sm leading-relaxed ${
                     isUser
-                      ? "bg-brand-900 text-white font-normal rounded-tr-xs"
-                      : "bg-white text-content rounded-tl-xs border border-stone-200/80 shadow-subtle"
+                      ? "bg-brand-900 dark:bg-emerald-800 text-white font-normal rounded-tr-xs"
+                      : "bg-white dark:bg-stone-900 text-content rounded-tl-xs border border-stone-200/80 dark:border-stone-800 shadow-subtle"
                   }`}
                 >
                   <p className="whitespace-pre-line">{msg.text}</p>
@@ -173,8 +173,8 @@ export default function AssistantPage() {
           })}
 
           {loading && (
-            <div className="flex items-center gap-2 text-xs text-content-muted self-start bg-white px-3.5 py-2 rounded-xl border border-stone-200 shadow-subtle">
-              <div className="w-2 h-2 rounded-full bg-brand-800 animate-pulse"></div>
+            <div className="flex items-center gap-2 text-xs text-content-muted self-start bg-white dark:bg-stone-900 px-3.5 py-2 rounded-xl border border-stone-200 dark:border-stone-800 shadow-subtle">
+              <div className="w-2 h-2 rounded-full bg-brand-800 dark:bg-emerald-400 animate-pulse"></div>
               Checking farm conditions and formulating advice...
             </div>
           )}
@@ -188,7 +188,7 @@ export default function AssistantPage() {
               key={idx}
               type="button"
               onClick={() => handleSendMessage(q)}
-              className="whitespace-nowrap px-3 py-1.5 bg-white hover:bg-stone-50 text-content-muted hover:text-content rounded-full text-xs border border-stone-200 shadow-subtle transition-colors flex-shrink-0"
+              className="whitespace-nowrap px-3 py-1.5 bg-white dark:bg-stone-900 hover:bg-stone-50 dark:hover:bg-stone-800 text-content-muted dark:text-stone-300 hover:text-content rounded-full text-xs border border-stone-200 dark:border-stone-800 shadow-subtle transition-colors flex-shrink-0"
             >
               {q}
             </button>
@@ -201,7 +201,7 @@ export default function AssistantPage() {
             e.preventDefault();
             handleSendMessage();
           }}
-          className="flex items-center gap-2 bg-white p-2 rounded-full border border-stone-300 shadow-subtle flex-shrink-0"
+          className="flex items-center gap-2 bg-white dark:bg-stone-900 p-2 rounded-full border border-stone-300 dark:border-stone-700 shadow-subtle flex-shrink-0"
         >
           <button
             type="button"
@@ -209,7 +209,7 @@ export default function AssistantPage() {
             className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
               isListening
                 ? "bg-red-600 text-white animate-pulse"
-                : "bg-stone-100 text-brand-900 hover:bg-stone-200"
+                : "bg-stone-100 dark:bg-stone-800 text-brand-900 dark:text-emerald-400 hover:bg-stone-200 dark:hover:bg-stone-700"
             }`}
             title="Speak your question"
           >
@@ -229,7 +229,7 @@ export default function AssistantPage() {
           <button
             type="submit"
             disabled={!inputText.trim() || loading}
-            className="w-9 h-9 rounded-full bg-brand-900 text-white flex items-center justify-center disabled:opacity-40 hover:bg-brand-950 transition-colors flex-shrink-0"
+            className="w-9 h-9 rounded-full bg-brand-900 hover:bg-brand-950 text-white flex items-center justify-center disabled:opacity-40 transition-colors flex-shrink-0"
           >
             <span className="material-symbols-outlined text-lg">arrow_upward</span>
           </button>

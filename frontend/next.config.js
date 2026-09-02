@@ -24,34 +24,6 @@ const nextConfig = {
         source: "/api/:path*",
         destination: `${backendUrl}/api/v1/:path*`,
       },
-      {
-        source: "/decisions/:path*",
-        destination: `${backendUrl}/api/v1/decisions/:path*`,
-      },
-      {
-        source: "/weather/:path*",
-        destination: `${backendUrl}/api/v1/weather/:path*`,
-      },
-      {
-        source: "/market/:path*",
-        destination: `${backendUrl}/api/v1/market/:path*`,
-      },
-      {
-        source: "/schemes/:path*",
-        destination: `${backendUrl}/api/v1/schemes/:path*`,
-      },
-      {
-        source: "/crops/:path*",
-        destination: `${backendUrl}/api/v1/crops/:path*`,
-      },
-      {
-        source: "/assistant/:path*",
-        destination: `${backendUrl}/api/v1/assistant/:path*`,
-      },
-      {
-        source: "/vision/:path*",
-        destination: `${backendUrl}/api/v1/vision/:path*`,
-      },
     ];
   },
 };

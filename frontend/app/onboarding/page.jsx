@@ -56,12 +56,14 @@ export default function OnboardingPage() {
           phone: formData.phone,
           state: formData.state,
           district: formData.district,
+          location: `${formData.district}, ${formData.state}`,
           experienceYears: formData.experienceYears,
           language: formData.primaryLanguage,
         });
         updateFarm({
           state: formData.state,
           district: formData.district,
+          location: `${formData.district}, ${formData.state}`,
         });
         router.push("/farm-setup");
       } catch (err) {
@@ -79,12 +81,12 @@ export default function OnboardingPage() {
       <div className="w-full max-w-lg bg-white p-7 md:p-8 rounded-2xl border border-stone-200/80 shadow-card flex flex-col gap-6">
         {/* Progress */}
         <div className="flex items-center justify-between pb-3 border-b border-stone-100">
-          <span className="text-xs font-bold text-brand-900 uppercase tracking-wider">
+          <span className="text-xs font-bold text-brand-900 dark:text-emerald-400 uppercase tracking-wider">
             Step {step} of 2 · Farmer Profile
           </span>
           <div className="flex gap-1">
-            <div className={`w-6 h-1.5 rounded-full ${step >= 1 ? "bg-brand-900" : "bg-stone-200"}`}></div>
-            <div className={`w-6 h-1.5 rounded-full ${step >= 2 ? "bg-brand-900" : "bg-stone-200"}`}></div>
+            <div className={`w-6 h-1.5 rounded-full ${step >= 1 ? "bg-brand-900 dark:bg-emerald-500" : "bg-stone-200 dark:bg-stone-800"}`}></div>
+            <div className={`w-6 h-1.5 rounded-full ${step >= 2 ? "bg-brand-900 dark:bg-emerald-500" : "bg-stone-200 dark:bg-stone-800"}`}></div>
           </div>
         </div>
 

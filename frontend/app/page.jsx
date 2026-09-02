@@ -23,7 +23,7 @@ export default function LandingPage() {
             className="w-10 h-10 rounded-xl object-contain shadow-sm"
           />
           <div>
-            <span className="font-display text-xl font-bold text-brand-900 tracking-tight">
+            <span className="font-display text-xl font-bold text-brand-900 dark:text-emerald-400 tracking-tight">
               FasalAI
             </span>
             <span className="hidden sm:inline-block text-xs text-content-muted ml-2 pl-2 border-l border-stone-300">
@@ -47,7 +47,7 @@ export default function LandingPage() {
 
           <Link
             href="/login"
-            className="px-4 py-1.5 text-xs md:text-sm font-semibold text-brand-900 hover:text-brand-950 transition-colors"
+            className="px-4 py-1.5 text-xs md:text-sm font-semibold text-brand-900 dark:text-emerald-400 hover:underline transition-colors"
           >
             Log In
           </Link>
@@ -58,13 +58,13 @@ export default function LandingPage() {
       <main className="flex flex-col lg:flex-row items-center justify-between gap-10 my-10 md:my-14">
         <div className="flex flex-col gap-5 max-w-xl text-center lg:text-left">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 self-center lg:self-start px-3.5 py-1.5 rounded-full bg-brand-50 text-brand-900 text-xs font-semibold border border-brand-100">
-            <span className="material-symbols-outlined text-[15px] text-brand-700">spa</span>
-            PR·FUSION · Personalized Farming Support
+          <div className="inline-flex items-center gap-2 self-center lg:self-start px-3.5 py-1.5 rounded-full bg-brand-50 dark:bg-emerald-950/60 text-brand-900 dark:text-emerald-300 text-xs font-semibold border border-brand-100 dark:border-emerald-800/60">
+            <span className="material-symbols-outlined text-[15px] text-brand-700 dark:text-emerald-400">spa</span>
+            FasalAI · Simple Daily Farm Decisions
           </div>
 
           <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-content leading-[1.2] tracking-tight">
-            Clear, actionable farming decisions for <span className="text-brand-900">your land.</span>
+            Clear, actionable farming decisions for <span className="text-brand-900 dark:text-emerald-400">your land.</span>
           </h1>
 
           <p className="text-content-muted text-sm sm:text-base leading-relaxed font-normal">
@@ -93,15 +93,15 @@ export default function LandingPage() {
           {/* Practical Value Points */}
           <div className="grid grid-cols-3 gap-4 pt-6 border-t border-stone-200 text-center lg:text-left">
             <div>
-              <p className="text-xl font-bold text-brand-900">30+ Diseases</p>
+              <p className="text-xl font-bold text-brand-900 dark:text-emerald-400">30+ Diseases</p>
               <p className="text-xs text-content-muted">Instant leaf diagnosis</p>
             </div>
             <div>
-              <p className="text-xl font-bold text-brand-900">Live Mandis</p>
+              <p className="text-xl font-bold text-brand-900 dark:text-emerald-400">Live Mandis</p>
               <p className="text-xs text-content-muted">Net profit comparison</p>
             </div>
             <div>
-              <p className="text-xl font-bold text-brand-900">Daily Checklist</p>
+              <p className="text-xl font-bold text-brand-900 dark:text-emerald-400">Daily Checklist</p>
               <p className="text-xs text-content-muted">Stage-wise farm plan</p>
             </div>
           </div>

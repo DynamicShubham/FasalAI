@@ -233,10 +233,10 @@ export default function DashboardPage() {
               </div>
 
               {/* What to do note */}
-              <div className="bg-brand-50/60 p-3.5 rounded-xl border border-brand-100/80 flex items-start gap-2.5">
-                <span className="material-symbols-outlined text-brand-800 text-lg mt-0.5">lightbulb</span>
-                <p className="text-xs text-brand-950 leading-relaxed">
-                  <strong className="font-semibold text-brand-900">Farm Advice:</strong> Your {farmData.currentCrop.toLowerCase()} in {farmData.district} is monitored. {sprayCondition.text.includes("Avoid") ? "Hold off on spraying until wind and rain conditions clear." : "Weather conditions are favorable for scheduled field management."}
+              <div className="bg-brand-50/60 dark:bg-emerald-950/40 p-3.5 rounded-xl border border-brand-100/80 dark:border-emerald-800/60 flex items-start gap-2.5">
+                <span className="material-symbols-outlined text-brand-800 dark:text-emerald-400 text-lg mt-0.5">lightbulb</span>
+                <p className="text-xs text-brand-950 dark:text-emerald-100 leading-relaxed">
+                  <strong className="font-semibold text-brand-900 dark:text-emerald-300">Farm Advice:</strong> Your {farmData.currentCrop.toLowerCase()} in {farmData.district} is monitored. {sprayCondition.text.includes("Avoid") ? "Hold off on spraying until wind and rain conditions clear." : "Weather conditions are favorable for scheduled field management."}
                 </p>
               </div>
             </section>
@@ -247,10 +247,10 @@ export default function DashboardPage() {
               <div className="lg:col-span-2 bg-white p-5 md:p-6 rounded-2xl border border-stone-200/80 shadow-subtle flex flex-col gap-4">
                 <div className="flex justify-between items-center pb-2 border-b border-stone-100">
                   <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-brand-800">checklist</span>
+                    <span className="material-symbols-outlined text-brand-800 dark:text-emerald-400">checklist</span>
                     <h3 className="font-display text-lg font-bold text-content">Today&apos;s Farm Plan</h3>
                   </div>
-                  <span className="text-xs font-semibold text-content-muted bg-stone-100 px-2.5 py-1 rounded-full">
+                  <span className="text-xs font-semibold text-content-muted bg-stone-100 dark:bg-stone-800 px-2.5 py-1 rounded-full">
                     {dailyPlan?.completionRate || "Active"}
                   </span>
                 </div>
@@ -263,8 +263,8 @@ export default function DashboardPage() {
                         onClick={() => toggleTaskComplete(task.id)}
                         className={`p-3.5 rounded-xl border transition-colors cursor-pointer flex items-start gap-3 ${
                           task.completed
-                            ? "bg-stone-50/70 border-stone-200 text-content-muted"
-                            : "bg-white border-stone-200 hover:border-brand-700"
+                            ? "bg-stone-50/70 dark:bg-stone-900/60 border-stone-200 dark:border-stone-800 text-content-muted dark:text-stone-400"
+                            : "bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 hover:border-brand-700 dark:hover:border-emerald-700"
                         }`}
                       >
                         <input
@@ -279,14 +279,14 @@ export default function DashboardPage() {
                         />
                         <div className="flex-grow">
                           <div className="flex items-center gap-2">
-                            <p className={`text-xs md:text-sm font-semibold ${task.completed ? "line-through text-content-muted" : "text-content"}`}>
+                            <p className={`text-xs md:text-sm font-semibold ${task.completed ? "line-through text-content-muted dark:text-stone-400" : "text-content"}`}>
                               {task.title}
                             </p>
-                            <span className="text-[10px] font-medium text-stone-500 bg-stone-100 px-2 py-0.5 rounded">
+                            <span className="text-[10px] font-medium text-stone-500 dark:text-stone-300 bg-stone-100 dark:bg-stone-800 px-2 py-0.5 rounded">
                               {task.timing}
                             </span>
                           </div>
-                          <p className="text-xs text-content-muted mt-0.5 leading-relaxed">
+                          <p className="text-xs text-content-muted dark:text-stone-400 mt-0.5 leading-relaxed">
                             {task.description}
                           </p>
                         </div>
@@ -324,8 +324,8 @@ export default function DashboardPage() {
                 </div>
 
                 {weather && (
-                  <div className="bg-amber-50/70 p-3 rounded-xl border border-amber-200/60 text-xs text-amber-950">
-                    <p className="font-semibold text-amber-900 flex items-center gap-1 mb-0.5">
+                  <div className="bg-amber-50/70 dark:bg-amber-950/40 p-3 rounded-xl border border-amber-200/60 dark:border-amber-800/50 text-xs text-amber-950 dark:text-amber-200">
+                    <p className="font-semibold text-amber-900 dark:text-amber-300 flex items-center gap-1 mb-0.5">
                       <span className="material-symbols-outlined text-[14px]">water_drop</span>
                       {weather.rainProbability >= 60
                         ? `Rain Expected (${weather.rainProbability}%)`
@@ -333,7 +333,7 @@ export default function DashboardPage() {
                         ? `Possible Rain (${weather.rainProbability}%)`
                         : `Low Rain Chance (${weather.rainProbability}%)`}
                     </p>
-                    <p className="text-[11px] text-amber-900/90 leading-normal">
+                    <p className="text-[11px] text-amber-900/90 dark:text-amber-200/90 leading-normal">
                       {weather.irrigationAdvice || "Monitor field moisture and adjust irrigation cycles."}
                     </p>
                   </div>
@@ -358,10 +358,10 @@ export default function DashboardPage() {
               <div className="bg-white p-5 md:p-6 rounded-2xl border border-stone-200/80 shadow-subtle flex flex-col justify-between gap-4">
                 <div className="flex justify-between items-center pb-2 border-b border-stone-100">
                   <span className="text-xs font-bold text-content-muted uppercase tracking-wider flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[16px] text-brand-800">storefront</span>
+                    <span className="material-symbols-outlined text-[16px] text-brand-800 dark:text-emerald-400">storefront</span>
                     Nearby APMC Markets
                   </span>
-                  <Link href="/market" className="text-xs text-brand-800 font-semibold hover:underline">
+                  <Link href="/market" className="text-xs text-brand-800 dark:text-emerald-400 font-semibold hover:underline">
                     View All Markets →
                   </Link>
                 </div>
@@ -377,12 +377,14 @@ export default function DashboardPage() {
                     </span>
                   </div>
                   <div className="flex items-baseline gap-2 mt-1 flex-wrap">
-                    <span className="text-xl font-black text-brand-900">
+                    <span className="text-xl font-black text-brand-900 dark:text-emerald-400">
                       ₹{market?.bestMandi?.modalPrice || 2400}/q
                     </span>
                     {marketPriceChange && (
                       <span className={`text-xs font-bold px-2 py-0.5 rounded ${
-                        marketPriceChange.isUp ? "text-emerald-700 bg-emerald-50" : "text-content-muted bg-stone-100"
+                        marketPriceChange.isUp
+                          ? "text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60"
+                          : "text-content-muted bg-stone-100 dark:bg-stone-800"
                       }`}>
                         {marketPriceChange.text}
                       </span>
@@ -390,7 +392,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                <p className="text-xs text-content-muted bg-stone-50 p-2.5 rounded-xl border border-stone-100">
+                <p className="text-xs text-content-muted bg-stone-50 dark:bg-stone-850 p-2.5 rounded-xl border border-stone-100 dark:border-stone-800">
                   {market?.recommendationText || `Compare distance-adjusted net returns for ${farmData.currentCrop}.`}
                 </p>
               </div>
@@ -399,17 +401,17 @@ export default function DashboardPage() {
               <div className="bg-white p-5 md:p-6 rounded-2xl border border-stone-200/80 shadow-subtle flex flex-col justify-between gap-4">
                 <div className="flex justify-between items-center pb-2 border-b border-stone-100">
                   <span className="text-xs font-bold text-content-muted uppercase tracking-wider flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[16px] text-brand-800">account_balance</span>
+                    <span className="material-symbols-outlined text-[16px] text-brand-800 dark:text-emerald-400">account_balance</span>
                     Government Support
                   </span>
-                  <Link href="/schemes" className="text-xs text-brand-800 font-semibold hover:underline">
+                  <Link href="/schemes" className="text-xs text-brand-800 dark:text-emerald-400 font-semibold hover:underline">
                     View Schemes ({schemes.length || 3}) →
                   </Link>
                 </div>
 
                 {schemes.length > 0 ? (
                   <div>
-                    <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded">
+                    <span className="text-[11px] font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
                       Matched for your {farmData.acreage} Acre farm
                     </span>
                     <h4 className="text-base font-bold text-content mt-1">
@@ -428,7 +430,7 @@ export default function DashboardPage() {
 
                 <Link
                   href="/schemes"
-                  className="w-full py-2.5 bg-stone-50 hover:bg-stone-100 text-brand-900 font-semibold text-xs rounded-xl border border-stone-200 text-center transition-colors"
+                  className="w-full py-2.5 bg-stone-50 dark:bg-stone-850 hover:bg-stone-100 dark:hover:bg-stone-800 text-brand-900 dark:text-emerald-400 font-semibold text-xs rounded-xl border border-stone-200 dark:border-stone-800 text-center transition-colors"
                 >
                   Check Required Documents & Apply
                 </Link>

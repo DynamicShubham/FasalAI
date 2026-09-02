@@ -56,13 +56,13 @@ export default function Sidebar() {
               href={item.href}
               className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[14px] transition-colors ${
                 isActive
-                  ? "bg-brand-50 text-brand-900 font-bold border border-brand-100"
-                  : "text-content-muted hover:text-content hover:bg-stone-50"
+                  ? "bg-brand-50 dark:bg-emerald-950/60 text-brand-900 dark:text-emerald-300 font-bold border border-brand-100 dark:border-emerald-800/60"
+                  : "text-content-muted hover:text-content hover:bg-stone-50 dark:hover:bg-stone-800"
               }`}
             >
               <span
                 className={`material-symbols-outlined text-[20px] ${
-                  isActive ? "fill text-brand-800" : "text-stone-400"
+                  isActive ? "fill text-brand-800 dark:text-emerald-400" : "text-stone-400"
                 }`}
               >
                 {item.icon}

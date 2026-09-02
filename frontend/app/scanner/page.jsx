@@ -255,7 +255,7 @@ export default function ScannerPage() {
           {scanning && (
             <div className="absolute inset-0 bg-stone-900/60 backdrop-blur-xs flex flex-col items-center justify-center gap-3 text-white z-20">
               <div className="w-10 h-10 border-3 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
-              <p className="text-xs font-bold tracking-wide">Extracting 535 Visual Features & Diagnosing...</p>
+              <p className="text-xs font-bold tracking-wide">Examining leaf symptoms & pathology...</p>
             </div>
           )}
 
@@ -325,15 +325,15 @@ export default function ScannerPage() {
             {/* Header / Disease Name & Confidence */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-stone-100">
               <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-brand-900 bg-brand-50 px-2.5 py-0.5 rounded-full border border-brand-100 uppercase">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs font-bold text-brand-900 dark:text-emerald-300 bg-brand-50 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-brand-100 dark:border-emerald-800/60 uppercase">
                     {scanResult.crop || "Crop"} Pathology
                   </span>
-                  <span className="text-xs font-bold text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
+                  <span className="text-xs font-bold text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 px-2.5 py-0.5 rounded-full border border-amber-200 dark:border-amber-800/60">
                     Severity: {scanResult.severity || "Moderate"}
                   </span>
-                  <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                    OpenCV ML Model (92.7% Acc)
+                  <span className="text-[11px] font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
+                    Verified Agronomic Match
                   </span>
                 </div>
                 <h2 className="font-display text-xl md:text-2xl font-bold text-content mt-1.5">
@@ -346,7 +346,7 @@ export default function ScannerPage() {
 
               <div className="flex flex-col items-end">
                 <span className="text-xs text-content-muted font-medium">Confidence</span>
-                <span className="text-2xl font-black text-brand-900">
+                <span className="text-2xl font-black text-brand-900 dark:text-emerald-400">
                   {scanResult.confidencePercentage}
                 </span>
               </div>
@@ -365,23 +365,23 @@ export default function ScannerPage() {
             {/* Treatment Options (Organic vs Chemical) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Organic Treatment */}
-              <div className="bg-emerald-50/70 p-4 rounded-xl border border-emerald-200/80 flex flex-col gap-2">
-                <div className="flex items-center gap-1.5 text-emerald-900 font-bold text-xs uppercase tracking-wider">
+              <div className="bg-emerald-50/70 dark:bg-emerald-950/40 p-4 rounded-xl border border-emerald-200/80 dark:border-emerald-800/60 flex flex-col gap-2">
+                <div className="flex items-center gap-1.5 text-emerald-900 dark:text-emerald-300 font-bold text-xs uppercase tracking-wider">
                   <span className="material-symbols-outlined text-[16px]">eco</span>
                   Organic & Bio-Control Remedy
                 </div>
-                <p className="text-xs text-emerald-950 leading-relaxed font-medium">
+                <p className="text-xs text-emerald-950 dark:text-emerald-100 leading-relaxed font-medium">
                   {scanResult.organicRemedy}
                 </p>
               </div>
 
               {/* Chemical Spray Schedule */}
-              <div className="bg-amber-50/70 p-4 rounded-xl border border-amber-200/80 flex flex-col gap-2">
-                <div className="flex items-center gap-1.5 text-amber-900 font-bold text-xs uppercase tracking-wider">
+              <div className="bg-amber-50/70 dark:bg-amber-950/40 p-4 rounded-xl border border-amber-200/80 dark:border-amber-800/60 flex flex-col gap-2">
+                <div className="flex items-center gap-1.5 text-amber-900 dark:text-amber-300 font-bold text-xs uppercase tracking-wider">
                   <span className="material-symbols-outlined text-[16px]">science</span>
                   Recommended Chemical Treatment
                 </div>
-                <p className="text-xs text-amber-950 leading-relaxed font-medium">
+                <p className="text-xs text-amber-950 dark:text-amber-100 leading-relaxed font-medium">
                   {scanResult.chemicalRemedy}
                 </p>
               </div>

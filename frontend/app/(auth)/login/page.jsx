@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../../context/AuthContext";
+import ThemeToggle from "../../../components/ui/ThemeToggle";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -28,13 +29,7 @@ export default function LoginPage() {
     try {
       await signInWithGoogle();
     } catch (err) {
-      console.error("Google sign in error:", err);
-      const msg = err.message || "";
-      if (msg.includes("provider is not enabled") || msg.includes("validation_failed")) {
-        setErrorMsg("Google Sign-In is not enabled yet in your Supabase Dashboard. Enable it under Authentication -> Providers -> Google, or use Email & Password below.");
-      } else {
-        setErrorMsg(msg || "Failed to initiate Google Sign-In.");
-      }
+      setErrorMsg(err.message || "Google sign-in failed. Please try again.");
       setLoading(false);
     }
   };
@@ -47,8 +42,9 @@ export default function LoginPage() {
 
     try {
       if (authMode === "SIGNUP") {
-        await signUpWithEmail(email, password, fullName);
-        setSuccessMsg("Account created! Please check your email for confirmation or sign in.");
+        await signUpWithEmail(email, password, { fullName });
+        setSuccessMsg("Account created! You can now sign in.");
+        setAuthMode("SIGNIN");
       } else {
         await signInWithEmail(email, password);
         router.push("/dashboard");
@@ -61,8 +57,20 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-surface flex flex-col justify-center items-center p-4">
-      <div className="w-full max-w-md bg-white p-7 md:p-8 rounded-2xl border border-stone-200/80 shadow-card flex flex-col gap-5">
+    <div className="min-h-screen bg-surface flex flex-col justify-between items-center p-4">
+      {/* Top Escape Hatch & Theme Bar */}
+      <div className="w-full max-w-md flex justify-between items-center py-2">
+        <Link
+          href="/"
+          className="text-xs font-semibold text-content-muted hover:text-content flex items-center gap-1 transition-colors"
+        >
+          <span className="material-symbols-outlined text-base">arrow_back</span>
+          <span>Back to Home</span>
+        </Link>
+        <ThemeToggle />
+      </div>
+
+      <div className="w-full max-w-md bg-white p-7 md:p-8 rounded-2xl border border-stone-200/80 shadow-card flex flex-col gap-5 my-auto">
         {/* Header */}
         <div className="text-center flex flex-col items-center">
           <img
@@ -74,7 +82,7 @@ export default function LoginPage() {
             {authMode === "SIGNIN" ? "Sign In to FasalAI" : "Create Farmer Account"}
           </h1>
           <p className="text-xs text-content-muted mt-0.5">
-            AI personalized agricultural decision companion
+            Your daily agricultural decision companion
           </p>
         </div>
 
@@ -83,7 +91,7 @@ export default function LoginPage() {
           type="button"
           onClick={handleGoogleLogin}
           disabled={loading}
-          className="w-full py-3 px-4 bg-white hover:bg-stone-50 text-stone-800 font-semibold text-xs md:text-sm rounded-xl border border-stone-300 shadow-subtle flex items-center justify-center gap-3 transition-colors active:scale-98 disabled:opacity-50"
+          className="w-full py-3 px-4 bg-white dark:bg-stone-800 hover:bg-stone-50 dark:hover:bg-stone-700 text-stone-800 dark:text-stone-100 font-semibold text-xs md:text-sm rounded-xl border border-stone-300 dark:border-stone-700 shadow-subtle flex items-center justify-center gap-3 transition-colors active:scale-98 disabled:opacity-50"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24">
             <path
@@ -107,9 +115,9 @@ export default function LoginPage() {
         </button>
 
         <div className="flex items-center gap-3 my-0.5">
-          <div className="flex-1 h-px bg-stone-200"></div>
+          <div className="flex-1 h-px bg-stone-200 dark:bg-stone-800"></div>
           <span className="text-[11px] text-content-muted font-medium uppercase">Or with Email</span>
-          <div className="flex-1 h-px bg-stone-200"></div>
+          <div className="flex-1 h-px bg-stone-200 dark:bg-stone-800"></div>
         </div>
 
         {/* Error / Success Notifications */}

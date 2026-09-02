@@ -51,7 +51,7 @@ export default function SchemesPage() {
             </p>
           </div>
 
-          <div className="px-3.5 py-1.5 bg-emerald-50 text-emerald-800 font-semibold text-xs rounded-xl border border-emerald-200">
+          <div className="px-3.5 py-1.5 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-semibold text-xs rounded-xl border border-emerald-200 dark:border-emerald-800/60">
             {schemes.filter((s) => (s.matchScore || 0) >= 70).length} Eligible Schemes Found
           </div>
         </section>
@@ -98,15 +98,15 @@ export default function SchemesPage() {
                     onClick={() => setSelectedScheme(s)}
                     className={`p-4 rounded-xl border transition-colors cursor-pointer flex flex-col gap-2 ${
                       isSelected
-                        ? "bg-brand-50 border-brand-800"
-                        : "bg-white border-stone-200 hover:border-stone-400"
+                        ? "bg-brand-50 dark:bg-emerald-950/50 border-brand-800 dark:border-emerald-500"
+                        : "bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 hover:border-stone-400 dark:hover:border-stone-700"
                     }`}
                   >
                     <div className="flex justify-between items-start">
-                      <span className="text-[10px] font-bold text-brand-800 uppercase tracking-wider">
+                      <span className="text-[10px] font-bold text-brand-800 dark:text-emerald-400 uppercase tracking-wider">
                         {s.type}
                       </span>
-                      <span className="text-xs font-bold text-emerald-800 bg-emerald-100/70 px-2 py-0.5 rounded">
+                      <span className="text-xs font-bold text-emerald-800 dark:text-emerald-200 bg-emerald-100/70 dark:bg-emerald-900/60 px-2 py-0.5 rounded border border-transparent dark:border-emerald-700/60">
                         {s.matchScore}% Match
                       </span>
                     </div>
@@ -132,7 +132,7 @@ export default function SchemesPage() {
                       {selectedScheme.name}
                     </h2>
                   </div>
-                  <span className="px-3 py-1 rounded bg-emerald-50 text-emerald-800 font-semibold text-xs border border-emerald-200">
+                  <span className="px-3 py-1 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-semibold text-xs border border-emerald-200 dark:border-emerald-800/60">
                     {selectedScheme.eligibilityStatus}
                   </span>
                 </div>

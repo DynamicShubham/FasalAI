@@ -88,12 +88,12 @@ export default function SettingsPage() {
                 onClick={() => setLanguage(l)}
                 className={`p-3 rounded-xl flex items-center justify-between border transition-colors ${
                   language === l
-                    ? "bg-brand-50 border-brand-900 text-brand-900 font-bold"
-                    : "bg-white border-stone-200 text-content hover:bg-stone-50"
+                    ? "bg-brand-50 dark:bg-emerald-950/60 border-brand-900 dark:border-emerald-500 text-brand-900 dark:text-emerald-300 font-bold"
+                    : "bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 text-content hover:bg-stone-50 dark:hover:bg-stone-800"
                 }`}
               >
                 <span className="text-xs">{l === "Hindi" ? "हिंदी (Hindi)" : l === "Marathi" ? "मराठी (Marathi)" : "English"}</span>
-                {language === l && <span className="material-symbols-outlined text-brand-900 text-base">check</span>}
+                {language === l && <span className="material-symbols-outlined text-brand-900 dark:text-emerald-400 text-base">check</span>}
               </button>
             ))}
           </div>
@@ -108,15 +108,15 @@ export default function SettingsPage() {
               onClick={() => setTheme("light")}
               className={`p-3 rounded-xl flex items-center justify-between border transition-colors ${
                 !isDark
-                  ? "bg-brand-50 border-brand-900 text-brand-900 font-bold"
-                  : "bg-white border-stone-200 text-content hover:bg-stone-50"
+                  ? "bg-brand-50 dark:bg-emerald-950/60 border-brand-900 dark:border-emerald-500 text-brand-900 dark:text-emerald-300 font-bold"
+                  : "bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 text-content hover:bg-stone-50 dark:hover:bg-stone-800"
               }`}
             >
               <span className="text-xs flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-base text-amber-600">light_mode</span>
                 Light Mode
               </span>
-              {!isDark && <span className="material-symbols-outlined text-brand-900 text-base">check</span>}
+              {!isDark && <span className="material-symbols-outlined text-brand-900 dark:text-emerald-400 text-base">check</span>}
             </button>
 
             <button
@@ -124,15 +124,15 @@ export default function SettingsPage() {
               onClick={() => setTheme("dark")}
               className={`p-3 rounded-xl flex items-center justify-between border transition-colors ${
                 isDark
-                  ? "bg-brand-50 border-brand-800 text-brand-900 font-bold"
-                  : "bg-white border-stone-200 text-content hover:bg-stone-50"
+                  ? "bg-brand-50 dark:bg-emerald-950/60 border-brand-800 dark:border-emerald-500 text-brand-900 dark:text-emerald-300 font-bold"
+                  : "bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 text-content hover:bg-stone-50 dark:hover:bg-stone-800"
               }`}
             >
               <span className="text-xs flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-base text-amber-500">dark_mode</span>
                 Dark Mode
               </span>
-              {isDark && <span className="material-symbols-outlined text-brand-900 text-base">check</span>}
+              {isDark && <span className="material-symbols-outlined text-brand-900 dark:text-emerald-400 text-base">check</span>}
             </button>
           </div>
         </div>

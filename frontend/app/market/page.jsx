@@ -9,7 +9,8 @@ import { fetchApi } from "../../lib/api";
 
 export default function MarketPage() {
   const { farmData } = useFarm();
-  const [selectedCrop, setSelectedCrop] = useState("Onion");
+  const commodities = ["Rice / Paddy", "Wheat", "Onion", "Tomato", "Soybean", "Cotton", "Mustard", "Chickpea"];
+  const [selectedCrop, setSelectedCrop] = useState(farmData?.currentCrop || "Rice / Paddy");
   const [quantity, setQuantity] = useState(20);
   const [marketData, setMarketData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,7 +20,7 @@ export default function MarketPage() {
       setLoading(true);
       try {
         const res = await fetchApi(
-          `/market/compare?crop=${selectedCrop}&quantity=${quantity}&district=${farmData.district}`
+          `/market/compare?crop=${encodeURIComponent(selectedCrop)}&quantity=${quantity}&district=${encodeURIComponent(farmData?.district || "Nashik")}`
         );
         setMarketData(res);
       } catch (e) {
@@ -29,9 +30,7 @@ export default function MarketPage() {
       }
     }
     loadMarket();
-  }, [selectedCrop, quantity, farmData.district]);
-
-  const commodities = ["Onion", "Tomato", "Soybean", "Wheat", "Cotton", "Mustard", "Chickpea"];
+  }, [selectedCrop, quantity, farmData?.district]);
 
   return (
     <div className="min-h-screen bg-surface flex flex-col md:flex-row antialiased">
@@ -50,15 +49,15 @@ export default function MarketPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2 bg-stone-100 px-3.5 py-1.5 rounded-xl border border-stone-200">
+          <div className="flex items-center gap-2 bg-stone-100 dark:bg-stone-800 px-3.5 py-1.5 rounded-xl border border-stone-200 dark:border-stone-700">
             <span className="text-xs text-content-muted">Crop:</span>
             <select
               value={selectedCrop}
               onChange={(e) => setSelectedCrop(e.target.value)}
-              className="bg-transparent text-brand-900 text-xs font-bold outline-none cursor-pointer"
+              className="bg-transparent text-brand-900 dark:text-emerald-400 text-xs font-bold outline-none cursor-pointer"
             >
               {commodities.map((c) => (
-                <option key={c} value={c}>
+                <option key={c} value={c} className="bg-white dark:bg-stone-900 text-content">
                   {c}
                 </option>
               ))}
@@ -70,20 +69,20 @@ export default function MarketPage() {
           <div className="flex flex-col gap-5 animate-pulse w-full">
             <div className="bg-white p-6 rounded-2xl border border-stone-200/80 shadow-card flex flex-col sm:flex-row justify-between gap-4">
               <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-xl bg-stone-200"></div>
+                <div className="w-12 h-12 rounded-xl bg-stone-200 dark:bg-stone-800"></div>
                 <div className="space-y-2">
-                  <div className="h-3.5 w-36 bg-stone-200 rounded"></div>
-                  <div className="h-6 w-48 bg-stone-200 rounded-lg"></div>
-                  <div className="h-3 w-64 bg-stone-100 rounded"></div>
+                  <div className="h-3.5 w-36 bg-stone-200 dark:bg-stone-800 rounded"></div>
+                  <div className="h-6 w-48 bg-stone-200 dark:bg-stone-800 rounded-lg"></div>
+                  <div className="h-3 w-64 bg-stone-100 dark:bg-stone-800 rounded"></div>
                 </div>
               </div>
-              <div className="h-16 w-36 bg-stone-100 rounded-xl"></div>
+              <div className="h-16 w-36 bg-stone-100 dark:bg-stone-800 rounded-xl"></div>
             </div>
 
             <div className="bg-white p-6 rounded-2xl border border-stone-200/80 shadow-subtle space-y-3">
-              <div className="h-5 w-44 bg-stone-200 rounded"></div>
+              <div className="h-5 w-44 bg-stone-200 dark:bg-stone-800 rounded"></div>
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-16 bg-stone-50 rounded-xl border border-stone-100"></div>
+                <div key={i} className="h-16 bg-stone-50 dark:bg-stone-800 rounded-xl border border-stone-100 dark:border-stone-700"></div>
               ))}
             </div>
           </div>
@@ -91,13 +90,13 @@ export default function MarketPage() {
           <>
             {/* Best Recommendation Banner */}
             {marketData?.bestMandi ? (
-              <section className="bg-white p-5 md:p-6 rounded-2xl border border-brand-200 shadow-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+              <section className="bg-white p-5 md:p-6 rounded-2xl border border-brand-200 dark:border-emerald-800 shadow-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
                 <div className="flex items-start gap-3.5">
-                  <div className="w-12 h-12 rounded-xl bg-brand-50 text-brand-900 flex items-center justify-center text-2xl flex-shrink-0">
+                  <div className="w-12 h-12 rounded-xl bg-brand-50 dark:bg-emerald-950/60 text-brand-900 dark:text-emerald-400 flex items-center justify-center text-2xl flex-shrink-0">
                     🏪
                   </div>
                   <div>
-                    <span className="text-xs font-bold text-brand-800 uppercase tracking-wider">
+                    <span className="text-xs font-bold text-brand-800 dark:text-emerald-400 uppercase tracking-wider">
                       Recommended Selling Market
                     </span>
                     <h3 className="font-display text-lg md:text-xl font-bold text-content mt-0.5">
@@ -109,12 +108,12 @@ export default function MarketPage() {
                   </div>
                 </div>
 
-                <div className="flex flex-col items-end sm:items-center bg-brand-50/60 p-3.5 rounded-xl border border-brand-100 w-full sm:w-auto">
+                <div className="flex flex-col items-end sm:items-center bg-brand-50/60 dark:bg-emerald-950/40 p-3.5 rounded-xl border border-brand-100 dark:border-emerald-800/60 w-full sm:w-auto">
                   <span className="text-[11px] text-content-muted">Total Net In-Hand</span>
-                  <span className="text-xl font-extrabold text-brand-900 mt-0.5">
+                  <span className="text-xl font-extrabold text-brand-900 dark:text-emerald-300 mt-0.5">
                     ₹{marketData.bestMandi.netPayout?.toLocaleString()}
                   </span>
-                  <span className="text-[11px] text-emerald-800 font-semibold">
+                  <span className="text-[11px] text-emerald-800 dark:text-emerald-400 font-semibold">
                     (₹{marketData.bestMandi.netPricePerQuintal}/q after transport)
                   </span>
                 </div>

@@ -70,7 +70,7 @@ export default function CropRecommendationsPage() {
         {/* Season & Category Tabs */}
         <section className="flex flex-wrap items-center justify-between gap-3">
           {/* Season Switcher */}
-          <div className="flex items-center gap-1 bg-stone-100 p-1 rounded-xl border border-stone-200">
+          <div className="flex items-center gap-1 bg-stone-100 dark:bg-stone-800 p-1 rounded-xl border border-stone-200 dark:border-stone-700">
             {["Rabi", "Kharif", "Multi-season"].map((season) => (
               <button
                 key={season}
@@ -78,8 +78,8 @@ export default function CropRecommendationsPage() {
                 onClick={() => setSelectedSeason(season)}
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
                   selectedSeason === season
-                    ? "bg-white text-brand-900 shadow-sm"
-                    : "text-content-muted hover:text-content"
+                    ? "bg-white dark:bg-stone-900 text-brand-900 dark:text-emerald-400 shadow-sm"
+                    : "text-content-muted dark:text-stone-400 hover:text-content dark:hover:text-stone-200"
                 }`}
               >
                 {season} Season
@@ -101,8 +101,8 @@ export default function CropRecommendationsPage() {
                 onClick={() => setActiveFilter(f.id)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                   activeFilter === f.id
-                    ? "bg-brand-900 text-white font-semibold"
-                    : "bg-white text-content-muted hover:text-content border border-stone-200"
+                    ? "bg-brand-900 dark:bg-emerald-700 text-white font-semibold"
+                    : "bg-white dark:bg-stone-800 text-content-muted dark:text-stone-300 hover:text-content border border-stone-200 dark:border-stone-700"
                 }`}
               >
                 {f.label}
@@ -165,23 +165,23 @@ export default function CropRecommendationsPage() {
                   </div>
 
                   <div className="text-right">
-                    <span className="px-2.5 py-1 rounded bg-brand-50 text-brand-900 font-bold text-xs">
+                    <span className="px-2.5 py-1 rounded bg-brand-50 dark:bg-emerald-950/60 text-brand-900 dark:text-emerald-300 font-bold text-xs border border-brand-100 dark:border-emerald-800/60">
                       {crop.suitabilityScore}% Match
                     </span>
                   </div>
                 </div>
 
                 {/* Estimates */}
-                <div className="grid grid-cols-2 gap-2 bg-stone-50 p-3 rounded-xl border border-stone-100 text-xs">
+                <div className="grid grid-cols-2 gap-2 bg-stone-50 dark:bg-stone-850 p-3 rounded-xl border border-stone-100 dark:border-stone-800 text-xs">
                   <div>
                     <span className="text-content-muted text-[11px]">Est. Net Return</span>
-                    <p className="font-bold text-brand-900 text-sm mt-0.5">
+                    <p className="font-bold text-brand-900 dark:text-emerald-400 text-sm mt-0.5">
                       ₹{crop.estimatedNetProfit?.toLocaleString()}
                     </p>
                   </div>
                   <div>
                     <span className="text-content-muted text-[11px]">Return on Investment</span>
-                    <p className="font-bold text-emerald-700 text-sm mt-0.5">
+                    <p className="font-bold text-emerald-700 dark:text-emerald-400 text-sm mt-0.5">
                       +{crop.roiPercentage}%
                     </p>
                   </div>
@@ -204,7 +204,7 @@ export default function CropRecommendationsPage() {
                   <span className="font-semibold text-content text-[11px]">Why recommended:</span>
                   {crop.reasons?.slice(0, 2).map((r, i) => (
                     <p key={i} className="flex items-start gap-1.5 leading-normal">
-                      <span className="material-symbols-outlined text-[15px] text-brand-700 mt-0.5 flex-shrink-0">
+                      <span className="material-symbols-outlined text-[15px] text-brand-700 dark:text-emerald-400 mt-0.5 flex-shrink-0">
                         check_circle
                       </span>
                       <span>{r}</span>
@@ -215,7 +215,7 @@ export default function CropRecommendationsPage() {
                 {/* Action Button */}
                 <Link
                   href={`/crops/${crop.cropId}`}
-                  className="w-full py-2 bg-stone-100 hover:bg-stone-200 text-brand-900 font-semibold text-xs rounded-xl transition-colors text-center border border-stone-200 mt-1"
+                  className="w-full py-2 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-brand-900 dark:text-emerald-400 font-semibold text-xs rounded-xl transition-colors text-center border border-stone-200 dark:border-stone-700 mt-1"
                 >
                   View Sowing Schedule & Cost Sheet →
                 </Link>
