@@ -30,7 +30,12 @@ export default function LoginPage() {
       await signInWithGoogle();
     } catch (err) {
       console.error("Google sign in error:", err);
-      setErrorMsg(err.message || "Failed to initiate Google Sign-In.");
+      const msg = err.message || "";
+      if (msg.includes("provider is not enabled") || msg.includes("validation_failed")) {
+        setErrorMsg("Google Sign-In is not enabled yet in your Supabase Dashboard. Enable it under Authentication -> Providers -> Google, or use Email & Password below.");
+      } else {
+        setErrorMsg(msg || "Failed to initiate Google Sign-In.");
+      }
       setLoading(false);
     }
   };
