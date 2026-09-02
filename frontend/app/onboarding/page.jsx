@@ -14,11 +14,11 @@ export default function OnboardingPage() {
 
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    name: "Ramesh Patil",
-    phone: "9876543210",
+    name: "",
+    phone: "",
     state: "Maharashtra",
-    district: "Nashik",
-    experienceYears: "14",
+    district: "",
+    experienceYears: "",
     primaryLanguage: language,
   });
 

@@ -214,7 +214,17 @@ export default function ScannerPage() {
           <div className="bg-white p-6 md:p-8 rounded-2xl border border-stone-200 shadow-card flex flex-col gap-5 animate-fadeIn">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-4 border-b border-stone-100">
               <div>
-                <div className="flex items-center gap-2 mb-1">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  {scanResult.isDemoMode && (
+                    <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200">
+                      AI Diagnostic Demo
+                    </span>
+                  )}
+                  {scanResult.isOfflineFallback && (
+                    <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                      Offline Mode
+                    </span>
+                  )}
                   <span className={`px-2.5 py-0.5 rounded text-xs font-bold ${
                     scanResult.severity === "Critical"
                       ? "bg-red-50 text-red-700 border border-red-200"
