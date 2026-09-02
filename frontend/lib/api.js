@@ -2,7 +2,7 @@ import { supabase, isSupabaseConfigured } from "./supabase";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
-export async function fetchApi(endpoint, options = {}) {
+export async function fetchApi(endpoint, options = {}, retries = 1) {
   try {
     let authHeaders = {};
     if (isSupabaseConfigured && supabase) {
@@ -16,14 +16,21 @@ export async function fetchApi(endpoint, options = {}) {
       }
     }
 
+    const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+    const timeoutId = controller ? setTimeout(() => controller.abort(), 12000) : null;
+
     const res = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
+      signal: controller ? controller.signal : undefined,
       headers: {
         "Content-Type": "application/json",
         ...authHeaders,
         ...(options.headers || {}),
       },
     });
+
+    if (timeoutId) clearTimeout(timeoutId);
+
     if (!res.ok) {
       throw new Error(`API Error: ${res.status}`);
     }
@@ -34,6 +41,11 @@ export async function fetchApi(endpoint, options = {}) {
     }
     return data;
   } catch (err) {
+    if (retries > 0) {
+      console.warn(`[FasalAI API] Retrying ${endpoint} (waking up server)...`);
+      await new Promise((r) => setTimeout(r, 1500));
+      return fetchApi(endpoint, options, retries - 1);
+    }
     console.warn(`[FasalAI API] Falling back for ${endpoint}:`, err.message);
     return getFallbackData(endpoint);
   }
