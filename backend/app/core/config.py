@@ -4,8 +4,19 @@ from typing import List, Union
 from pydantic import field_validator
 from pydantic_settings import BaseSettings
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
-DATA_DIR = BASE_DIR / "data"
+# Resolve data directory flexibly for local, Render, and Docker
+APP_DIR = Path(__file__).resolve().parent.parent
+BACKEND_DIR = APP_DIR.parent
+ROOT_DIR = BACKEND_DIR.parent
+
+if os.getenv("DATA_PATH"):
+    DATA_DIR = Path(os.getenv("DATA_PATH"))
+elif (BACKEND_DIR / "data").exists():
+    DATA_DIR = BACKEND_DIR / "data"
+elif (ROOT_DIR / "data").exists():
+    DATA_DIR = ROOT_DIR / "data"
+else:
+    DATA_DIR = BACKEND_DIR / "data"
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "FasalAI"

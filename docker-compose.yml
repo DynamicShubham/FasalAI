@@ -1,0 +1,67 @@
+version: "3.8"
+
+services:
+  # 1. FastAPI REST Backend Service
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: fasalai-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - DEBUG=true
+      - REDIS_URL=redis://redis:6379/0
+      - CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000,https://*.vercel.app
+    env_file:
+      - backend/.env
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - fasalai-network
+
+  # 2. Next.js 14 Web Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: fasalai-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://backend:8000/api/v1
+    depends_on:
+      backend:
+        condition: service_started
+    networks:
+      - fasalai-network
+
+  # 3. Redis Cache & Key-Value Store
+  redis:
+    image: redis:7-alpine
+    container_name: fasalai-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - fasalai-network
+
+networks:
+  fasalai-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+    driver: local
