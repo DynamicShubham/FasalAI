@@ -67,9 +67,25 @@ export default function MarketPage() {
         </section>
 
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-16 gap-3">
-            <div className="w-8 h-8 border-3 border-brand-900 border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-sm text-content-muted font-medium">Calculating net rates across nearby mandis...</p>
+          <div className="flex flex-col gap-5 animate-pulse w-full">
+            <div className="bg-white p-6 rounded-2xl border border-stone-200/80 shadow-card flex flex-col sm:flex-row justify-between gap-4">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-xl bg-stone-200"></div>
+                <div className="space-y-2">
+                  <div className="h-3.5 w-36 bg-stone-200 rounded"></div>
+                  <div className="h-6 w-48 bg-stone-200 rounded-lg"></div>
+                  <div className="h-3 w-64 bg-stone-100 rounded"></div>
+                </div>
+              </div>
+              <div className="h-16 w-36 bg-stone-100 rounded-xl"></div>
+            </div>
+
+            <div className="bg-white p-6 rounded-2xl border border-stone-200/80 shadow-subtle space-y-3">
+              <div className="h-5 w-44 bg-stone-200 rounded"></div>
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-16 bg-stone-50 rounded-xl border border-stone-100"></div>
+              ))}
+            </div>
           </div>
         ) : (
           <>

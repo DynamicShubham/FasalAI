@@ -9,6 +9,7 @@ import { useLanguage } from "../../context/LanguageContext";
 import { useAuth } from "../../context/AuthContext";
 import { useFarm } from "../../context/FarmContext";
 import { fetchApi } from "../../lib/api";
+import DashboardSkeleton from "../../components/ui/DashboardSkeleton";
 
 function getTimeGreeting() {
   const hour = new Date().getHours();
@@ -120,13 +121,8 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Loading State */}
-        {loading && (
-          <div className="flex flex-col items-center justify-center py-16 gap-3">
-            <div className="w-8 h-8 border-3 border-brand-900 border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-sm text-content-muted font-medium">Loading your farm dashboard...</p>
-          </div>
-        )}
+        {/* Structural Skeleton Loading State */}
+        {loading && <DashboardSkeleton />}
 
         {/* EMPTY STATE: If no farm parcel registered yet */}
         {!loading && !hasFarm && (

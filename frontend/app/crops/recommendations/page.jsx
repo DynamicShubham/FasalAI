@@ -112,9 +112,23 @@ export default function CropRecommendationsPage() {
         </section>
 
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-16 gap-3">
-            <div className="w-8 h-8 border-3 border-brand-900 border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-sm text-content-muted font-medium">Analyzing soil and seasonal suitability...</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 animate-pulse w-full">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="bg-white p-5 rounded-2xl border border-stone-200/80 shadow-card space-y-4">
+                <div className="flex justify-between">
+                  <div className="space-y-1.5">
+                    <div className="h-3 w-16 bg-stone-200 rounded"></div>
+                    <div className="h-5 w-28 bg-stone-200 rounded-lg"></div>
+                  </div>
+                  <div className="h-6 w-16 bg-stone-100 rounded-full"></div>
+                </div>
+                <div className="space-y-2 py-2 border-y border-stone-100">
+                  <div className="h-3 w-full bg-stone-100 rounded"></div>
+                  <div className="h-3 w-3/4 bg-stone-100 rounded"></div>
+                </div>
+                <div className="h-8 w-full bg-stone-50 rounded-xl"></div>
+              </div>
+            ))}
           </div>
         ) : filteredCrops.length === 0 ? (
           <div className="bg-white p-12 rounded-2xl border border-stone-200 text-center flex flex-col items-center gap-3">

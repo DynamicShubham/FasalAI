@@ -57,9 +57,25 @@ export default function SchemesPage() {
         </section>
 
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-16 gap-3">
-            <div className="w-8 h-8 border-3 border-brand-900 border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-sm text-content-muted font-medium">Matching government schemes to your farm profile...</p>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-pulse w-full">
+            <div className="flex flex-col gap-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="p-4 rounded-xl border border-stone-200 bg-white space-y-2">
+                  <div className="flex justify-between">
+                    <div className="h-3 w-16 bg-stone-200 rounded"></div>
+                    <div className="h-4 w-16 bg-stone-200 rounded"></div>
+                  </div>
+                  <div className="h-4 w-40 bg-stone-200 rounded"></div>
+                  <div className="h-3 w-full bg-stone-100 rounded"></div>
+                </div>
+              ))}
+            </div>
+            <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-stone-200 space-y-4">
+              <div className="h-6 w-56 bg-stone-200 rounded-lg"></div>
+              <div className="h-4 w-full bg-stone-100 rounded"></div>
+              <div className="h-24 bg-stone-50 rounded-xl border border-stone-100"></div>
+              <div className="h-10 w-40 bg-stone-200 rounded-full"></div>
+            </div>
           </div>
         ) : schemes.length === 0 ? (
           <div className="bg-white p-12 rounded-2xl border border-stone-200 text-center flex flex-col items-center gap-3">
