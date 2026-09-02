@@ -1,6 +1,10 @@
 import { supabase, isSupabaseConfigured } from "./supabase";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+let rawApiUrl = (process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1").trim().replace(/\/+$/, "");
+if (!rawApiUrl.endsWith("/api/v1")) {
+  rawApiUrl = `${rawApiUrl}/api/v1`;
+}
+const API_BASE_URL = rawApiUrl;
 
 export async function fetchApi(endpoint, options = {}, retries = 1) {
   try {
