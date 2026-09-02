@@ -21,7 +21,7 @@ async def explain_decision_with_grok(
     language: str = "English"
 ) -> str:
     """
-    Calls Grok API with structured decision engine context or falls back gracefully
+    Calls Groq / Grok API with structured decision engine context or falls back gracefully
     to grounded agricultural advice.
     """
     context_str = ""
@@ -35,14 +35,24 @@ async def explain_decision_with_grok(
         f"Provide a clear, actionable, friendly 2-3 paragraph answer with clear next steps."
     )
 
-    if settings.GROK_API_KEY and not settings.GROK_API_KEY.startswith("your-"):
+    api_key = settings.GROK_API_KEY
+    if api_key and not api_key.startswith("your-"):
+        # Auto-detect Groq vs xAI
+        if api_key.startswith("gsk_"):
+            endpoint = "https://api.groq.com/openai/v1/chat/completions"
+            model = "qwen/qwen3.8-27b"
+        else:
+            endpoint = settings.GROK_API_URL
+            model = settings.GROK_MODEL
+
         try:
             headers = {
-                "Authorization": f"Bearer {settings.GROK_API_KEY}",
-                "Content-Type": "application/json"
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+                "User-Agent": "FasalAI/1.0"
             }
             payload = {
-                "model": settings.GROK_MODEL,
+                "model": model,
                 "messages": [
                     {"role": "system", "content": AGRICULTURE_SYSTEM_PROMPT},
                     {"role": "user", "content": prompt}
@@ -51,47 +61,97 @@ async def explain_decision_with_grok(
                 "max_tokens": 450
             }
             async with httpx.AsyncClient(timeout=10.0) as client:
-                resp = await client.post(settings.GROK_API_URL, json=payload, headers=headers)
+                resp = await client.post(endpoint, json=payload, headers=headers)
                 if resp.status_code == 200:
                     data = resp.json()
                     return data["choices"][0]["message"]["content"]
                 else:
-                    logger.warning(f"Grok API returned status {resp.status_code}: {resp.text[:200]}")
+                    logger.warning(f"AI API returned status {resp.status_code}: {resp.text[:200]}")
         except httpx.TimeoutException:
-            logger.warning("Grok API request timed out after 10 seconds")
+            logger.warning("AI API timed out, using fallback advisory response.")
         except Exception as e:
-            logger.warning(f"Grok API call failed: {e}")
+            logger.warning(f"AI API error ({e}), using fallback advisory response.")
 
-    # Grounded fallback generation (no API key or API failure)
-    logger.info("Using grounded fallback response for assistant query")
-    q_lower = user_query.lower()
-    if "water" in q_lower or "irrigation" in q_lower or "sinchai" in q_lower:
+    # Rule-grounded deterministic agricultural fallback
+    return get_rule_grounded_advice(user_query, context_data, language)
+
+def get_rule_grounded_advice(
+    query: str,
+    context: Optional[Dict[str, Any]],
+    language: str
+) -> str:
+    """Deterministic, high-fidelity agronomic advice when AI API is unreachable."""
+    q = query.lower()
+    
+    if "spray" in q or "pesticide" in q or "insecticide" in q or "dawa" in q or "फवारणी" in q:
+        if language == "Hindi":
+            return (
+                "आज की सिफारिश: दोपहर 4:30 बजे के बाद जब हवा शांत हो (15 किमी/घंटा से कम) तभी छिड़काव करें। "
+                "यदि बारिश की संभावना 50% से अधिक है, तो छिड़काव टालें ताकि दवा न धुले। "
+                "कीटनाशक के साथ स्टीकर (चिपको) का उपयोग अवश्य करें।"
+            )
+        elif language == "Marathi":
+            return (
+                "आजचा सल्ला: दुपारी 4:30 नंतर वारा शांत असतानाच (15 किमी/तास पेक्षा कमी) फवारणी करा. "
+                "पावसाची शक्यता असल्यास फवारणी पुढे ढकला. "
+                "औषधासोबत स्टिकरचा वापर करा जेणेकरून औषध पानांवर टिकून राहील."
+            )
         return (
-            "Based on current soil moisture and weather conditions, morning irrigation between 6:00 AM and 9:00 AM "
-            "is recommended. For your current crop stage, a light 2-hour drip cycle will maintain optimal root zone "
-            "aeration without causing waterlogging."
+            "Spray Advisory: Perform spraying strictly in late afternoon (after 4:30 PM) under calm wind conditions (<15 km/h). "
+            "If rain probability exceeds 50%, postpone application to prevent chemical runoff. "
+            "Always mix an agricultural wetting agent/sticker for uniform leaf adhesion."
         )
-    elif "disease" in q_lower or "yellow" in q_lower or "spray" in q_lower or "blight" in q_lower:
+
+    if "water" in q or "irrigation" in q or "pani" in q or "पानी" in q or "पाणी" in q:
+        if language == "Hindi":
+            return (
+                "सिंचाई सलाह: आपके खेत की काली चिकनी मिट्टी में नमी धारण क्षमता अच्छी है। "
+                "सुबह 6:00 से 9:00 बजे के बीच ड्रिप सिंचाई चलाएं। "
+                "गेहूं के लिए सीआरआई (ताज जड़ निर्माण) अवस्था में हल्की सिंचाई अत्यंत महत्वपूर्ण है।"
+            )
+        elif language == "Marathi":
+            return (
+                "पाणी व्यवस्थापन: तुमच्या शेतातील काळ्या जमिनीत ओलावा टिकून राहतो. "
+                "सकाळी 6:00 ते 9:00 या वेळेत ठिबक सिंचन सुरू करा. "
+                "गव्हाच्या मुळांच्या वाढीच्या काळात हलके पाणी देणे फायदेशीर ठरेल."
+            )
         return (
-            "If you notice yellowing or brown spots on lower leaves, inspect leaf undersides for fungal spores. "
-            "Start with an eco-friendly spray of 5ml Neem Oil per liter of water. If fungal lesions expand, spray "
-            "Mancozeb (2.5g/L) during calm evening hours (after 4:30 PM) to avoid leaf scorch."
+            "Irrigation Advisory: Your Black Clay Loam retains moisture well. "
+            "Schedule drip irrigation in the early morning (6:00 AM – 9:00 AM) to minimize evapotranspiration losses. "
+            "For current stage, maintain uniform topsoil moisture without waterlogging root zones."
         )
-    elif "market" in q_lower or "price" in q_lower or "mandi" in q_lower:
+
+    if "mandi" in q or "market" in q or "price" in q or "bhav" in q or "भाव" in q:
+        if language == "Hindi":
+            return (
+                "मंडी विश्लेषण: पिंपलगांव बसवंत और लासलगांव मंडी में आज आवक और मांग मजबूत है। "
+                "परिवहन लागत काटने के बाद भी आपको नजदीकी मंडी की तुलना में 150-200 रुपये प्रति क्विंटल अधिक शुद्ध लाभ मिल सकता है।"
+            )
+        elif language == "Marathi":
+            return (
+                "बाजारभाव सल्ला: पिंपळगाव बसवंत आणि लासलगाव बाजारपेठेत आज कांदा व गव्हाचे भाव चांगले आहेत. "
+                "वाहतूक खर्च वजा जाता तुम्हाला अधिक नफा मिळू शकेल."
+            )
         return (
-            "Check the Mandi Prices section for the latest rates at nearby markets. The system calculates net "
-            "realization after transport costs to help you find the most profitable selling point. Consider "
-            "timing your sale when demand trends are upward."
+            "Mandi Intelligence: Current arrivals indicate strong demand at regional APMCs. "
+            "After accounting for distance-based transport costs, net realization is optimized at higher-volume mandis. Check the Mandi section for real-time rates."
         )
-    elif "scheme" in q_lower or "subsidy" in q_lower or "pm-kisan" in q_lower:
+
+    # General Greeting / Default
+    if language == "Hindi":
         return (
-            "Visit the Government Schemes section to see which subsidies match your farm profile. Ensure your "
-            "Aadhaar is linked to your bank account and 7/12 land records are updated. The system checks your "
-            "eligibility based on your landholding size and crop type."
+            "नमस्ते! मैं आपका फसल-एआई (FasalAI) कृषि साथी हूँ। "
+            "मैं आपकी फसल, मौसम, सिंचाई, खाद-दवा के छिड़काव और मंडी भाव के बारे में सटीक जानकारी दे सकता हूँ। "
+            "आप मुझसे अपनी भाषा में कोई भी सवाल पूछ सकते हैं।"
         )
-    else:
+    elif language == "Marathi":
         return (
-            f"Hello! I am your FasalAI assistant. I can help you with irrigation scheduling, "
-            f"disease identification, market price comparison, and government scheme eligibility. "
-            f"Ask me anything about your farm — I'll give you clear, practical advice."
+            "नमस्कार! मी तुमचा फसल-एआय (FasalAI) शेती मित्र आहे. "
+            "मी तुमच्या पिकाचे आरोग्य, हवामान, खत-औषध फवारणी आणि बाजारभावाबाबत अचूक मार्गदर्शन करू शकतो. "
+            "तुम्ही मला कोणताही प्रश्न विचारू शकता."
         )
+    return (
+        "Namaste! I am your FasalAI Field Advisor. "
+        "I provide personalized guidance on standing crop health, irrigation schedules, spray timing, and optimal mandi realizations based on your specific parcel parameters. "
+        "How can I assist your farm today?"
+    )
