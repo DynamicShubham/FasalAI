@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FasalAI Onboarding</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&amp;family=Noto+Sans:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#002114",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#a5d0b9",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed": "#151d1a",
+                        "on-primary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#d8e2dc",
+                        "surface-dim": "#d9dadb",
+                        "on-secondary-fixed-variant": "#3f4945",
+                        "on-tertiary-fixed-variant": "#5a4400",
+                        "on-primary-container": "#86af99",
+                        "inverse-surface": "#2e3132",
+                        "surface-container-low": "#f3f4f5",
+                        "on-primary-fixed-variant": "#274e3d",
+                        "primary-container": "#1b4332",
+                        "secondary": "#57615c",
+                        "on-error": "#ffffff",
+                        "primary": "#012d1d",
+                        "on-tertiary-container": "#c4a24c",
+                        "secondary-fixed": "#dbe5df",
+                        "error-container": "#ffdad6",
+                        "background": "#f8f9fa",
+                        "primary-fixed": "#c1ecd4",
+                        "tertiary-fixed-dim": "#e7c268",
+                        "surface-container": "#edeeef",
+                        "surface-container-high": "#e7e8e9",
+                        "outline-variant": "#c1c8c2",
+                        "on-secondary-container": "#5b6560",
+                        "surface-container-highest": "#e1e3e4",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#191c1d",
+                        "on-background": "#191c1d",
+                        "tertiary": "#322400",
+                        "on-secondary": "#ffffff",
+                        "surface-bright": "#f8f9fa",
+                        "tertiary-fixed": "#ffdf96",
+                        "tertiary-container": "#4c3900",
+                        "on-tertiary-fixed": "#251a00",
+                        "surface-tint": "#3f6653",
+                        "on-surface-variant": "#414844",
+                        "surface-variant": "#e1e3e4",
+                        "inverse-on-surface": "#f0f1f2",
+                        "outline": "#717973",
+                        "primary-fixed-dim": "#a5d0b9",
+                        "secondary-fixed-dim": "#bfc9c3",
+                        "surface": "#f8f9fa"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "xl": "40px",
+                        "container-margin": "16px",
+                        "unit": "8px",
+                        "xs": "4px",
+                        "lg": "24px",
+                        "md": "16px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Open Sans"],
+                        "body-md": ["Noto Sans"],
+                        "headline-sm": ["Open Sans"],
+                        "display-lg": ["Open Sans"],
+                        "body-lg": ["Noto Sans"],
+                        "mobile-headline": ["Open Sans"],
+                        "label-lg": ["Noto Sans"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "mobile-headline": ["22px", { "lineHeight": "30px", "fontWeight": "600" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Noto Sans', sans-serif; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Open Sans', sans-serif; }
+    </style>
+</head>
+<body class="h-full bg-[#e6e9ef] text-on-surface flex items-center justify-center min-h-screen">
+<div class="w-full max-w-2xl px-gutter py-xl">
+<!-- Header -->
+<div class="text-center mb-xl">
+<h1 class="font-display-lg text-display-lg text-primary mb-xs">Welcome to FasalAI</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Let's set up your farm profile to get started.</p>
+</div>
+<!-- Step Indicator -->
+<div class="flex items-center justify-center gap-xs mb-xl">
+<div class="h-2 w-8 bg-primary rounded-full shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5),inset_-2px_-2px_4px_rgba(255,255,255,0.2)]"></div>
+<div class="h-2 w-8 bg-primary-container opacity-30 rounded-full shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5),inset_-2px_-2px_4px_rgba(255,255,255,0.2)]"></div>
+<div class="h-2 w-8 bg-primary-container opacity-30 rounded-full shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5),inset_-2px_-2px_4px_rgba(255,255,255,0.2)]"></div>
+</div>
+<div class="space-y-xl">
+<!-- Step 1: Location -->
+<section class="bg-[#e6e9ef] rounded-[2rem] p-lg shadow-[8px_8px_16px_#c5c8cd,-8px_-8px_16px_#ffffff] transition-all">
+<h2 class="font-headline-sm text-headline-sm text-primary mb-md">Step 1: Where is your farm?</h2>
+<div class="flex flex-col sm:flex-row gap-md">
+<button class="flex-1 min-h-[48px] flex items-center justify-center gap-sm bg-primary text-on-primary rounded-2xl font-label-lg text-label-lg transition-all shadow-[6px_6px_12px_#c5c8cd,-6px_-6px_12px_#ffffff] hover:shadow-[inset_4px_4px_8px_rgba(0,0,0,0.3),inset_-4px_-4px_8px_rgba(255,255,255,0.1)] hover:bg-on-primary-fixed-variant">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">my_location</span>
+                        Use my location
+                    </button>
+<button class="flex-1 min-h-[48px] flex items-center justify-center gap-sm bg-[#e6e9ef] text-primary rounded-2xl font-label-lg text-label-lg transition-all shadow-[6px_6px_12px_#c5c8cd,-6px_-6px_12px_#ffffff] hover:shadow-[inset_4px_4px_8px_#c5c8cd,inset_-4px_-4px_8px_#ffffff] hover:text-primary">
+<span class="material-symbols-outlined">map</span>
+                        Choose manually
+                    </button>
+</div>
+</section>
+<!-- Step 2: Farm Details -->
+<section class="bg-[#e6e9ef] rounded-[2rem] p-lg shadow-[8px_8px_16px_#c5c8cd,-8px_-8px_16px_#ffffff] transition-all opacity-50 pointer-events-none">
+<h2 class="font-headline-sm text-headline-sm text-primary mb-md">Step 2: Tell us about your farm</h2>
+<div class="space-y-lg">
+<!-- Land Size -->
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface-variant mb-sm">Land Size (Acres)</label>
+<div class="grid grid-cols-3 gap-sm">
+<button class="min-h-[48px] rounded-2xl bg-[#e6e9ef] shadow-[4px_4px_8px_#c5c8cd,-4px_-4px_8px_#ffffff] hover:shadow-[inset_4px_4px_8px_#c5c8cd,inset_-4px_-4px_8px_#ffffff] transition-all text-on-surface">0-5</button>
+<button class="min-h-[48px] rounded-2xl bg-[#e6e9ef] shadow-[4px_4px_8px_#c5c8cd,-4px_-4px_8px_#ffffff] hover:shadow-[inset_4px_4px_8px_#c5c8cd,inset_-4px_-4px_8px_#ffffff] transition-all text-on-surface">5-20</button>
+<button class="min-h-[48px] rounded-2xl bg-[#e6e9ef] shadow-[4px_4px_8px_#c5c8cd,-4px_-4px_8px_#ffffff] hover:shadow-[inset_4px_4px_8px_#c5c8cd,inset_-4px_-4px_8px_#ffffff] transition-all text-on-surface">20+</button>
+</div>
+</div>
+<!-- Soil Type -->
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface-variant mb-sm">Soil Type</label>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-sm">
+<button class="flex flex-col items-center p-sm rounded-2xl bg-[#e6e9ef] shadow-[4px_4px_8px_#c5c8cd,-4px_-4px_8px_#ffffff] hover:shadow-[inset_4px_4px_8px_#c5c8cd,inset_-4px_-4px_8px_#ffffff] transition-all text-on-surface">
+<span class="material-symbols-outlined mb-xs text-on-surface-variant">landscape</span>
+                                Loamy
+                            </button>
+<button class="flex flex-col items-center p-sm rounded-2xl bg-[#e6e9ef] shadow-[4px_4px_8px_#c5c8cd,-4px_-4px_8px_#ffffff] hover:shadow-[inset_4px_4px_8px_#c5c8cd,inset_-4px_-4px_8px_#ffffff] transition-all text-on-surface">
+<span class="material-symbols-outlined mb-xs text-on-surface-variant">grain</span>
+                                Sandy
+                            </button>
+<button class="flex flex-col items-center p-sm rounded-2xl bg-[#e6e9ef] shadow-[4px_4px_8px_#c5c8cd,-4px_-4px_8px_#ffffff] hover:shadow-[inset_4px_4px_8px_#c5c8cd,inset_-4px_-4px_8px_#ffffff] transition-all text-on-surface">
+<span class="material-symbols-outlined mb-xs text-on-surface-variant">water_drop</span>
+                                Clay
+                            </button>
+<button class="flex flex-col items-center p-sm rounded-2xl bg-[#e6e9ef] shadow-[4px_4px_8px_#c5c8cd,-4px_-4px_8px_#ffffff] hover:shadow-[inset_4px_4px_8px_#c5c8cd,inset_-4px_-4px_8px_#ffffff] transition-all text-on-surface">
+<span class="material-symbols-outlined mb-xs text-on-surface-variant">question_mark</span>
+                                Not sure
+                            </button>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FasalAI - Smarter decisions for every farm</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#00180d",
+                        "surface-dim": "#00180d",
+                        "surface-bright": "#18402f",
+                        "surface-container-lowest": "#001209",
+                        "surface-container-low": "#002114",
+                        "surface-container": "#012d1d",
+                        "surface-container-high": "#013a27",
+                        "surface-container-highest": "#024730",
+                        "on-surface": "#96f1c4",
+                        "on-surface-variant": "#7bbca2",
+                        "outline": "#609d84",
+                        "outline-variant": "#478068",
+                        "inverse-surface": "#96f1c4",
+                        "inverse-on-surface": "#00180d",
+                        "primary": "#4ce19a",
+                        "on-primary": "#002114",
+                        "primary-container": "#012d1d",
+                        "on-primary-container": "#76f7b1",
+                        "secondary": "#aedbcc",
+                        "on-secondary": "#11382b",
+                        "secondary-container": "#294f41",
+                        "on-secondary-container": "#caf8e8",
+                        "tertiary": "#8bf0df",
+                        "on-tertiary": "#003831",
+                        "tertiary-container": "#005047",
+                        "on-tertiary-container": "#a7ffed",
+                        "error": "#ffb4ab",
+                        "on-error": "#690005",
+                        "error-container": "#93000a",
+                        "on-error-container": "#ffdad6",
+                        "background": "#00180d",
+                        "on-background": "#96f1c4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "9999px",
+                        "sm": "9999px",
+                        "md": "9999px",
+                        "lg": "9999px",
+                        "xl": "9999px",
+                        "2xl": "9999px",
+                        "3xl": "9999px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "xl": "40px",
+                        "container-margin": "16px",
+                        "unit": "8px",
+                        "xs": "4px",
+                        "lg": "24px",
+                        "md": "16px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Sora"],
+                        "body-md": ["Sora"],
+                        "headline-sm": ["Sora"],
+                        "display-lg": ["Sora"],
+                        "body-lg": ["Sora"],
+                        "mobile-headline": ["Sora"],
+                        "label-lg": ["Sora"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "mobile-headline": ["22px", { "lineHeight": "30px", "fontWeight": "600" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .clay-card {
+            background: theme('colors.surface-container');
+            border-radius: 32px;
+            box-shadow: 
+                8px 8px 16px rgba(0, 0, 0, 0.4),
+                -8px -8px 16px rgba(255, 255, 255, 0.05),
+                inset 1px 1px 2px rgba(255, 255, 255, 0.1),
+                inset -1px -1px 2px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .clay-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                10px 10px 20px rgba(0, 0, 0, 0.45),
+                -10px -10px 20px rgba(255, 255, 255, 0.06),
+                inset 1px 1px 2px rgba(255, 255, 255, 0.15),
+                inset -1px -1px 2px rgba(0, 0, 0, 0.25);
+        }
+
+        .clay-btn-primary {
+            background: theme('colors.primary');
+            color: theme('colors.on-primary');
+            border-radius: 9999px;
+            box-shadow: 
+                6px 6px 12px rgba(0, 0, 0, 0.3),
+                -6px -6px 12px rgba(255, 255, 255, 0.1),
+                inset 2px 2px 4px rgba(255, 255, 255, 0.4),
+                inset -2px -2px 4px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .clay-btn-primary:active {
+            transform: scale(0.98);
+            box-shadow: 
+                2px 2px 4px rgba(0, 0, 0, 0.3),
+                -2px -2px 4px rgba(255, 255, 255, 0.1),
+                inset 4px 4px 8px rgba(0, 0, 0, 0.2),
+                inset -4px -4px 8px rgba(255, 255, 255, 0.2);
+        }
+
+        .clay-btn-secondary {
+            background: theme('colors.surface-container-high');
+            color: theme('colors.primary');
+            border-radius: 9999px;
+            box-shadow: 
+                6px 6px 12px rgba(0, 0, 0, 0.3),
+                -6px -6px 12px rgba(255, 255, 255, 0.05),
+                inset 2px 2px 4px rgba(255, 255, 255, 0.1),
+                inset -2px -2px 4px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .clay-btn-secondary:active {
+            transform: scale(0.98);
+            box-shadow: 
+                2px 2px 4px rgba(0, 0, 0, 0.3),
+                -2px -2px 4px rgba(255, 255, 255, 0.05),
+                inset 4px 4px 8px rgba(0, 0, 0, 0.2),
+                inset -4px -4px 8px rgba(255, 255, 255, 0.1);
+        }
+        
+        .clay-section {
+            box-shadow: inset 0 4px 24px rgba(255,255,255,0.02), inset 0 -4px 24px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="bg-surface/90 backdrop-blur-md font-body-md text-body-md w-full top-0 sticky z-50">
+<div class="flex justify-between items-center h-20 px-gutter w-full max-w-7xl mx-auto">
+<div class="font-headline-md text-headline-md text-primary font-bold cursor-pointer active:opacity-80">
+                FasalAI
+            </div>
+<!-- Desktop Nav Items -->
+<div class="hidden md:flex items-center gap-lg bg-surface-container-low px-6 py-3 rounded-full shadow-[inset_1px_1px_2px_rgba(255,255,255,0.05),inset_-1px_-1px_2px_rgba(0,0,0,0.2)]">
+<a class="text-primary font-bold hover:text-primary-container transition-colors px-3 py-2 rounded-full" href="#">Home</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors px-3 py-2 rounded-full" href="#">Features</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors px-3 py-2 rounded-full" href="#">About Us</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-12 h-12 flex items-center justify-center rounded-full bg-surface-container shadow-[4px_4px_8px_rgba(0,0,0,0.3),-4px_-4px_8px_rgba(255,255,255,0.05),inset_1px_1px_2px_rgba(255,255,255,0.1),inset_-1px_-1px_2px_rgba(0,0,0,0.2)] text-primary hover:text-on-surface transition-all active:scale-95 active:shadow-[inset_4px_4px_8px_rgba(0,0,0,0.2),inset_-4px_-4px_8px_rgba(255,255,255,0.05)]">
+<span class="material-symbols-outlined" data-icon="location_on">location_on</span>
+</button>
+<button class="w-12 h-12 flex items-center justify-center rounded-full bg-surface-container shadow-[4px_4px_8px_rgba(0,0,0,0.3),-4px_-4px_8px_rgba(255,255,255,0.05),inset_1px_1px_2px_rgba(255,255,255,0.1),inset_-1px_-1px_2px_rgba(0,0,0,0.2)] text-primary hover:text-on-surface transition-all active:scale-95 active:shadow-[inset_4px_4px_8px_rgba(0,0,0,0.2),inset_-4px_-4px_8px_rgba(255,255,255,0.05)]">
+<span class="material-symbols-outlined" data-icon="language">language</span>
+</button>
+</div>
+</div>
+</nav>
+<main class="flex-grow">
+<!-- Hero Section -->
+<section class="py-xl px-gutter md:py-24 max-w-7xl mx-auto">
+<div class="flex flex-col md:flex-row items-center gap-xl md:gap-16">
+<div class="flex-1 space-y-8 md:space-y-10">
+<h1 class="font-display-lg text-display-lg text-primary md:text-5xl md:leading-tight">
+                        Smarter decisions for every farm.
+                    </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
+                        FasalAI brings crop intelligence, disease detection, market information, weather insights and government support into one simple farming assistant.
+                    </p>
+<div class="flex flex-col sm:flex-row gap-6 pt-4">
+<button class="clay-btn-primary font-label-lg text-label-lg px-8 py-5 min-h-[56px] flex items-center justify-center gap-2">
+                            Get Started
+                        </button>
+<button class="clay-btn-secondary font-label-lg text-label-lg px-8 py-5 min-h-[56px] flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">play_circle</span>
+                            See How It Works
+                        </button>
+</div>
+</div>
+<div class="flex-1 w-full h-[400px] md:h-[500px] rounded-[40px] overflow-hidden relative shadow-[16px_16px_32px_rgba(0,0,0,0.4),-16px_-16px_32px_rgba(255,255,255,0.03)] border-4 border-surface-container-high">
+<img alt="Farmer using smartphone in field" class="w-full h-full object-cover" data-alt="A clean, modern flat vector illustration showing a rural farmer standing in a green agricultural field holding a smartphone, with digital overlay graphics representing crop health data, weather patterns, and market prices. The style is minimalist corporate modern, using a soft, calming color palette of deep greens and light neutrals to convey trust and technological advancement in farming." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyF439lSIyeSDmotitVCpZuB1zzw04MYDIRqs9RRzqfdeyO6T3yIfD4MpiNIndkBeaxDTY1kQHRvd7lZExKTw-DBu8--EfBeO0Z8wnVvHjwibsva8XesX7Y4GCokxj268-996NSzaXmKdjVpqMv6J9WBPivtDwsnGP-Mr8S60WNljmaFyvAsVn8lzn1Vs-CW0zSiTFw5f4P7qP-Pdv2xrrkA6XbLn0_5Q7dJKh9lf8yi7cppYgjfZq"/>
+</div>
+</div>
+</section>
+<!-- Value Propositions Bento Grid -->
+<section class="py-xl px-gutter bg-surface-container-low clay-section mt-12 rounded-[48px] mx-4 mb-8">
+<div class="max-w-7xl mx-auto py-8">
+<div class="text-center mb-16">
+<h2 class="font-headline-md text-headline-md text-primary mb-6">Empowering Your Agricultural Journey</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto bg-surface-container-lowest px-8 py-4 rounded-full shadow-[inset_2px_2px_4px_rgba(0,0,0,0.3),inset_-2px_-2px_4px_rgba(255,255,255,0.05)] inline-block">Everything you need to maximize your yield and protect your livelihood, right in your pocket.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+<!-- Value 1 -->
+<div class="clay-card p-8 flex flex-col h-full min-h-[260px]">
+<div class="w-16 h-16 bg-surface-container-highest text-primary rounded-full flex items-center justify-center mb-6 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.1),inset_-2px_-2px_4px_rgba(0,0,0,0.4)]">
+<span class="material-symbols-outlined text-3xl" data-icon="grass">grass</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-3">Choose the right crop</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-auto">Data-driven recommendations based on soil health, local climate, and historical success rates.</p>
+</div>
+<!-- Value 2 -->
+<div class="clay-card p-8 flex flex-col h-full min-h-[260px]">
+<div class="w-16 h-16 bg-surface-container-highest text-primary rounded-full flex items-center justify-center mb-6 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.1),inset_-2px_-2px_4px_rgba(0,0,0,0.4)]">
+<span class="material-symbols-outlined text-3xl" data-icon="health_and_safety">health_and_safety</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-3">Understand crop health</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-auto">Instant disease detection through photo analysis, providing immediate treatment strategies.</p>
+</div>
+<!-- Value 3 -->
+<div class="clay-card p-8 flex flex-col h-full min-h-[260px]">
+<div class="w-16 h-16 bg-surface-container-highest text-primary rounded-full flex items-center justify-center mb-6 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.1),inset_-2px_-2px_4px_rgba(0,0,0,0.4)]">
+<span class="material-symbols-outlined text-3xl" data-icon="storefront">storefront</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-3">Know your market</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-auto">Real-time commodity pricing and demand forecasting to ensure you sell at the best time.</p>
+</div>
+<!-- Value 4 -->
+<div class="clay-card p-8 flex flex-col h-full min-h-[260px]">
+<div class="w-16 h-16 bg-surface-container-highest text-primary rounded-full flex items-center justify-center mb-6 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.1),inset_-2px_-2px_4px_rgba(0,0,0,0.4)]">
+<span class="material-symbols-outlined text-3xl" data-icon="handshake">handshake</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-3">Discover support</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-auto">Easily navigate and apply for relevant government agricultural schemes and subsidies.</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="bg-surface-container-lowest py-8 clay-section">
+<div class="max-w-7xl mx-auto px-gutter text-center">
+<p class="font-body-md text-body-md text-on-surface-variant bg-surface-container-low px-6 py-3 rounded-full shadow-[inset_2px_2px_4px_rgba(0,0,0,0.3),inset_-2px_-2px_4px_rgba(255,255,255,0.05)] inline-block">© 2024 FasalAI. Your Field Companion.</p>
+</div>
+</footer>
+</body></html>

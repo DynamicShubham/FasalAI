@@ -1,11 +1,14 @@
 import io
 import json
 import base64
+import logging
 import numpy as np
 from PIL import Image
 from typing import Dict, Any, List
 from ..core.config import settings
 from ..decision_engine.disease_analyzer import load_diseases, get_disease_by_id
+
+logger = logging.getLogger("fasalai.vision")
 
 class CropDiseaseDetector:
     def __init__(self):
@@ -13,9 +16,23 @@ class CropDiseaseDetector:
         
     def detect_from_image_bytes(self, image_bytes: bytes, crop_hint: str = "") -> Dict[str, Any]:
         """
-        Processes image frame using visual feature extraction, edge detection, and chromatic aberration
-        to accurately classify crop pathology with confidence and bounding boxes.
+        Processes image frame using visual feature extraction and chromatic analysis
+        to classify crop pathology with confidence and bounding boxes.
+        
+        NOTE: This uses a heuristic color-analysis approach as a demo diagnostic.
+        A production system would use a trained YOLO/CNN model for accurate classification.
+        The response includes `isDemoMode: true` to indicate this is heuristic-based.
         """
+        # Reject empty/invalid image data
+        if not image_bytes or len(image_bytes) < 100:
+            return {
+                "success": False,
+                "isDemoMode": True,
+                "error": "No valid image data received. Please capture a clear photo of the affected leaf.",
+                "diseaseName": None,
+                "confidenceScore": 0,
+            }
+
         try:
             image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
             img_array = np.array(image)
@@ -38,7 +55,7 @@ class CropDiseaseDetector:
                 crop_lower = crop_hint.lower()
                 matched = [d for d in self.diseases if crop_lower in d.get("crop", "").lower()]
                 if matched:
-                    # Pick relevant disease or healthy
+                    # Pick relevant disease or healthy based on color analysis
                     if yellow_ratio > 1.8 or brown_ratio > 1.1:
                         detected_disease = matched[0]
                         confidence = detected_disease.get("confidenceBase", 0.94)
@@ -61,7 +78,7 @@ class CropDiseaseDetector:
                     detected_disease = get_disease_by_id("tomato_late_blight") or self.diseases[0]
                     confidence = 0.93
 
-            # Synthetic bounding boxes for visual overlay
+            # Bounding boxes for visual overlay
             boxes = [
                 {
                     "x": int(w * 0.25),
@@ -75,6 +92,8 @@ class CropDiseaseDetector:
             
             return {
                 "success": True,
+                "isDemoMode": True,
+                "demoNote": "Diagnosis based on color-analysis heuristic. A trained CV model would provide higher accuracy.",
                 "diseaseId": detected_disease["id"],
                 "diseaseName": detected_disease["name"],
                 "crop": detected_disease.get("crop", "General"),
@@ -92,34 +111,13 @@ class CropDiseaseDetector:
             }
             
         except Exception as e:
-            # Safe graceful fallback
-            fallback_disease = self.diseases[0] if self.diseases else {
-                "id": "tomato_early_blight",
-                "name": "Tomato Early Blight",
-                "crop": "Tomato",
-                "pathogen": "Alternaria solani",
-                "severity": "Moderate",
-                "symptoms": "Concentric dark brown rings on leaf surfaces.",
-                "organicRemedy": "Spray Neem oil 5ml/L.",
-                "chemicalRemedy": "Mancozeb 75% WP @ 2.5g/L.",
-                "prevention": "Ensure good ventilation and crop rotation."
-            }
+            logger.warning(f"Vision detection failed for image ({len(image_bytes)} bytes): {e}")
             return {
-                "success": True,
-                "diseaseId": fallback_disease["id"],
-                "diseaseName": fallback_disease["name"],
-                "crop": fallback_disease.get("crop", "Tomato"),
-                "pathogen": fallback_disease.get("pathogen", "Alternaria solani"),
-                "severity": fallback_disease.get("severity", "Moderate"),
-                "confidenceScore": 0.93,
-                "confidencePercentage": "93%",
-                "symptoms": fallback_disease.get("symptoms", ""),
-                "favorableConditions": fallback_disease.get("favorableConditions", ""),
-                "organicRemedy": fallback_disease.get("organicRemedy", ""),
-                "chemicalRemedy": fallback_disease.get("chemicalRemedy", ""),
-                "prevention": fallback_disease.get("prevention", ""),
-                "boundingBoxes": [{"x": 100, "y": 120, "width": 250, "height": 200, "label": "Early Blight", "confidence": 0.93}],
-                "imageResolution": "640x480"
+                "success": False,
+                "isDemoMode": True,
+                "error": "Could not process image. Please ensure the photo is clear and well-lit.",
+                "diseaseName": None,
+                "confidenceScore": 0,
             }
 
 detector = CropDiseaseDetector()

@@ -1,6 +1,9 @@
+import logging
 import httpx
 from typing import Dict, Any, Optional
 from ..core.config import settings
+
+logger = logging.getLogger("fasalai.ai.grok")
 
 AGRICULTURE_SYSTEM_PROMPT = """You are FasalAI, a warm, dependable, and highly knowledgeable agricultural field companion for Indian farmers.
 Your core principles:
@@ -9,6 +12,7 @@ Your core principles:
 3. Be specific with numbers (water volume, spray dosages, dates, mandi prices).
 4. Always prioritize farmer safety, soil long-term health, and cost-efficiency.
 5. If speaking in Hindi, Marathi, or English, keep the tone warm, clear, and reassuring.
+6. Never fabricate specific weather data, market prices, or scheme details. Only present data you are given in context.
 """
 
 async def explain_decision_with_grok(
@@ -31,7 +35,7 @@ async def explain_decision_with_grok(
         f"Provide a clear, actionable, friendly 2-3 paragraph answer with clear next steps."
     )
 
-    if settings.GROK_API_KEY and settings.GROK_API_KEY != "your-grok-api-key":
+    if settings.GROK_API_KEY and not settings.GROK_API_KEY.startswith("your-"):
         try:
             headers = {
                 "Authorization": f"Bearer {settings.GROK_API_KEY}",
@@ -51,10 +55,15 @@ async def explain_decision_with_grok(
                 if resp.status_code == 200:
                     data = resp.json()
                     return data["choices"][0]["message"]["content"]
+                else:
+                    logger.warning(f"Grok API returned status {resp.status_code}: {resp.text[:200]}")
+        except httpx.TimeoutException:
+            logger.warning("Grok API request timed out after 10 seconds")
         except Exception as e:
-            pass
+            logger.warning(f"Grok API call failed: {e}")
 
-    # Grounded fallback generation
+    # Grounded fallback generation (no API key or API failure)
+    logger.info("Using grounded fallback response for assistant query")
     q_lower = user_query.lower()
     if "water" in q_lower or "irrigation" in q_lower or "sinchai" in q_lower:
         return (
@@ -70,18 +79,19 @@ async def explain_decision_with_grok(
         )
     elif "market" in q_lower or "price" in q_lower or "mandi" in q_lower:
         return (
-            "Current mandi prices are showing a positive 4% upward trend at Lasalgaon APMC. Factoring in local "
-            "transportation costs, selling directly at the main market yields approximately ₹120 more per quintal "
-            "compared to village-level intermediaries."
+            "Check the Mandi Prices section for the latest rates at nearby markets. The system calculates net "
+            "realization after transport costs to help you find the most profitable selling point. Consider "
+            "timing your sale when demand trends are upward."
         )
     elif "scheme" in q_lower or "subsidy" in q_lower or "pm-kisan" in q_lower:
         return (
-            "You are eligible for PM-KISAN (₹6,000/year) and the PMKSY Drip Irrigation subsidy (up to 55% coverage "
-            "for small landholdings). Ensure your Aadhaar is linked to your bank account and 7/12 land records."
+            "Visit the Government Schemes section to see which subsidies match your farm profile. Ensure your "
+            "Aadhaar is linked to your bank account and 7/12 land records are updated. The system checks your "
+            "eligibility based on your landholding size and crop type."
         )
     else:
         return (
-            f"Hello! I am your FasalAI assistant. Your farm in Maharashtra is currently in good condition. "
-            f"I have reviewed your crop health, 7-day weather outlook, and market trends. "
-            f"You can ask me anything about crop protection, irrigation timing, or fertilizer schedules."
+            f"Hello! I am your FasalAI assistant. I can help you with irrigation scheduling, "
+            f"disease identification, market price comparison, and government scheme eligibility. "
+            f"Ask me anything about your farm — I'll give you clear, practical advice."
         )

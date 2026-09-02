@@ -12,16 +12,21 @@ export default function LoginPage() {
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState("PHONE");
 
+  const [demoNotice, setDemoNotice] = useState("");
+
   const handleSendOtp = (e) => {
     e.preventDefault();
     if (phone.length >= 10) {
       setStep("OTP");
+      setDemoNotice("Demo Mode: Enter any 4-digit code to continue.");
     }
   };
 
   const handleVerifyOtp = (e) => {
     e.preventDefault();
-    router.push("/dashboard");
+    if (otp.length >= 4) {
+      router.push("/dashboard");
+    }
   };
 
   const handleInstantDemo = async () => {
@@ -49,6 +54,13 @@ export default function LoginPage() {
           <span className="material-symbols-outlined text-base">account_circle</span>
           Demo Farmer Quick Access (Ramesh Patil)
         </button>
+
+        {demoNotice && (
+          <div className="bg-amber-50 border border-amber-200 text-amber-800 px-3 py-2 rounded-xl text-xs flex items-center gap-2">
+            <span className="material-symbols-outlined text-sm">info</span>
+            {demoNotice}
+          </div>
+        )}
 
         <div className="flex items-center gap-3 my-0.5">
           <div className="flex-1 h-px bg-stone-200"></div>

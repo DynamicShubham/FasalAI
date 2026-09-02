@@ -3,11 +3,17 @@ from pathlib import Path
 from typing import List, Dict, Any
 from ..core.config import settings
 
+_crops_cache = None
+
 def load_crops() -> List[Dict[str, Any]]:
+    global _crops_cache
+    if _crops_cache is not None:
+        return _crops_cache
     crops_file = settings.DATA_PATH / "crops.json"
     if crops_file.exists():
         with open(crops_file, "r", encoding="utf-8") as f:
-            return json.load(f)
+            _crops_cache = json.load(f)
+            return _crops_cache
     return []
 
 def calculate_crop_suitability(

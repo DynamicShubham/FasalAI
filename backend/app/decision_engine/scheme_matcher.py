@@ -3,11 +3,17 @@ from pathlib import Path
 from typing import List, Dict, Any
 from ..core.config import settings
 
+_schemes_cache = None
+
 def load_schemes() -> List[Dict[str, Any]]:
+    global _schemes_cache
+    if _schemes_cache is not None:
+        return _schemes_cache
     schemes_file = settings.DATA_PATH / "schemes.json"
     if schemes_file.exists():
         with open(schemes_file, "r", encoding="utf-8") as f:
-            return json.load(f)
+            _schemes_cache = json.load(f)
+            return _schemes_cache
     return []
 
 def match_schemes_for_farmer(

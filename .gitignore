@@ -44,15 +44,12 @@ Thumbs.db
 *.swp
 *.swo
 
+# Large archives (keep extracted design-reference or original zip)
+archive.zip
+*.zip
+
 # Logs & temp
 *.log
 scratch/
 
-# Planning, PRD & Design Reference Files
-FasalAI_Technical_Architecture.md
-IMPLEMENTATION_PLAN.md
-TODO.md
-NEXORA_2026_PRD.md
-designs.zip
-design-reference/
-designs/
+designs

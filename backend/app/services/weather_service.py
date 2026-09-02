@@ -1,6 +1,9 @@
+import logging
 import httpx
 from typing import Dict, Any, List
 from ..core.config import settings
+
+logger = logging.getLogger("fasalai.weather")
 
 class WeatherService:
     def __init__(self):
@@ -8,41 +11,65 @@ class WeatherService:
         
     async def get_forecast(self, latitude: float = 20.1472, longitude: float = 74.2257, district: str = "Nashik") -> Dict[str, Any]:
         """
-        Fetches live or high-fidelity agrometeorological weather intelligence.
+        Fetches live OpenWeather 5-day / 3-hour agrometeorological forecast or high-fidelity agronomic fallback.
         """
-        # If openweather api key is available, call live endpoint
-        if self.api_key and self.api_key != "your-weather-api-key":
+        # If openweather api key is configured, query live API
+        if self.api_key and len(self.api_key) >= 16 and not self.api_key.startswith("your-"):
             try:
-                url = f"https://api.openweathermap.org/data/2.5/forecast?lat={latitude}&lon={longitude}&appid={self.api_key}&units=metric"
-                async with httpx.AsyncClient(timeout=5.0) as client:
+                # Query by district name in India or lat/lon coordinates
+                query = f"q={district},IN" if district else f"lat={latitude}&lon={longitude}"
+                url = f"https://api.openweathermap.org/data/2.5/forecast?{query}&appid={self.api_key}&units=metric"
+                
+                async with httpx.AsyncClient(timeout=4.0) as client:
                     resp = await client.get(url)
                     if resp.status_code == 200:
                         data = resp.json()
                         current = data["list"][0]
+                        city_name = data.get("city", {}).get("name", district)
+                        
+                        # Group 3-hour forecasts into daily forecasts
+                        daily_forecasts = []
+                        seen_days = set()
+                        for item in data.get("list", []):
+                            dt_txt = item.get("dt_txt", "")
+                            date_key = dt_txt.split(" ")[0] if " " in dt_txt else dt_txt
+                            if date_key not in seen_days and len(daily_forecasts) < 5:
+                                seen_days.add(date_key)
+                                cond = item["weather"][0]["main"]
+                                icon = "wb_sunny" if "Clear" in cond or "Sun" in cond else "cloud" if "Cloud" in cond else "rainy"
+                                daily_forecasts.append({
+                                    "day": "Today" if len(daily_forecasts) == 0 else f"Day {len(daily_forecasts) + 1}",
+                                    "date": date_key,
+                                    "tempMax": round(item["main"]["temp_max"]),
+                                    "tempMin": round(item["main"]["temp_min"]),
+                                    "condition": cond,
+                                    "rainProb": int(item.get("pop", 0) * 100),
+                                    "icon": icon
+                                })
+                                
+                        wind_speed_km = round(current["wind"]["speed"] * 3.6, 1)
+                        humidity = current["main"]["humidity"]
+                        spray_ok = wind_speed_km < 15.0 and humidity < 75
+                        
                         return {
-                            "location": f"{district}, Maharashtra",
+                            "location": f"{city_name}, Maharashtra",
                             "currentTemp": round(current["main"]["temp"]),
                             "condition": current["weather"][0]["main"],
                             "description": current["weather"][0]["description"].title(),
-                            "humidity": current["main"]["humidity"],
-                            "windSpeedKm": round(current["wind"]["speed"] * 3.6, 1),
+                            "humidity": humidity,
+                            "windSpeedKm": wind_speed_km,
                             "rainProbability": int(current.get("pop", 0) * 100),
-                            "spraySuitability": "Ideal" if current["wind"]["speed"] < 4.0 and current["main"]["humidity"] < 75 else "Moderate",
-                            "forecast": [
-                                {
-                                    "day": f"Day {i+1}",
-                                    "tempMax": round(item["main"]["temp_max"]),
-                                    "tempMin": round(item["main"]["temp_min"]),
-                                    "condition": item["weather"][0]["main"],
-                                    "rainProb": int(item.get("pop", 0) * 100)
-                                }
-                                for i, item in enumerate(data["list"][:7])
+                            "spraySuitability": "Ideal" if spray_ok else "Moderate / High Wind",
+                            "isLive": True,
+                            "forecast": daily_forecasts or [
+                                { "day": "Today", "tempMax": round(current["main"]["temp"]), "tempMin": round(current["main"]["temp"] - 5), "condition": current["weather"][0]["main"], "rainProb": 10, "icon": "wb_sunny" }
                             ]
                         }
-            except Exception:
-                pass
+            except Exception as e:
+                # Log warning and fall through to grounded agrometeorological dataset
+                logger.warning(f"OpenWeather API request failed: {e}")
                 
-        # High-fidelity agrometeorological mock forecast
+        # High-fidelity agrometeorological dataset fallback
         return {
             "location": f"{district}, Maharashtra",
             "currentTemp": 28,
@@ -55,26 +82,13 @@ class WeatherService:
             "soilMoistureIndex": "62% (Optimal)",
             "spraySuitability": "Ideal (Low Wind, No Imminent Rain)",
             "irrigationAdvice": "Safe to irrigate. Maintain normal morning watering cycle.",
+            "isLive": False,
             "forecast": [
                 { "day": "Today", "date": "Sep 2", "tempMax": 30, "tempMin": 19, "condition": "Partly Sunny", "rainProb": 15, "icon": "wb_sunny" },
                 { "day": "Thu", "date": "Sep 3", "tempMax": 31, "tempMin": 20, "condition": "Sunny", "rainProb": 10, "icon": "sunny" },
                 { "day": "Fri", "date": "Sep 4", "tempMax": 29, "tempMin": 19, "condition": "Cloudy", "rainProb": 40, "icon": "cloud" },
                 { "day": "Sat", "date": "Sep 5", "tempMax": 27, "tempMin": 18, "condition": "Light Rain", "rainProb": 75, "icon": "rainy" },
-                { "day": "Sun", "date": "Sep 6", "tempMax": 28, "tempMin": 18, "condition": "Scattered Clouds", "rainProb": 30, "icon": "partly_cloudy_day" },
-                { "day": "Mon", "date": "Sep 7", "tempMax": 30, "tempMin": 19, "condition": "Sunny", "rainProb": 10, "icon": "wb_sunny" },
-                { "day": "Tue", "date": "Sep 8", "tempMax": 31, "tempMin": 20, "condition": "Sunny", "rainProb": 5, "icon": "sunny" }
-            ],
-            "agriAlerts": [
-                {
-                    "title": "Spraying Window Open",
-                    "level": "SUCCESS",
-                    "message": "Next 48 hours offer calm wind (<10 km/h) and clear skies. Ideal for foliar bio-fertilizer or preventive pest spray."
-                },
-                {
-                    "title": "Rain Alert for Saturday (75%)",
-                    "level": "INFO",
-                    "message": "Heavy showers predicted Saturday. Plan fertilizer top-dressing before Friday evening."
-                }
+                { "day": "Sun", "date": "Sep 6", "tempMax": 28, "tempMin": 18, "condition": "Scattered Clouds", "rainProb": 30, "icon": "partly_cloudy_day" }
             ]
         }
 

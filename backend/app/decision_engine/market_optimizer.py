@@ -3,11 +3,17 @@ from pathlib import Path
 from typing import List, Dict, Any
 from ..core.config import settings
 
+_mandis_cache = None
+
 def load_mandis() -> List[Dict[str, Any]]:
+    global _mandis_cache
+    if _mandis_cache is not None:
+        return _mandis_cache
     mandis_file = settings.DATA_PATH / "mandis.json"
     if mandis_file.exists():
         with open(mandis_file, "r", encoding="utf-8") as f:
-            return json.load(f)
+            _mandis_cache = json.load(f)
+            return _mandis_cache
     return []
 
 def optimize_market_sale(

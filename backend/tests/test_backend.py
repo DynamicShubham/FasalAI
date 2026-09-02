@@ -45,10 +45,28 @@ def test_daily_plan():
     assert "tasks" in data
     assert len(data["tasks"]) > 0
 
-def test_vision_scan():
-    # Test blank scan payload fallback
+def test_vision_scan_empty_image():
+    """Empty image should return success=false (not fake a disease detection)"""
     response = client.post("/api/v1/vision/scan-frame", json={"imageBase64": "", "cropHint": "Tomato"})
     assert response.status_code == 200
     data = response.json()
+    assert data["success"] is False
+    assert data["isDemoMode"] is True
+
+def test_vision_scan_valid_image():
+    """A valid image should return a demo-mode detection result"""
+    import base64
+    from PIL import Image
+    import io
+    # Create a small test image (green leaf-like)
+    img = Image.new("RGB", (100, 100), (80, 140, 60))
+    buf = io.BytesIO()
+    img.save(buf, format="JPEG")
+    b64 = base64.b64encode(buf.getvalue()).decode()
+    
+    response = client.post("/api/v1/vision/scan-frame", json={"imageBase64": b64, "cropHint": "Tomato"})
+    assert response.status_code == 200
+    data = response.json()
     assert data["success"] is True
+    assert data["isDemoMode"] is True
     assert "diseaseName" in data

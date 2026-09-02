@@ -12,7 +12,12 @@ export async function fetchApi(endpoint, options = {}) {
     if (!res.ok) {
       throw new Error(`API Error: ${res.status}`);
     }
-    return await res.json();
+    const data = await res.json();
+    // Mark as live data
+    if (typeof data === "object" && data !== null) {
+      data._isLiveData = true;
+    }
+    return data;
   } catch (err) {
     console.warn(`[FasalAI API] Falling back for ${endpoint}:`, err.message);
     return getFallbackData(endpoint);
@@ -26,12 +31,19 @@ export async function scanCropImage(base64Image, cropHint = "Tomato") {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ imageBase64: base64Image, cropHint }),
     });
-    if (res.ok) return await res.json();
+    if (res.ok) {
+      const data = await res.json();
+      data._isLiveData = true;
+      return data;
+    }
   } catch (e) {
-    console.warn("[FasalAI Scan] Offline fallback diagnostic used.");
+    console.warn("[FasalAI Scan] Backend unavailable, using offline fallback.");
   }
   return {
     success: true,
+    isDemoMode: true,
+    isOfflineFallback: true,
+    demoNote: "Offline fallback diagnosis — backend was unavailable. Connect to backend for real analysis.",
     diseaseId: "tomato_early_blight",
     diseaseName: "Tomato Early Blight (टमाटर का अगेती झुलसा)",
     crop: "Tomato",
@@ -55,20 +67,29 @@ export async function sendChatMessage(message, language = "English", contextData
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message, language, contextData }),
     });
-    if (res.ok) return await res.json();
+    if (res.ok) {
+      const data = await res.json();
+      data._isLiveData = true;
+      return data;
+    }
   } catch (e) {
-    console.warn("[FasalAI Chat] Offline fallback used.");
+    console.warn("[FasalAI Chat] Backend unavailable, using offline fallback.");
   }
   return {
-    reply: "I am actively monitoring your farm conditions in Maharashtra. Your Wheat crop is entering the critical Day 22 Crown Root Initiation (CRI) stage. Ensure a light morning watering cycle, and check for any fungal symptoms on lower foliage before Saturday's predicted rain.",
+    reply: "I'm currently unable to connect to the advisory service. Please check your internet connection and try again. In the meantime, you can browse the Crop Advice, Mandi Prices, and Government Schemes sections for helpful information.",
     language,
-    poweredBy: "FasalAI Decision Engine"
+    poweredBy: "FasalAI (Offline Mode)",
+    isOfflineFallback: true,
   };
 }
 
 function getFallbackData(endpoint) {
+  // All fallback data is clearly marked with isOfflineFallback: true
+  // These are used ONLY when the backend API is unavailable
+  
   if (endpoint.includes("/farmer/profile")) {
     return {
+      isOfflineFallback: true,
       id: "farmer_demo_1",
       name: "Ramesh Patil",
       phone: "+91 98765 43210",
@@ -87,6 +108,7 @@ function getFallbackData(endpoint) {
   }
   if (endpoint.includes("/crops/recommendations")) {
     return {
+      isOfflineFallback: true,
       crops: [
         {
           cropId: "wheat",
@@ -153,6 +175,8 @@ function getFallbackData(endpoint) {
   }
   if (endpoint.includes("/weather/forecast")) {
     return {
+      isOfflineFallback: true,
+      isLive: false,
       location: "Nashik, Maharashtra",
       currentTemp: 28,
       condition: "Partly Sunny",
@@ -170,17 +194,12 @@ function getFallbackData(endpoint) {
         { day: "Fri", date: "Sep 4", tempMax: 29, tempMin: 19, condition: "Cloudy", rainProb: 40, icon: "cloud" },
         { day: "Sat", date: "Sep 5", tempMax: 27, tempMin: 18, condition: "Light Rain", rainProb: 75, icon: "rainy" },
         { day: "Sun", date: "Sep 6", tempMax: 28, tempMin: 18, condition: "Scattered Clouds", rainProb: 30, icon: "partly_cloudy_day" },
-        { day: "Mon", date: "Sep 7", tempMax: 30, tempMin: 19, condition: "Sunny", rainProb: 10, icon: "wb_sunny" },
-        { day: "Tue", date: "Sep 8", tempMax: 31, tempMin: 20, condition: "Sunny", rainProb: 5, icon: "sunny" }
       ],
-      agriAlerts: [
-        { title: "Spraying Window Open", level: "SUCCESS", message: "Calm wind (<10 km/h) and clear skies today." },
-        { title: "Rain Alert for Saturday (75%)", level: "INFO", message: "Plan fertilizer top-dressing before Friday evening." }
-      ]
     };
   }
   if (endpoint.includes("/market/compare")) {
     return {
+      isOfflineFallback: true,
       commodity: "Onion",
       quantityQuintals: 20,
       bestMandi: {
@@ -228,6 +247,7 @@ function getFallbackData(endpoint) {
   }
   if (endpoint.includes("/schemes/matched")) {
     return {
+      isOfflineFallback: true,
       schemes: [
         {
           id: "pm_kisan",
@@ -267,6 +287,7 @@ function getFallbackData(endpoint) {
   }
   if (endpoint.includes("/decisions/daily-plan")) {
     return {
+      isOfflineFallback: true,
       crop: "Wheat",
       cropAgeDays: 22,
       tasks: [
@@ -306,27 +327,19 @@ function getFallbackData(endpoint) {
   }
   if (endpoint.includes("/alerts")) {
     return {
+      isOfflineFallback: true,
       alerts: [
         {
-          id: "alert_weather_rain",
-          type: "WEATHER",
-          severity: "WARNING",
-          title: "Rain Forecast for Saturday (75% probability)",
-          message: "Heavy showers expected across Nashik district. Postpone foliar pesticide spraying until Sunday.",
-          timestamp: "10 mins ago",
-          action: "Adjust Schedule"
-        },
-        {
-          id: "alert_pest_watch",
-          type: "DISEASE_RISK",
-          severity: "CRITICAL",
-          title: "Yellow Rust Advisory in Neighboring Blocks",
-          message: "High humidity has triggered stripe rust reports in adjacent wheat fields. Inspect lower foliage today.",
-          timestamp: "2 hours ago",
-          action: "Scan Leaf Now"
+          id: "alert_offline",
+          type: "SYSTEM",
+          severity: "INFO",
+          title: "Working in Offline Mode",
+          message: "Cannot connect to FasalAI server. Alerts will update when connection is restored.",
+          timestamp: "Just now",
+          action: "Retry"
         }
       ]
     };
   }
-  return {};
+  return { isOfflineFallback: true };
 }
