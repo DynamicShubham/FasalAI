@@ -1,6 +1,16 @@
 import { supabase, isSupabaseConfigured } from "./supabase";
 
-let rawApiUrl = (process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1").trim().replace(/\/+$/, "");
+const DEFAULT_PROD_API = "https://fasalai-backend-s9k8.onrender.com/api/v1";
+
+let rawApiUrl = process.env.NEXT_PUBLIC_API_URL;
+if (!rawApiUrl) {
+  if (typeof window !== "undefined" && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
+    rawApiUrl = DEFAULT_PROD_API;
+  } else {
+    rawApiUrl = "http://127.0.0.1:8000/api/v1";
+  }
+}
+rawApiUrl = rawApiUrl.trim().replace(/\/+$/, "");
 if (!rawApiUrl.endsWith("/api/v1")) {
   rawApiUrl = `${rawApiUrl}/api/v1`;
 }

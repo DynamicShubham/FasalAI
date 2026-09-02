@@ -9,15 +9,46 @@ const nextConfig = {
     ],
   },
   async rewrites() {
-    // If NEXT_PUBLIC_API_URL is configured (e.g. on Railway/Render), proxy to it, else local
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL
-      ? process.env.NEXT_PUBLIC_API_URL.replace(/\/api\/v1\/?$/, "")
-      : "http://127.0.0.1:8000";
+    const backendUrl = (process.env.NEXT_PUBLIC_API_URL || "https://fasalai-backend-s9k8.onrender.com")
+      .replace(/\/api\/v1\/?$/, "")
+      .replace(/\/+$/, "");
 
     return [
       {
+        source: "/api/v1/:path*",
+        destination: `${backendUrl}/api/v1/:path*`,
+      },
+      {
         source: "/api/:path*",
-        destination: `${backendUrl}/api/:path*`,
+        destination: `${backendUrl}/api/v1/:path*`,
+      },
+      {
+        source: "/decisions/:path*",
+        destination: `${backendUrl}/api/v1/decisions/:path*`,
+      },
+      {
+        source: "/weather/:path*",
+        destination: `${backendUrl}/api/v1/weather/:path*`,
+      },
+      {
+        source: "/market/:path*",
+        destination: `${backendUrl}/api/v1/market/:path*`,
+      },
+      {
+        source: "/schemes/:path*",
+        destination: `${backendUrl}/api/v1/schemes/:path*`,
+      },
+      {
+        source: "/crops/:path*",
+        destination: `${backendUrl}/api/v1/crops/:path*`,
+      },
+      {
+        source: "/assistant/:path*",
+        destination: `${backendUrl}/api/v1/assistant/:path*`,
+      },
+      {
+        source: "/vision/:path*",
+        destination: `${backendUrl}/api/v1/vision/:path*`,
       },
     ];
   },
