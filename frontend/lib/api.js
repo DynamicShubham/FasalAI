@@ -1,20 +1,21 @@
 import { supabase, isSupabaseConfigured } from "./supabase";
 
-const DEFAULT_PROD_API = "https://fasalai-backend-s9k8.onrender.com/api/v1";
+const DEFAULT_PROD_API = "https://fasalai-backend-s9k8.onrender.com";
 
-let rawApiUrl = process.env.NEXT_PUBLIC_API_URL;
+let rawApiUrl = (process.env.NEXT_PUBLIC_API_URL || "").trim().replace(/\/+$/, "");
 if (!rawApiUrl) {
   if (typeof window !== "undefined" && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
     rawApiUrl = DEFAULT_PROD_API;
   } else {
-    rawApiUrl = "http://127.0.0.1:8000/api/v1";
+    rawApiUrl = "http://127.0.0.1:8000";
   }
 }
-rawApiUrl = rawApiUrl.trim().replace(/\/+$/, "");
-if (!rawApiUrl.endsWith("/api/v1")) {
-  rawApiUrl = `${rawApiUrl}/api/v1`;
-}
-const API_BASE_URL = rawApiUrl;
+
+// Strip any accidental trailing /api/v1, /api/v, or /api prefix to get the clean host origin
+rawApiUrl = rawApiUrl.replace(/\/api\/v\d*$/, "").replace(/\/api\/?$/, "").replace(/\/+$/, "");
+
+// Always append canonical /api/v1 prefix
+const API_BASE_URL = `${rawApiUrl}/api/v1`;
 
 export async function fetchApi(endpoint, options = {}, retries = 1) {
   try {

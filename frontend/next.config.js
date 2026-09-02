@@ -10,7 +10,9 @@ const nextConfig = {
   },
   async rewrites() {
     const backendUrl = (process.env.NEXT_PUBLIC_API_URL || "https://fasalai-backend-s9k8.onrender.com")
-      .replace(/\/api\/v1\/?$/, "")
+      .trim()
+      .replace(/\/api\/v\d*$/, "")
+      .replace(/\/api\/?$/, "")
       .replace(/\/+$/, "");
 
     return [

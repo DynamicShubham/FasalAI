@@ -32,7 +32,9 @@ app.add_middleware(
 )
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
-app.include_router(api_router)  # Direct fallback in case client omits /api/v1 prefix
+app.include_router(api_router)  # Direct root fallback
+app.include_router(api_router, prefix="/api/v")  # Typo fallback
+app.include_router(api_router, prefix="/api/v/api/v1")  # Nested typo fallback
 
 @app.get("/")
 def root():
