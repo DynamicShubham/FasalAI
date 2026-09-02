@@ -4,10 +4,17 @@ from app.main import app
 
 client = TestClient(app)
 
-def test_health_check():
+def test_root_endpoint():
     response = client.get("/")
     assert response.status_code == 200
     assert response.json()["status"] == "online"
+
+def test_render_health_endpoint():
+    response = client.get("/health")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "healthy"
+    assert "service" in data
 
 def test_crop_recommendations():
     response = client.get("/api/v1/crops/recommendations?soil_type=Black+Clay+Loam&ph=6.8&acreage=3.5")

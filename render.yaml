@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: fasalai-backend
+    runtime: python
+    rootDir: backend
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.8
+      - key: DEBUG
+        value: "false"
+      - key: GROK_API_KEY
+        sync: false
+      - key: OPENWEATHER_API_KEY
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        value: "http://localhost:3000,https://fasalai.vercel.app"
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: fasalai-redis
+          property: connectionString
+
+  - type: keyvalue
+    name: fasalai-redis
+    plan: free
+    region: oregon
+    ipAllowList: [] # Internal service access only

@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .core.config import settings
@@ -5,7 +6,7 @@ from .api.router import api_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    description="FasalAI — AI Personalized Agriculture Decision Support Platform API Gateway",
+    description="FasalAI — AI Personalized Agriculture Decision Support Platform API Gateway (Render Deployment Ready)",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
@@ -14,7 +15,8 @@ app = FastAPI(
 # Cross-Origin Resource Sharing
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.CORS_ORIGINS if isinstance(settings.CORS_ORIGINS, list) else ["*"],
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -23,7 +25,7 @@ app.add_middleware(
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
 @app.get("/")
-def health_check():
+def root():
     return {
         "project": settings.PROJECT_NAME,
         "status": "online",
@@ -32,6 +34,20 @@ def health_check():
         "version": "1.0.0"
     }
 
+@app.get("/health")
+def health_check():
+    """
+    Render Health Check Endpoint
+    Monitored by Render Web Service for uptime and zero-downtime rolling deploys.
+    """
+    return {
+        "status": "healthy",
+        "service": settings.PROJECT_NAME,
+        "version": "1.0.0",
+        "environment": "development" if settings.DEBUG else "production"
+    }
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+    port = int(os.getenv("PORT", settings.PORT))
+    uvicorn.run("app.main:app", host="0.0.0.0", port=port, reload=settings.DEBUG)
