@@ -16,9 +16,11 @@ export default function LandingPage() {
       {/* Top Navbar */}
       <header className="flex justify-between items-center py-3 px-2 border-b border-stone-200/60">
         <div className="flex items-center gap-2.5">
-          <div className="w-10 h-10 rounded-xl bg-brand-900 flex items-center justify-center text-white font-bold text-lg shadow-sm">
-            🌱
-          </div>
+          <img
+            src="/logo.png"
+            alt="FasalAI Logo"
+            className="w-10 h-10 rounded-xl object-contain shadow-sm"
+          />
           <div>
             <span className="font-display text-xl font-bold text-brand-900 tracking-tight">
               FasalAI

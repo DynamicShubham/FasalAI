@@ -8,11 +8,11 @@ export default function FarmSetupPage() {
   const router = useRouter();
   const { farmData, saveFarmParcel } = useFarm();
 
-  const [acreage, setAcreage] = useState(farmData.acreage || 3.5);
-  const [soilType, setSoilType] = useState(farmData.soilType || "Black Clay Loam");
-  const [irrigation, setIrrigation] = useState(farmData.irrigationSource || "Drip + Borewell");
-  const [waterAvailability, setWaterAvailability] = useState(farmData.waterAvailability || "Medium");
-  const [currentCrop, setCurrentCrop] = useState(farmData.currentCrop || "Wheat");
+  const [acreage, setAcreage] = useState(farmData?.acreage || "");
+  const [soilType, setSoilType] = useState(farmData?.soilType || "Alluvial");
+  const [irrigation, setIrrigation] = useState(farmData?.irrigationSource || "Drip + Borewell");
+  const [waterAvailability, setWaterAvailability] = useState(farmData?.waterAvailability || "Medium");
+  const [currentCrop, setCurrentCrop] = useState(farmData?.currentCrop || "Rice / Paddy");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 

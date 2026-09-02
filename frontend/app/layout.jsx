@@ -6,6 +6,13 @@ import { FarmProvider } from "../context/FarmContext";
 export const metadata = {
   title: "FasalAI — Digital Farming Companion",
   description: "FasalAI turns crop information, weather forecasts, leaf health diagnostics, and mandi prices into simple daily farming decisions.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/logo.png", type: "image/png" }
+    ],
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({ children }) {

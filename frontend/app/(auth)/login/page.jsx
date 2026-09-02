@@ -65,9 +65,11 @@ export default function LoginPage() {
       <div className="w-full max-w-md bg-white p-7 md:p-8 rounded-2xl border border-stone-200/80 shadow-card flex flex-col gap-5">
         {/* Header */}
         <div className="text-center flex flex-col items-center">
-          <div className="w-12 h-12 rounded-xl bg-brand-900 text-white flex items-center justify-center text-2xl mb-2 shadow-sm">
-            🌱
-          </div>
+          <img
+            src="/logo.png"
+            alt="FasalAI Logo"
+            className="w-14 h-14 rounded-2xl object-contain mb-2 shadow-xs"
+          />
           <h1 className="font-display text-xl font-bold text-content">
             {authMode === "SIGNIN" ? "Sign In to FasalAI" : "Create Farmer Account"}
           </h1>

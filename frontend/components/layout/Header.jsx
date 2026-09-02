@@ -13,9 +13,11 @@ export default function Header() {
   return (
     <header className="md:hidden w-full top-0 sticky bg-white/95 backdrop-blur-sm border-b border-stone-200 flex justify-between items-center h-14 px-4 z-50 shadow-sm">
       <Link href="/dashboard" className="flex items-center gap-2">
-        <span className="w-8 h-8 rounded-lg bg-brand-900 flex items-center justify-center text-white font-bold text-sm">
-          🌱
-        </span>
+        <img
+          src="/logo.png"
+          alt="FasalAI"
+          className="w-8 h-8 rounded-lg object-contain"
+        />
         <span className="font-display text-lg text-brand-900 font-extrabold tracking-tight">
           FasalAI
         </span>

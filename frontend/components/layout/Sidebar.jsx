@@ -29,9 +29,11 @@ export default function Sidebar() {
     <aside className="hidden md:flex flex-col h-[calc(100vh-24px)] w-64 left-0 top-0 sticky bg-white border border-stone-200/80 m-3 rounded-2xl p-5 gap-2 z-40 flex-shrink-0 shadow-subtle">
       {/* Brand Header */}
       <div className="flex items-center gap-3 pb-4 mb-2 border-b border-stone-100">
-        <div className="w-10 h-10 rounded-xl bg-brand-900 flex items-center justify-center text-white font-bold text-lg shadow-sm">
-          🌱
-        </div>
+        <img
+          src="/logo.png"
+          alt="FasalAI Logo"
+          className="w-10 h-10 rounded-xl object-contain shadow-sm"
+        />
         <div>
           <h1 className="font-display text-lg font-bold text-brand-900 leading-tight">
             FasalAI
