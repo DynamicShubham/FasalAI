@@ -2,6 +2,7 @@
 -- FasalAI — Production Supabase Schema & Row-Level Security (RLS) Policies
 -- PR·FUSION — AI Personalized Agriculture Decision Support Platform
 -- ==============================================================================
+-- RUN THIS ENTIRE SCRIPT IN YOUR SUPABASE SQL EDITOR (Dashboard -> SQL Editor -> New query -> Run)
 
 -- 1. Enable UUID Extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -10,8 +11,9 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS public.farmers (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     auth_user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-    full_name TEXT NOT NULL,
-    phone_number TEXT UNIQUE NOT NULL,
+    full_name TEXT NOT NULL DEFAULT 'Farmer',
+    email TEXT,
+    phone_number TEXT,
     state TEXT NOT NULL DEFAULT 'Maharashtra',
     district TEXT NOT NULL DEFAULT 'Nashik',
     language TEXT NOT NULL DEFAULT 'English',
@@ -19,6 +21,9 @@ CREATE TABLE IF NOT EXISTS public.farmers (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Unique index on auth_user_id for 1-to-1 farmer profile mapping
+CREATE UNIQUE INDEX IF NOT EXISTS farmers_auth_user_id_idx ON public.farmers(auth_user_id);
 
 -- 3. Farm Land Parcels Table
 CREATE TABLE IF NOT EXISTS public.farm_parcels (
@@ -32,8 +37,11 @@ CREATE TABLE IF NOT EXISTS public.farm_parcels (
     water_availability TEXT DEFAULT 'Medium',
     current_crop TEXT DEFAULT 'Wheat',
     sowing_date DATE DEFAULT CURRENT_DATE - INTERVAL '22 days',
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+CREATE INDEX IF NOT EXISTS farm_parcels_farmer_id_idx ON public.farm_parcels(farmer_id);
 
 -- 4. Leaf Pathology & Disease Diagnostic Logs
 CREATE TABLE IF NOT EXISTS public.disease_scans (
@@ -51,6 +59,8 @@ CREATE TABLE IF NOT EXISTS public.disease_scans (
     scanned_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+CREATE INDEX IF NOT EXISTS disease_scans_farmer_id_idx ON public.disease_scans(farmer_id);
+
 -- 5. Conversational Advisory History
 CREATE TABLE IF NOT EXISTS public.advisory_logs (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -61,6 +71,8 @@ CREATE TABLE IF NOT EXISTS public.advisory_logs (
     farm_context JSONB,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+CREATE INDEX IF NOT EXISTS advisory_logs_farmer_id_idx ON public.advisory_logs(farmer_id);
 
 -- ==============================================================================
 -- ROW-LEVEL SECURITY (RLS) POLICIES
@@ -73,6 +85,7 @@ ALTER TABLE public.disease_scans ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.advisory_logs ENABLE ROW LEVEL SECURITY;
 
 -- Farmers Policy
+DROP POLICY IF EXISTS "Farmers can access own profile" ON public.farmers;
 CREATE POLICY "Farmers can access own profile"
     ON public.farmers
     FOR ALL
@@ -80,6 +93,7 @@ CREATE POLICY "Farmers can access own profile"
     WITH CHECK (auth.uid() = auth_user_id);
 
 -- Farm Parcels Policy
+DROP POLICY IF EXISTS "Farmers can manage own parcels" ON public.farm_parcels;
 CREATE POLICY "Farmers can manage own parcels"
     ON public.farm_parcels
     FOR ALL
@@ -87,9 +101,15 @@ CREATE POLICY "Farmers can manage own parcels"
         farmer_id IN (
             SELECT id FROM public.farmers WHERE auth_user_id = auth.uid()
         )
+    )
+    WITH CHECK (
+        farmer_id IN (
+            SELECT id FROM public.farmers WHERE auth_user_id = auth.uid()
+        )
     );
 
 -- Disease Scans Policy
+DROP POLICY IF EXISTS "Farmers can view own scans" ON public.disease_scans;
 CREATE POLICY "Farmers can view own scans"
     ON public.disease_scans
     FOR ALL
@@ -97,13 +117,24 @@ CREATE POLICY "Farmers can view own scans"
         farmer_id IN (
             SELECT id FROM public.farmers WHERE auth_user_id = auth.uid()
         )
+    )
+    WITH CHECK (
+        farmer_id IN (
+            SELECT id FROM public.farmers WHERE auth_user_id = auth.uid()
+        )
     );
 
 -- Advisory Logs Policy
+DROP POLICY IF EXISTS "Farmers can view own chat logs" ON public.advisory_logs;
 CREATE POLICY "Farmers can view own chat logs"
     ON public.advisory_logs
     FOR ALL
     USING (
+        farmer_id IN (
+            SELECT id FROM public.farmers WHERE auth_user_id = auth.uid()
+        )
+    )
+    WITH CHECK (
         farmer_id IN (
             SELECT id FROM public.farmers WHERE auth_user_id = auth.uid()
         )
