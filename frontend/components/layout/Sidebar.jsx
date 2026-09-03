@@ -15,15 +15,15 @@ export default function Sidebar() {
   const { farmData } = useFarm();
 
   const navItems = [
-    { href: "/dashboard", label: "Home", icon: "home" },
-    { href: "/my-farm", label: "My Farm", icon: "potted_plant" },
-    { href: "/scanner", label: "Plant Doctor", icon: "photo_camera" },
-    { href: "/crops/recommendations", label: "Crop Advice", icon: "eco" },
-    { href: "/market", label: "Mandi Prices", icon: "storefront" },
-    { href: "/schemes", label: "Govt Schemes", icon: "account_balance" },
-    { href: "/assistant", label: "Farm Advisor", icon: "support_agent" },
-    { href: "/alerts", label: "Alerts", icon: "notifications" },
-    { href: "/settings", label: "Settings", icon: "settings" },
+    { href: "/dashboard", label: t.navHome || "Home", icon: "home" },
+    { href: "/my-farm", label: t.navMyFarm || "My Farm", icon: "potted_plant" },
+    { href: "/scanner", label: t.navScanner || "Plant Doctor", icon: "photo_camera" },
+    { href: "/crops/recommendations", label: t.navCropAdvice || "Crop Advice", icon: "eco" },
+    { href: "/market", label: t.navMarket || "Mandi Prices", icon: "storefront" },
+    { href: "/schemes", label: t.navSchemes || "Govt Schemes", icon: "account_balance" },
+    { href: "/assistant", label: t.navAssistant || "Farm Advisor", icon: "support_agent" },
+    { href: "/alerts", label: t.navAlerts || "Alerts", icon: "notifications" },
+    { href: "/settings", label: t.navSettings || "Settings", icon: "settings" },
   ];
 
   return (
@@ -37,11 +37,11 @@ export default function Sidebar() {
         />
         <div>
           <h1 className="font-display text-lg font-bold text-brand-900 leading-tight">
-            FasalAI
+            {t.brandName || "FasalAI"}
           </h1>
           <p className="text-[12px] text-content-muted flex items-center gap-0.5">
             <span className="material-symbols-outlined text-[14px] text-brand-700">location_on</span>
-            {farmData.district}, {farmData.state}
+            {farmData.district ? `${farmData.district}, ${farmData.state}` : (t.brandName || "FasalAI")}
           </p>
         </div>
       </div>
@@ -76,12 +76,12 @@ export default function Sidebar() {
       {/* Language & Profile Footer */}
       <div className="mt-auto pt-3 border-t border-stone-100 flex flex-col gap-2.5">
         <div className="flex items-center justify-between text-[12px] text-content-muted px-1">
-          <span>Appearance:</span>
+          <span>{t.appearanceLabel || "Appearance:"}</span>
           <ThemeToggle variant="button" />
         </div>
 
         <div className="flex items-center justify-between text-[12px] text-content-muted px-1">
-          <span>Language:</span>
+          <span>{t.languageLabel || "Language:"}</span>
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
@@ -102,7 +102,7 @@ export default function Sidebar() {
             {farmData?.acreage && farmData?.currentCrop ? (
               <p className="text-[10px] text-content-muted truncate">{farmData.acreage} Acres · {farmData.currentCrop}</p>
             ) : (
-              <p className="text-[10px] text-brand-800 font-semibold">Farm Setup Needed</p>
+              <p className="text-[10px] text-brand-800 font-semibold">{t.farmSetupNeeded || "Farm Setup Needed"}</p>
             )}
           </div>
         </div>

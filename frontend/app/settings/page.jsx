@@ -13,11 +13,27 @@ import { useTheme } from "../../context/ThemeContext";
 
 export default function SettingsPage() {
   const router = useRouter();
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const { theme, setTheme, isDark } = useTheme();
-  const { user, farmerProfile, logout, isSupabaseConfigured, hasProfile } = useAuth();
+  const { user, farmerProfile, saveFarmerProfile, logout, isSupabaseConfigured, hasProfile } = useAuth();
   const { farmData, hasFarm } = useFarm();
   const [loggingOut, setLoggingOut] = useState(false);
+  const [feedbackMsg, setFeedbackMsg] = useState("");
+
+  const handleLanguageSelect = async (l) => {
+    setLanguage(l);
+    setFeedbackMsg(l === "Hindi" ? "भाषा बदलकर हिंदी कर दी गई!" : l === "Marathi" ? "भाषा बदलून मराठी केली!" : "Language updated to English!");
+    setTimeout(() => setFeedbackMsg(""), 3000);
+
+    // Persist language to Supabase profile if authenticated
+    if (user?.id) {
+      try {
+        await saveFarmerProfile({ language: l });
+      } catch (err) {
+        console.warn("Could not save language to Supabase:", err);
+      }
+    }
+  };
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -26,7 +42,7 @@ export default function SettingsPage() {
   };
 
   const displayName = farmerProfile?.name || user?.name || "Farmer";
-  const displayPhone = farmerProfile?.phone || user?.phone || user?.email || "Account Active";
+  const displayPhone = farmerProfile?.phone || user?.phone || user?.email || (t.accountActive || "Account Active");
   const displayDistrict = farmData?.district || farmerProfile?.district || user?.district || "";
   const displayState = farmData?.state || farmerProfile?.state || user?.state || "";
 
@@ -39,12 +55,20 @@ export default function SettingsPage() {
         {/* Header */}
         <section className="bg-white p-5 md:p-6 rounded-2xl border border-stone-200/80 shadow-subtle">
           <h1 className="font-display text-2xl md:text-3xl font-bold text-content">
-            Settings & Farm Profile
+            {t.settingsTitle || "Settings & Farm Profile"}
           </h1>
           <p className="text-xs md:text-sm text-content-muted mt-0.5">
-            Manage your language preferences and registered land details
+            {t.settingsDesc || "Manage your language preferences and registered land details"}
           </p>
         </section>
+
+        {/* Temporary Feedback Notification */}
+        {feedbackMsg && (
+          <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 animate-fadeIn shadow-subtle">
+            <span className="material-symbols-outlined text-sm">check_circle</span>
+            <span className="font-semibold">{feedbackMsg}</span>
+          </div>
+        )}
 
         {/* Profile Card */}
         <div className="bg-white p-5 rounded-2xl border border-stone-200/80 shadow-subtle flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -63,7 +87,7 @@ export default function SettingsPage() {
                 </p>
               ) : (
                 <p className="text-[11px] text-amber-800 font-medium mt-0.5">
-                  Farm not configured yet
+                  {t.farmNotConfigured || "Farm not configured yet"}
                 </p>
               )}
             </div>
@@ -73,22 +97,22 @@ export default function SettingsPage() {
             href={hasProfile ? "/farm-setup" : "/onboarding"}
             className="px-3.5 py-1.5 bg-stone-100 hover:bg-stone-200 rounded-lg text-xs font-semibold text-brand-900 transition-colors"
           >
-            {hasFarm ? "Edit Farm" : "Configure Farm"}
+            {hasFarm ? (t.editFarm || "Edit Farm") : (t.configureFarm || "Configure Farm")}
           </Link>
         </div>
 
         {/* Language Selection */}
         <div className="bg-white p-5 rounded-2xl border border-stone-200/80 shadow-subtle flex flex-col gap-3">
-          <h3 className="font-bold text-content text-sm">Preferred Language</h3>
+          <h3 className="font-bold text-content text-sm">{t.preferredLanguage || "Preferred Language"}</h3>
           <div className="grid grid-cols-3 gap-2.5">
             {["English", "Hindi", "Marathi"].map((l) => (
               <button
                 key={l}
                 type="button"
-                onClick={() => setLanguage(l)}
-                className={`p-3 rounded-xl flex items-center justify-between border transition-colors ${
+                onClick={() => handleLanguageSelect(l)}
+                className={`p-3 rounded-xl flex items-center justify-between border transition-colors cursor-pointer ${
                   language === l
-                    ? "bg-brand-50 dark:bg-emerald-950/60 border-brand-900 dark:border-emerald-500 text-brand-900 dark:text-emerald-300 font-bold"
+                    ? "bg-brand-50 dark:bg-emerald-950/60 border-brand-900 dark:border-emerald-500 text-brand-900 dark:text-emerald-300 font-bold shadow-xs"
                     : "bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 text-content hover:bg-stone-50 dark:hover:bg-stone-800"
                 }`}
               >
@@ -101,20 +125,20 @@ export default function SettingsPage() {
 
         {/* Appearance / Theme Selection */}
         <div className="bg-white p-5 rounded-2xl border border-stone-200/80 shadow-subtle flex flex-col gap-3">
-          <h3 className="font-bold text-content text-sm">Appearance</h3>
+          <h3 className="font-bold text-content text-sm">{t.appearance || "Appearance"}</h3>
           <div className="grid grid-cols-2 gap-2.5">
             <button
               type="button"
               onClick={() => setTheme("light")}
-              className={`p-3 rounded-xl flex items-center justify-between border transition-colors ${
+              className={`p-3 rounded-xl flex items-center justify-between border transition-colors cursor-pointer ${
                 !isDark
-                  ? "bg-brand-50 dark:bg-emerald-950/60 border-brand-900 dark:border-emerald-500 text-brand-900 dark:text-emerald-300 font-bold"
+                  ? "bg-brand-50 dark:bg-emerald-950/60 border-brand-900 dark:border-emerald-500 text-brand-900 dark:text-emerald-300 font-bold shadow-xs"
                   : "bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 text-content hover:bg-stone-50 dark:hover:bg-stone-800"
               }`}
             >
               <span className="text-xs flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-base text-amber-600">light_mode</span>
-                Light Mode
+                {t.lightMode || "Light Mode"}
               </span>
               {!isDark && <span className="material-symbols-outlined text-brand-900 dark:text-emerald-400 text-base">check</span>}
             </button>
@@ -122,15 +146,15 @@ export default function SettingsPage() {
             <button
               type="button"
               onClick={() => setTheme("dark")}
-              className={`p-3 rounded-xl flex items-center justify-between border transition-colors ${
+              className={`p-3 rounded-xl flex items-center justify-between border transition-colors cursor-pointer ${
                 isDark
-                  ? "bg-brand-50 dark:bg-emerald-950/60 border-brand-800 dark:border-emerald-500 text-brand-900 dark:text-emerald-300 font-bold"
+                  ? "bg-brand-50 dark:bg-emerald-950/60 border-brand-800 dark:border-emerald-500 text-brand-900 dark:text-emerald-300 font-bold shadow-xs"
                   : "bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 text-content hover:bg-stone-50 dark:hover:bg-stone-800"
               }`}
             >
               <span className="text-xs flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-base text-amber-500">dark_mode</span>
-                Dark Mode
+                {t.darkMode || "Dark Mode"}
               </span>
               {isDark && <span className="material-symbols-outlined text-brand-900 dark:text-emerald-400 text-base">check</span>}
             </button>
@@ -140,7 +164,7 @@ export default function SettingsPage() {
         {/* Sign Out Button */}
         <div className="bg-white p-5 rounded-2xl border border-stone-200/80 shadow-subtle flex items-center justify-between">
           <div>
-            <h4 className="font-bold text-content text-sm">Account Session</h4>
+            <h4 className="font-bold text-content text-sm">{t.accountSession || "Account Session"}</h4>
             <p className="text-xs text-content-muted mt-0.5">
               {user?.email ? `Signed in as ${user.email}` : isSupabaseConfigured ? "Connected to Supabase Auth" : "Guest Mode"}
             </p>
@@ -150,10 +174,10 @@ export default function SettingsPage() {
             type="button"
             onClick={handleLogout}
             disabled={loggingOut}
-            className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 font-semibold text-xs rounded-xl border border-red-200 transition-colors flex items-center gap-1.5 disabled:opacity-50"
+            className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 font-semibold text-xs rounded-xl border border-red-200 transition-colors flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
           >
             <span className="material-symbols-outlined text-base">logout</span>
-            <span>{loggingOut ? "Signing Out..." : "Sign Out"}</span>
+            <span>{loggingOut ? "Signing Out..." : (t.signOut || "Sign Out")}</span>
           </button>
         </div>
 

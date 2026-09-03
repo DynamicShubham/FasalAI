@@ -11,11 +11,11 @@ import { useFarm } from "../../context/FarmContext";
 import { fetchApi } from "../../lib/api";
 import DashboardSkeleton from "../../components/ui/DashboardSkeleton";
 
-function getTimeGreeting() {
+function getTimeGreeting(t) {
   const hour = new Date().getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
-  return "Good evening";
+  if (hour < 12) return t?.greetingMorning || "Good morning";
+  if (hour < 17) return t?.greetingAfternoon || "Good afternoon";
+  return t?.greetingEvening || "Good evening";
 }
 
 export default function DashboardPage() {
@@ -172,7 +172,7 @@ export default function DashboardPage() {
                   <span>{farmData.acreage} Acres</span>
                 </div>
                 <h1 className="font-display text-2xl md:text-3xl font-bold text-content">
-                  {getTimeGreeting()}, {farmerDisplayName}
+                  {getTimeGreeting(t)}, {farmerDisplayName}
                 </h1>
                 <p className="text-xs md:text-sm text-content-muted mt-0.5">
                   Here is what you need to know about your farm today.
@@ -184,7 +184,7 @@ export default function DashboardPage() {
                 className="w-full sm:w-auto px-5 py-2.5 bg-brand-900 hover:bg-brand-950 text-white font-semibold text-xs md:text-sm rounded-full shadow-sm flex items-center justify-center gap-2 transition-colors"
               >
                 <span className="material-symbols-outlined text-[18px]">photo_camera</span>
-                Check Crop Disease
+                {t.scanButton || "Check Crop Disease"}
               </Link>
             </section>
 
@@ -248,7 +248,7 @@ export default function DashboardPage() {
                 <div className="flex justify-between items-center pb-2 border-b border-stone-100">
                   <div className="flex items-center gap-2">
                     <span className="material-symbols-outlined text-brand-800 dark:text-emerald-400">checklist</span>
-                    <h3 className="font-display text-lg font-bold text-content">Today&apos;s Farm Plan</h3>
+                    <h3 className="font-display text-lg font-bold text-content">{t.todaysPlan || "Today's Farm Plan"}</h3>
                   </div>
                   <span className="text-xs font-semibold text-content-muted bg-stone-100 dark:bg-stone-800 px-2.5 py-1 rounded-full">
                     {dailyPlan?.completionRate || "Active"}

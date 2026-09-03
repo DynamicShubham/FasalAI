@@ -10,11 +10,11 @@ export default function BottomNav() {
   const { t } = useLanguage();
 
   const navItems = [
-    { href: "/dashboard", label: "Home", icon: "home" },
-    { href: "/my-farm", label: "My Farm", icon: "potted_plant" },
-    { href: "/scanner", label: "Plant Doctor", icon: "photo_camera", isHighlight: true },
-    { href: "/market", label: "Mandi", icon: "storefront" },
-    { href: "/assistant", label: "Advisor", icon: "support_agent" },
+    { href: "/dashboard", label: t.navHome || "Home", icon: "home" },
+    { href: "/my-farm", label: t.navMyFarm || "My Farm", icon: "potted_plant" },
+    { href: "/scanner", label: t.navScanner || "Plant Doctor", icon: "photo_camera", isHighlight: true },
+    { href: "/market", label: t.navMarket || "Mandi", icon: "storefront" },
+    { href: "/assistant", label: t.navAssistant || "Advisor", icon: "support_agent" },
   ];
 
   return (

@@ -6,8 +6,10 @@ import Sidebar from "../../components/layout/Sidebar";
 import Header from "../../components/layout/Header";
 import BottomNav from "../../components/layout/BottomNav";
 import { fetchApi } from "../../lib/api";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function AlertsPage() {
+  const { t } = useLanguage();
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -35,14 +37,14 @@ export default function AlertsPage() {
         <section className="bg-white p-5 md:p-6 rounded-2xl border border-stone-200/80 shadow-subtle flex justify-between items-center">
           <div>
             <h1 className="font-display text-2xl md:text-3xl font-bold text-content">
-              Field Alerts & Notices
+              {t.alertsTitle || "Field Alerts & Notices"}
             </h1>
             <p className="text-xs md:text-sm text-content-muted mt-0.5">
-              Important weather, pest, and market price updates for your area
+              {t.alertsDesc || "Important weather, pest, and market price updates for your area"}
             </p>
           </div>
           <span className="text-xs font-semibold bg-stone-100 px-3 py-1 rounded-full text-content-muted">
-            {alerts.length} Active
+            {alerts.length} {t.activeAlerts || "Active"}
           </span>
         </section>
 
