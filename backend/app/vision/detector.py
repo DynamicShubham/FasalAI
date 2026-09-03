@@ -495,12 +495,34 @@ class CropDiseaseDetector:
                     detected_class = self.encoder.inverse_transform([pred_idx])[0]
                     confidence = float(np.max(probabilities))
                 
-                # Format confidence for realistic presentation
-                confidence = min(0.98, max(0.72, confidence))
+                # Check confidence threshold (must be at least 45% confident)
+                CONFIDENCE_THRESHOLD = 0.45
+                if confidence < CONFIDENCE_THRESHOLD:
+                    return {
+                        "success": False,
+                        "status": "LOW_CONFIDENCE",
+                        "isTrainedModel": True,
+                        "modelArchitecture": "OpenCV Multi-Space Visual Feature Extractor + RandomForest",
+                        "trainingDataset": "PlantVillage Crop Disease Dataset (7,250 samples, 29 classes)",
+                        "validationAccuracy": f"{self.metadata.get('validation_accuracy', 0.9269) * 100:.1f}% (Benchmark Validation)",
+                        "confidenceScore": round(confidence, 3),
+                        "confidencePercentage": f"{int(confidence * 100)}%",
+                        "diseaseName": None,
+                        "message": "Unable to make a reliable diagnosis from this image. The leaf features do not match trained pathology patterns with sufficient confidence. Please retake the photo with clear lighting and focus directly on the affected leaf area.",
+                        "boundingBoxes": [],
+                        "disclaimer": "Laboratory validation accuracy differs from ambient field conditions. When diagnosis is uncertain, physical inspection by a certified agronomist is strongly recommended."
+                    }
             else:
-                # Fallback heuristic if model is not loaded
-                detected_class = "Tomato - Early Blight"
-                confidence = 0.88
+                # Model file was not loaded: return explicit unavailable state, NEVER default to Early Blight
+                return {
+                    "success": False,
+                    "status": "MODEL_UNAVAILABLE",
+                    "isTrainedModel": False,
+                    "diseaseName": None,
+                    "confidenceScore": 0,
+                    "message": "Computer vision pathology model is currently unavailable on this server instance.",
+                    "error": "Model weights or feature encoder not initialized."
+                }
                 
             # Locate lesion contours for visual bounding boxes
             boxes = detect_lesion_bounding_boxes(img_bgr)
@@ -519,9 +541,11 @@ class CropDiseaseDetector:
             
             return {
                 "success": True,
+                "status": "SUCCESS",
                 "isTrainedModel": True,
                 "modelArchitecture": "OpenCV Multi-Space Visual Feature Extractor + RandomForest",
-                "modelAccuracy": f"{self.metadata.get('validation_accuracy', 0.9269) * 100:.1f}%",
+                "trainingDataset": "PlantVillage Crop Disease Dataset (7,250 samples, 29 classes)",
+                "validationAccuracy": f"{self.metadata.get('validation_accuracy', 0.9269) * 100:.1f}% (Benchmark Validation)",
                 "diseaseClass": detected_class,
                 "diseaseName": details["diseaseName"],
                 "crop": details["crop"],
@@ -534,7 +558,8 @@ class CropDiseaseDetector:
                 "chemicalRemedy": details["chemicalRemedy"],
                 "prevention": details["prevention"],
                 "boundingBoxes": boxes,
-                "imageResolution": f"{w}x{h}"
+                "imageResolution": f"{w}x{h}",
+                "disclaimer": "Benchmark validation accuracy was measured under controlled dataset conditions. Field accuracy varies under ambient lighting, shadows, dust, and multi-pathogen complexes. Verify with local KVK agronomist before purchasing chemical pesticides."
             }
             
         except Exception as e:

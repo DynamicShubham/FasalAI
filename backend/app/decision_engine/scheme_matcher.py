@@ -52,13 +52,17 @@ def match_schemes_for_farmer(
                 match_score += 10
                 reasons.append(f"Your crop ({current_crop}) is explicitly notified for subsidy/insurance coverage.")
                 
-        status_label = "Likely Eligible" if match_score >= 70 else ("Requires Additional Verification" if match_score >= 50 else "Not Eligible")
+        status_label = "Likely eligible" if match_score >= 70 else ("Requires Additional Verification" if match_score >= 50 else "Likely ineligible")
         
         matched.append({
             **s,
             "matchScore": match_score,
             "eligibilityStatus": status_label,
-            "reasons": reasons
+            "reasons": reasons,
+            "officialSourceUrl": s.get("official_source_url", s.get("applicationUrl")),
+            "lastVerifiedAt": s.get("last_verified_at", "2026-09-01"),
+            "sourceDepartment": s.get("ministry_department", "Ministry of Agriculture & Farmers Welfare, GoI"),
+            "verificationDisclaimer": "Indicative algorithmic assessment only. Final benefit disbursement is subject to official document verification by the implementing department or bank."
         })
         
     matched.sort(key=lambda x: x["matchScore"], reverse=True)

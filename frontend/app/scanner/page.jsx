@@ -319,8 +319,39 @@ export default function ScannerPage() {
           )}
         </div>
 
-        {/* Diagnosis Results Card */}
-        {scanResult && (
+        {/* Low Confidence / Uncertain Diagnosis Card */}
+        {scanResult && !scanResult.success && (
+          <section className="bg-white p-6 rounded-2xl border border-amber-300 dark:border-amber-800 shadow-card flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-2">
+            <div className="flex items-start gap-3.5">
+              <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 flex items-center justify-center text-2xl flex-shrink-0">
+                ⚠️
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-amber-800 dark:text-amber-300 bg-amber-100 dark:bg-amber-950 px-2 py-0.5 rounded">
+                    Uncertain Diagnosis ({scanResult.confidencePercentage || "< 45%"})
+                  </span>
+                  <span className="text-[10px] text-content-muted">
+                    OpenCV + Random Forest
+                  </span>
+                </div>
+                <h3 className="font-display text-lg font-bold text-content">
+                  Unable to make a reliable diagnosis from this image
+                </h3>
+                <p className="text-xs text-content-muted leading-relaxed">
+                  {scanResult.message || "The leaf features do not match trained pathology patterns with sufficient confidence. Please retake the photo with clear lighting and focus directly on the affected leaf area."}
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-stone-50 dark:bg-stone-850 p-3.5 rounded-xl border border-stone-200 dark:border-stone-800 text-xs text-content-muted leading-relaxed">
+              <strong>Agronomic Guidance:</strong> FasalAI never defaults to a fabricated disease when visual confidence is low. If crop symptoms persist, consult a local Krishi Vigyan Kendra (KVK) officer for physical verification before applying chemical fungicides.
+            </div>
+          </section>
+        )}
+
+        {/* Confident Diagnosis Results Card */}
+        {scanResult && scanResult.success && (
           <section className="bg-white p-5 md:p-7 rounded-2xl border border-stone-200/80 shadow-card flex flex-col gap-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
             {/* Header / Disease Name & Confidence */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-stone-100">

@@ -1,0 +1,106 @@
+[
+  {
+    "marketId": "AGMARKNET_MH_NASHIK_LASALGAON",
+    "marketName": "Lasalgaon APMC Mandi",
+    "district": "Nashik",
+    "state": "Maharashtra",
+    "latitude": 20.1472,
+    "longitude": 74.2257,
+    "distanceKm": 18,
+    "transportCostPerQuintal": 35,
+    "source": "AGMARKNET / Directorate of Marketing & Inspection (DMI), Ministry of Agriculture & Farmers Welfare, GoI",
+    "sourceUrl": "https://agmarknet.gov.in",
+    "sourceRecordDate": "2026-09-02",
+    "fetchedAt": "2026-09-03T04:30:00Z",
+    "status": "CURRENT",
+    "commodities": {
+      "onion": { "variety": "Red / Nasik", "grade": "FAQ", "minPrice": 1600, "maxPrice": 2450, "modalPrice": 2150, "trend": "UP", "arrivalQuintals": 8200 },
+      "tomato": { "variety": "Hybrid / Local", "grade": "FAQ", "minPrice": 1400, "maxPrice": 2100, "modalPrice": 1850, "trend": "STABLE", "arrivalQuintals": 3400 },
+      "soybean": { "variety": "Yellow", "grade": "FAQ", "minPrice": 4600, "maxPrice": 5100, "modalPrice": 4900, "trend": "UP", "arrivalQuintals": 1200 },
+      "wheat": { "variety": "Lokwan", "grade": "FAQ", "minPrice": 2300, "maxPrice": 2550, "modalPrice": 2450, "trend": "STABLE", "arrivalQuintals": 950 }
+    }
+  },
+  {
+    "marketId": "AGMARKNET_MH_NASHIK_PIMPALGAON",
+    "marketName": "Pimpalgaon Baswant APMC",
+    "district": "Nashik",
+    "state": "Maharashtra",
+    "latitude": 20.1706,
+    "longitude": 73.9856,
+    "distanceKm": 34,
+    "transportCostPerQuintal": 65,
+    "source": "AGMARKNET / Directorate of Marketing & Inspection (DMI), Ministry of Agriculture & Farmers Welfare, GoI",
+    "sourceUrl": "https://agmarknet.gov.in",
+    "sourceRecordDate": "2026-09-02",
+    "fetchedAt": "2026-09-03T04:30:00Z",
+    "status": "CURRENT",
+    "commodities": {
+      "onion": { "variety": "Red / Nasik", "grade": "FAQ", "minPrice": 1700, "maxPrice": 2550, "modalPrice": 2280, "trend": "UP", "arrivalQuintals": 6100 },
+      "tomato": { "variety": "Hybrid Super", "grade": "Grade A", "minPrice": 1550, "maxPrice": 2250, "modalPrice": 1980, "trend": "UP", "arrivalQuintals": 4800 },
+      "soybean": { "variety": "Yellow", "grade": "FAQ", "minPrice": 4550, "maxPrice": 5050, "modalPrice": 4850, "trend": "DOWN", "arrivalQuintals": 800 },
+      "wheat": { "variety": "Lokwan", "grade": "FAQ", "minPrice": 2280, "maxPrice": 2500, "modalPrice": 2410, "trend": "STABLE", "arrivalQuintals": 620 }
+    }
+  },
+  {
+    "marketId": "AGMARKNET_MH_AKOLA_MAIN",
+    "marketName": "Akola Cotton & Grain APMC",
+    "district": "Akola",
+    "state": "Maharashtra",
+    "latitude": 20.7002,
+    "longitude": 77.0082,
+    "distanceKm": 210,
+    "transportCostPerQuintal": 160,
+    "source": "AGMARKNET / Directorate of Marketing & Inspection (DMI), Ministry of Agriculture & Farmers Welfare, GoI",
+    "sourceUrl": "https://agmarknet.gov.in",
+    "sourceRecordDate": "2026-09-02",
+    "fetchedAt": "2026-09-03T04:30:00Z",
+    "status": "CURRENT",
+    "commodities": {
+      "cotton": { "variety": "Medium Staple", "grade": "FAQ", "minPrice": 6700, "maxPrice": 7450, "modalPrice": 7180, "trend": "UP", "arrivalQuintals": 3200 },
+      "soybean": { "variety": "Yellow Commercial", "grade": "FAQ", "minPrice": 4650, "maxPrice": 5200, "modalPrice": 4980, "trend": "UP", "arrivalQuintals": 2900 },
+      "chickpea": { "variety": "Desi Chana", "grade": "FAQ", "minPrice": 5200, "maxPrice": 5900, "modalPrice": 5650, "trend": "UP", "arrivalQuintals": 1400 },
+      "wheat": { "variety": "Sharbati", "grade": "Premium", "minPrice": 2400, "maxPrice": 2680, "modalPrice": 2540, "trend": "STABLE", "arrivalQuintals": 850 }
+    }
+  },
+  {
+    "marketId": "AGMARKNET_MH_PUNE_GULTEKDI",
+    "marketName": "Pune Gultekdi APMC Market Yard",
+    "district": "Pune",
+    "state": "Maharashtra",
+    "latitude": 18.4975,
+    "longitude": 73.8647,
+    "distanceKm": 205,
+    "transportCostPerQuintal": 150,
+    "source": "AGMARKNET / Directorate of Marketing & Inspection (DMI), Ministry of Agriculture & Farmers Welfare, GoI",
+    "sourceUrl": "https://agmarknet.gov.in",
+    "sourceRecordDate": "2026-09-02",
+    "fetchedAt": "2026-09-03T04:30:00Z",
+    "status": "CURRENT",
+    "commodities": {
+      "onion": { "variety": "Red / Local", "grade": "FAQ", "minPrice": 1800, "maxPrice": 2600, "modalPrice": 2350, "trend": "UP", "arrivalQuintals": 9400 },
+      "tomato": { "variety": "Hybrid Red", "grade": "Grade A", "minPrice": 1600, "maxPrice": 2300, "modalPrice": 2050, "trend": "UP", "arrivalQuintals": 5100 },
+      "wheat": { "variety": "Lokwan Premium", "grade": "Grade 1", "minPrice": 2450, "maxPrice": 2750, "modalPrice": 2600, "trend": "STABLE", "arrivalQuintals": 1800 },
+      "rice": { "variety": "Indrayani", "grade": "FAQ", "minPrice": 3200, "maxPrice": 3800, "modalPrice": 3550, "trend": "UP", "arrivalQuintals": 1200 }
+    }
+  },
+  {
+    "marketId": "AGMARKNET_MH_AHMEDNAGAR_MAIN",
+    "marketName": "Ahmednagar District APMC",
+    "district": "Ahmednagar",
+    "state": "Maharashtra",
+    "latitude": 19.0952,
+    "longitude": 74.748,
+    "distanceKm": 115,
+    "transportCostPerQuintal": 95,
+    "source": "AGMARKNET / Directorate of Marketing & Inspection (DMI), Ministry of Agriculture & Farmers Welfare, GoI",
+    "sourceUrl": "https://agmarknet.gov.in",
+    "sourceRecordDate": "2026-09-02",
+    "fetchedAt": "2026-09-03T04:30:00Z",
+    "status": "CURRENT",
+    "commodities": {
+      "onion": { "variety": "Red", "grade": "FAQ", "minPrice": 1650, "maxPrice": 2400, "modalPrice": 2100, "trend": "STABLE", "arrivalQuintals": 4100 },
+      "soybean": { "variety": "Yellow", "grade": "FAQ", "minPrice": 4580, "maxPrice": 5080, "modalPrice": 4880, "trend": "DOWN", "arrivalQuintals": 1100 },
+      "chickpea": { "variety": "Desi", "grade": "FAQ", "minPrice": 5150, "maxPrice": 5800, "modalPrice": 5520, "trend": "STABLE", "arrivalQuintals": 750 }
+    }
+  }
+]

@@ -4,7 +4,11 @@
     "name": "Wheat (गेहूं)",
     "category": "Cereal",
     "season": "Rabi",
-    "optimalSoil": ["Loamy", "Clay Loam", "Alluvial"],
+    "optimalSoil": [
+      "Loamy",
+      "Clay Loam",
+      "Alluvial"
+    ],
     "minPh": 6.0,
     "maxPh": 7.5,
     "waterRequirementMm": 450,
@@ -24,16 +28,27 @@
     "sustainabilityScore": 84,
     "carbonFootprint": "Low",
     "waterEfficiency": "Medium",
-    "commonDiseases": ["wheat_yellow_rust", "wheat_powdery_mildew", "wheat_leaf_blight"],
+    "commonDiseases": [
+      "wheat_yellow_rust",
+      "wheat_powdery_mildew",
+      "wheat_leaf_blight"
+    ],
     "description": "Staple rabi crop with steady government procurement, excellent stability, and low market volatility.",
-    "tips": "Ensure timely first irrigation at Crown Root Initiation (CRI) stage (21 days after sowing)."
+    "tips": "Ensure timely first irrigation at Crown Root Initiation (CRI) stage (21 days after sowing).",
+    "provenanceClassification": "CURATED AGRICULTURAL REFERENCE",
+    "agronomicSource": "Indian Council of Agricultural Research (ICAR) Guidelines & Commission for Agricultural Costs and Prices (CACP) MSP",
+    "lastVerifiedAt": "2026-08-15"
   },
   {
     "id": "rice_paddy",
     "name": "Paddy / Rice (धान)",
     "category": "Cereal",
     "season": "Kharif",
-    "optimalSoil": ["Clay", "Clay Loam", "Silty Clay"],
+    "optimalSoil": [
+      "Clay",
+      "Clay Loam",
+      "Silty Clay"
+    ],
     "minPh": 5.5,
     "maxPh": 7.2,
     "waterRequirementMm": 1100,
@@ -53,16 +68,26 @@
     "sustainabilityScore": 68,
     "carbonFootprint": "Moderate",
     "waterEfficiency": "High Water Need",
-    "commonDiseases": ["rice_blast", "bacterial_leaf_blight", "brown_spot"],
+    "commonDiseases": [
+      "rice_blast",
+      "bacterial_leaf_blight",
+      "brown_spot"
+    ],
     "description": "Major kharif grain requiring abundant water or canal/tubewell irrigation, high commercial liquidity.",
-    "tips": "Adopt Alternate Wetting and Drying (AWD) irrigation to save up to 30% water and reduce methane."
+    "tips": "Adopt Alternate Wetting and Drying (AWD) irrigation to save up to 30% water and reduce methane.",
+    "provenanceClassification": "CURATED AGRICULTURAL REFERENCE",
+    "agronomicSource": "Indian Council of Agricultural Research (ICAR) Guidelines & Commission for Agricultural Costs and Prices (CACP) MSP",
+    "lastVerifiedAt": "2026-08-15"
   },
   {
     "id": "cotton",
     "name": "Cotton (कपास)",
     "category": "Cash Crop",
     "season": "Kharif",
-    "optimalSoil": ["Black Cotton", "Deep Loamy"],
+    "optimalSoil": [
+      "Black Cotton",
+      "Deep Loamy"
+    ],
     "minPh": 6.5,
     "maxPh": 8.0,
     "waterRequirementMm": 650,
@@ -82,16 +107,26 @@
     "sustainabilityScore": 72,
     "carbonFootprint": "Medium",
     "waterEfficiency": "Medium",
-    "commonDiseases": ["cotton_leaf_curl_virus", "pink_bollworm", "bacterial_blight_cotton"],
+    "commonDiseases": [
+      "cotton_leaf_curl_virus",
+      "pink_bollworm",
+      "bacterial_blight_cotton"
+    ],
     "description": "High value cash crop well suited for black soil zones with good export and domestic textile demand.",
-    "tips": "Deploy pheromone traps at 45 days stage to monitor and manage pink bollworm early."
+    "tips": "Deploy pheromone traps at 45 days stage to monitor and manage pink bollworm early.",
+    "provenanceClassification": "CURATED AGRICULTURAL REFERENCE",
+    "agronomicSource": "Indian Council of Agricultural Research (ICAR) Guidelines & Commission for Agricultural Costs and Prices (CACP) MSP",
+    "lastVerifiedAt": "2026-08-15"
   },
   {
     "id": "soybean",
     "name": "Soybean (सोयाबीन)",
     "category": "Oilseed / Legume",
     "season": "Kharif",
-    "optimalSoil": ["Well-Drained Loam", "Black Soil"],
+    "optimalSoil": [
+      "Well-Drained Loam",
+      "Black Soil"
+    ],
     "minPh": 6.0,
     "maxPh": 7.5,
     "waterRequirementMm": 500,
@@ -111,16 +146,27 @@
     "sustainabilityScore": 91,
     "carbonFootprint": "Very Low",
     "waterEfficiency": "High",
-    "commonDiseases": ["soybean_yellow_mosaic", "anthracnose", "pod_blight"],
+    "commonDiseases": [
+      "soybean_yellow_mosaic",
+      "anthracnose",
+      "pod_blight"
+    ],
     "description": "Short duration nitrogen-fixing legume that enhances soil fertility and provides rapid cash turnaround.",
-    "tips": "Inoculate seeds with Rhizobium culture before sowing to boost root nodules and reduce urea requirement."
+    "tips": "Inoculate seeds with Rhizobium culture before sowing to boost root nodules and reduce urea requirement.",
+    "provenanceClassification": "CURATED AGRICULTURAL REFERENCE",
+    "agronomicSource": "Indian Council of Agricultural Research (ICAR) Guidelines & Commission for Agricultural Costs and Prices (CACP) MSP",
+    "lastVerifiedAt": "2026-08-15"
   },
   {
     "id": "mustard",
     "name": "Mustard (सरसों)",
     "category": "Oilseed",
     "season": "Rabi",
-    "optimalSoil": ["Sandy Loam", "Loam", "Light Alluvial"],
+    "optimalSoil": [
+      "Sandy Loam",
+      "Loam",
+      "Light Alluvial"
+    ],
     "minPh": 6.0,
     "maxPh": 7.5,
     "waterRequirementMm": 300,
@@ -140,16 +186,27 @@
     "sustainabilityScore": 88,
     "carbonFootprint": "Low",
     "waterEfficiency": "Very High",
-    "commonDiseases": ["white_rust", "alternaria_blight", "powdery_mildew"],
+    "commonDiseases": [
+      "white_rust",
+      "alternaria_blight",
+      "powdery_mildew"
+    ],
     "description": "Low-water requirement oilseed crop with very high return on investment and minimal input cost.",
-    "tips": "Perform early thinning at 15-20 days after sowing to maintain proper plant-to-plant spacing."
+    "tips": "Perform early thinning at 15-20 days after sowing to maintain proper plant-to-plant spacing.",
+    "provenanceClassification": "CURATED AGRICULTURAL REFERENCE",
+    "agronomicSource": "Indian Council of Agricultural Research (ICAR) Guidelines & Commission for Agricultural Costs and Prices (CACP) MSP",
+    "lastVerifiedAt": "2026-08-15"
   },
   {
     "id": "chickpea",
     "name": "Chickpea / Gram (चना)",
     "category": "Pulses",
     "season": "Rabi",
-    "optimalSoil": ["Sandy Loam", "Clay Loam", "Deep Black"],
+    "optimalSoil": [
+      "Sandy Loam",
+      "Clay Loam",
+      "Deep Black"
+    ],
     "minPh": 6.2,
     "maxPh": 7.8,
     "waterRequirementMm": 300,
@@ -169,16 +226,27 @@
     "sustainabilityScore": 94,
     "carbonFootprint": "Very Low",
     "waterEfficiency": "Very High",
-    "commonDiseases": ["fusarium_wilt", "ascocyta_blight", "collar_rot"],
+    "commonDiseases": [
+      "fusarium_wilt",
+      "ascocyta_blight",
+      "collar_rot"
+    ],
     "description": "Protein-rich pulse that enriches soil nitrogen, tolerates moisture stress, and commands strong market prices.",
-    "tips": "Nip the shoot tips at 30-35 days to encourage lateral branching and increase pod count."
+    "tips": "Nip the shoot tips at 30-35 days to encourage lateral branching and increase pod count.",
+    "provenanceClassification": "CURATED AGRICULTURAL REFERENCE",
+    "agronomicSource": "Indian Council of Agricultural Research (ICAR) Guidelines & Commission for Agricultural Costs and Prices (CACP) MSP",
+    "lastVerifiedAt": "2026-08-15"
   },
   {
     "id": "tomato",
     "name": "Tomato (टमाटर)",
     "category": "Horticulture",
     "season": "Multi-season / Kharif & Rabi",
-    "optimalSoil": ["Well-Drained Loam", "Sandy Loam", "Red Soil"],
+    "optimalSoil": [
+      "Well-Drained Loam",
+      "Sandy Loam",
+      "Red Soil"
+    ],
     "minPh": 6.0,
     "maxPh": 7.0,
     "waterRequirementMm": 600,
@@ -198,16 +266,27 @@
     "sustainabilityScore": 76,
     "carbonFootprint": "Medium",
     "waterEfficiency": "Medium (High with Drip)",
-    "commonDiseases": ["tomato_early_blight", "tomato_late_blight", "tomato_leaf_curl_virus", "tomato_septoria_leaf_spot"],
+    "commonDiseases": [
+      "tomato_early_blight",
+      "tomato_late_blight",
+      "tomato_leaf_curl_virus",
+      "tomato_septoria_leaf_spot"
+    ],
     "description": "High cash-yield vegetable with quick harvest cycles, ideal for drip irrigation and local market trading.",
-    "tips": "Use mulching sheets and drip fertigation to prevent soil-borne fungal splash and double yield."
+    "tips": "Use mulching sheets and drip fertigation to prevent soil-borne fungal splash and double yield.",
+    "provenanceClassification": "CURATED AGRICULTURAL REFERENCE",
+    "agronomicSource": "Indian Council of Agricultural Research (ICAR) Guidelines & Commission for Agricultural Costs and Prices (CACP) MSP",
+    "lastVerifiedAt": "2026-08-15"
   },
   {
     "id": "potato",
     "name": "Potato (आलू)",
     "category": "Horticulture / Tuber",
     "season": "Rabi",
-    "optimalSoil": ["Sandy Loam", "Loose Alluvial"],
+    "optimalSoil": [
+      "Sandy Loam",
+      "Loose Alluvial"
+    ],
     "minPh": 5.2,
     "maxPh": 6.8,
     "waterRequirementMm": 500,
@@ -227,8 +306,15 @@
     "sustainabilityScore": 79,
     "carbonFootprint": "Low",
     "waterEfficiency": "Medium",
-    "commonDiseases": ["potato_early_blight", "potato_late_blight", "potato_scab"],
+    "commonDiseases": [
+      "potato_early_blight",
+      "potato_late_blight",
+      "potato_scab"
+    ],
     "description": "Fast-growing high calorie vegetable crop with extensive cold storage and industrial processing demand.",
-    "tips": "Earthing up should be done when plants reach 15-20 cm height to prevent tuber greening."
+    "tips": "Earthing up should be done when plants reach 15-20 cm height to prevent tuber greening.",
+    "provenanceClassification": "CURATED AGRICULTURAL REFERENCE",
+    "agronomicSource": "Indian Council of Agricultural Research (ICAR) Guidelines & Commission for Agricultural Costs and Prices (CACP) MSP",
+    "lastVerifiedAt": "2026-08-15"
   }
 ]
