@@ -100,14 +100,48 @@ export function FarmProvider({ children }) {
   };
 
   const saveFarmParcel = async (parcelProps) => {
-    if (!isSupabaseConfigured || !supabase || !farmerProfile?.id) {
-      throw new Error("Farmer profile required to save farm parcels.");
+    if (!isSupabaseConfigured || !supabase) {
+      throw new Error("Supabase is not configured.");
     }
 
     try {
       setLoading(true);
+      let targetFarmerId = farmerProfile?.id;
+
+      if (!targetFarmerId) {
+        const { data: { session: activeSession } } = await supabase.auth.getSession();
+        if (!activeSession?.user) {
+          throw new Error("Farmer profile required to save farm parcels.");
+        }
+
+        const { data: existingFarmer } = await supabase
+          .from("farmers")
+          .select("id")
+          .eq("auth_user_id", activeSession.user.id)
+          .maybeSingle();
+
+        if (existingFarmer?.id) {
+          targetFarmerId = existingFarmer.id;
+        } else {
+          const { data: newFarmer, error: farmerErr } = await supabase
+            .from("farmers")
+            .upsert({
+              auth_user_id: activeSession.user.id,
+              full_name: activeSession.user.user_metadata?.full_name || "Farmer",
+              email: activeSession.user.email || "",
+              state: farmerProfile?.state || "Maharashtra",
+              district: farmerProfile?.district || "Nashik",
+            }, { onConflict: "auth_user_id" })
+            .select("id")
+            .single();
+
+          if (farmerErr) throw farmerErr;
+          targetFarmerId = newFarmer?.id;
+        }
+      }
+
       const payload = {
-        farmer_id: farmerProfile.id,
+        farmer_id: targetFarmerId,
         parcel_name: parcelProps.farmName || "Primary Farm",
         acreage: parseFloat(parcelProps.acreage) || 1.0,
         soil_type: parcelProps.soilType || "Alluvial",

@@ -41,6 +41,42 @@ export function AuthProvider({ children }) {
         };
         setFarmerProfile(formatted);
         return formatted;
+      } else {
+        // Auto-provision an initial farmer record so foreign keys in other tables never fail
+        const { data: { session: activeSession } } = await supabase.auth.getSession();
+        const userObj = activeSession?.user;
+        const initialName = userObj?.user_metadata?.full_name || userObj?.email?.split("@")[0] || "Farmer";
+        const { data: inserted } = await supabase
+          .from("farmers")
+          .upsert({
+            auth_user_id: authUserId,
+            full_name: initialName,
+            email: userObj?.email || "",
+            state: "Maharashtra",
+            district: "Nashik",
+            language: "English",
+            experience_years: 5,
+            updated_at: new Date().toISOString(),
+          }, { onConflict: "auth_user_id" })
+          .select()
+          .maybeSingle();
+
+        if (inserted) {
+          const formatted = {
+            id: inserted.id,
+            name: inserted.full_name || initialName,
+            email: inserted.email || "",
+            phone: inserted.phone_number || "",
+            state: inserted.state || "",
+            district: inserted.district || "",
+            language: inserted.language || "English",
+            experienceYears: inserted.experience_years || 5,
+            authUserId: inserted.auth_user_id,
+            hasProfile: true,
+          };
+          setFarmerProfile(formatted);
+          return formatted;
+        }
       }
     } catch (err) {
       console.warn("Failed to load farmer profile from Supabase:", err);
@@ -117,16 +153,37 @@ export function AuthProvider({ children }) {
       throw new Error("Supabase is not configured. Please supply NEXT_PUBLIC_SUPABASE_URL.");
     }
     try {
+      const nameStr = typeof fullName === "string" ? fullName : (fullName?.fullName || fullName?.name || "");
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
-            full_name: fullName,
+            full_name: nameStr,
           },
         },
       });
       if (error) throw error;
+
+      // If confirm email is disabled on Supabase, a session is returned immediately
+      if (data?.session?.user) {
+        try {
+          await supabase.from("farmers").upsert({
+            auth_user_id: data.session.user.id,
+            full_name: nameStr || "Farmer",
+            email: data.session.user.email || email,
+            state: "Maharashtra",
+            district: "Nashik",
+            language: "English",
+            experience_years: 5,
+            updated_at: new Date().toISOString(),
+          }, { onConflict: "auth_user_id" });
+          await loadFarmerProfile(data.session.user.id);
+        } catch (initErr) {
+          console.warn("Initial farmer profile upsert note:", initErr);
+        }
+      }
+
       return data;
     } catch (err) {
       setAuthError(err.message);
@@ -150,7 +207,13 @@ export function AuthProvider({ children }) {
         password,
       });
       if (error) throw error;
-      return data;
+
+      let profile = null;
+      if (data?.session?.user) {
+        setSession(data.session);
+        profile = await loadFarmerProfile(data.session.user.id);
+      }
+      return { data, profile };
     } catch (err) {
       setAuthError(err.message);
       throw err;
@@ -187,15 +250,28 @@ export function AuthProvider({ children }) {
 
   // Save/Upsert Farmer Profile to Supabase
   const saveFarmerProfile = async (profileData) => {
-    if (!isSupabaseConfigured || !supabase || !session?.user) {
+    if (!isSupabaseConfigured || !supabase) {
+      throw new Error("Supabase is not configured.");
+    }
+
+    let activeUserId = session?.user?.id;
+    let activeUserEmail = session?.user?.email;
+
+    if (!activeUserId) {
+      const { data: { session: activeSession } } = await supabase.auth.getSession();
+      activeUserId = activeSession?.user?.id;
+      activeUserEmail = activeSession?.user?.email;
+    }
+
+    if (!activeUserId) {
       throw new Error("Authentication required to save profile.");
     }
 
     try {
       const payload = {
-        auth_user_id: session.user.id,
+        auth_user_id: activeUserId,
         full_name: profileData.name || profileData.fullName || user?.name || "Farmer",
-        email: session.user.email || "",
+        email: activeUserEmail || profileData.email || "",
         phone_number: profileData.phone || profileData.phoneNumber || "",
         state: profileData.state || "",
         district: profileData.district || "",

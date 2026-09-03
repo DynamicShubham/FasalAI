@@ -42,15 +42,38 @@ export default function LoginPage() {
 
     try {
       if (authMode === "SIGNUP") {
-        await signUpWithEmail(email, password, { fullName });
-        setSuccessMsg("Account created! You can now sign in.");
-        setAuthMode("SIGNIN");
+        const res = await signUpWithEmail(email, password, fullName);
+        if (res?.session) {
+          setSuccessMsg("Account created! Redirecting to setup...");
+          router.push("/onboarding");
+        } else {
+          setSuccessMsg(
+            "Account created! Please check your email inbox to verify your address before signing in (or disable 'Confirm email' in Supabase Auth settings)."
+          );
+          setAuthMode("SIGNIN");
+        }
       } else {
-        await signInWithEmail(email, password);
-        router.push("/dashboard");
+        const { profile } = (await signInWithEmail(email, password)) || {};
+        if (profile?.hasProfile && profile?.district) {
+          router.push("/dashboard");
+        } else {
+          router.push("/onboarding");
+        }
       }
     } catch (err) {
-      setErrorMsg(err.message || "Authentication failed. Please check your credentials.");
+      const rawMsg = err.message || "";
+      const lower = rawMsg.toLowerCase();
+      if (lower.includes("email not confirmed")) {
+        setErrorMsg(
+          "Email not confirmed yet! Please click the confirmation link sent to your inbox, or disable 'Confirm email' under Authentication ➔ Providers ➔ Email in your Supabase project."
+        );
+      } else if (lower.includes("invalid login credentials") || lower.includes("invalid_grant")) {
+        setErrorMsg(
+          "Invalid email or password. If you just registered, your Supabase project may require confirming your email first."
+        );
+      } else {
+        setErrorMsg(rawMsg || "Authentication failed. Please check your credentials.");
+      }
     } finally {
       setLoading(false);
     }
