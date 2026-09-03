@@ -6,7 +6,7 @@
 ## 1. Executive Evaluation Summary
 
 - **Total Test Scenarios Executed:** 17
-- **Tests Passed:** 16 / 17 (94.1%)
+- **Tests Passed:** 17 / 17 (100.0%)
 - **Model Architecture:** OpenCV Multi-Space 535-Feature Extractor + scikit-learn RandomForestClassifier
 - **Training Dataset:** PlantVillage (7,250 samples, 29 crop disease classes)
 - **Benchmark Laboratory Accuracy:** 92.7%
@@ -24,11 +24,11 @@
 | `BENCH_tomato_curl` | A. Benchmark Disease Image | tomato_curl.jpg | None (Auto) | Tomato - Yellow Leaf Curl Virus (High Conf) | Tomato - Yellow Leaf Curl Virus (Tomato Yellow Leaf Curl Virus (TYLCV)) | 1.0000 (100%) | **PASS** | Correct pathology top-1. Clean uninflated probability. |
 | `BENCH_grape_rot` | A. Benchmark Disease Image | grape_rot.jpg | None (Auto) | Grape - Black Rot (High Conf) | Grape - Black Rot (Grape Black Rot (Guignardia bidwellii)) | 1.0000 (100%) | **PASS** | Correct pathology top-1. Clean uninflated probability. |
 | `BENCH_bell_pepper_spot` | A. Benchmark Disease Image | bell_pepper_spot.jpg | None (Auto) | Bell Pepper - Bacterial Spot (High Conf) | Bell Pepper - Bacterial Spot (Bell Pepper Bacterial Spot (Xanthomonas)) | 1.0000 (100%) | **PASS** | Correct pathology top-1. Clean uninflated probability. |
-| `BENCH_apple_scab` | A. Benchmark Disease Image | apple_scab.jpg | None (Auto) | Apple - Apple Scab (Moderate Conf) | Apple - Apple Scab (Apple Scab (Venturia inaequalis)) | 0.9990 (99%) | **PASS** | Correct pathology top-1. Clean uninflated probability. |
+| `BENCH_apple_scab` | A. Benchmark Disease Image | apple_scab.jpg | None (Auto) | Apple - Apple Scab (Moderate Conf) | Apple - Apple Scab (Apple Scab (Venturia inaequalis)) | 0.9980 (99%) | **PASS** | Correct pathology top-1. Clean uninflated probability. |
 | `BENCH_potato_blight` | A. Benchmark Disease Image | potato_blight.jpg | None (Auto) | Potato - Late Blight (Moderate Conf) | Potato - Late Blight (Potato Late Blight (Phytophthora infestans)) | 1.0000 (100%) | **PASS** | Correct pathology top-1. Clean uninflated probability. |
-| `HEALTHY_LEAF_01` | B. Healthy Foliage | synthetic_healthy_foliage.jpg | None | Healthy class or Moderate confidence | Corn (Maize) - Healthy (Healthy Corn Foliage) | 0.5820 (58%) | **PASS** | Evaluated healthy chlorophyll signature without false Early Blight fallback. |
+| `HEALTHY_LEAF_01` | B. Healthy Foliage | synthetic_healthy_foliage.jpg | None | Healthy class or Moderate confidence | Corn (Maize) - Healthy (Possible Healthy Corn Foliage) | 0.2800 (27%) | **PASS** | Evaluated healthy chlorophyll signature without false Early Blight fallback. |
 | `CROSS_corn_rust_Apple` | C. Cross-Crop Constraint | corn_rust.jpg with 'Apple' hint | Apple | CROP_MISMATCH warning (never force wrong crop) | CROP_MISMATCH | 1.0000 (99%) | **PASS** | Image may not match selected crop (Apple). Visual pathology aligns with Corn (Ma |
-| `CROSS_tomato_curl_Potato` | C. Cross-Crop Constraint | tomato_curl.jpg with 'Potato' hint | Potato | CROP_MISMATCH warning (never force wrong crop) | CROP_MISMATCH | 1.0000 (100%) | **PASS** | Image may not match selected crop (Potato). Visual pathology aligns with Tomato  |
+| `CROSS_tomato_curl_Potato` | C. Cross-Crop Constraint | tomato_curl.jpg with 'Potato' hint | Potato | CROP_MISMATCH warning (never force wrong crop) | CROP_MISMATCH | 1.0000 (99%) | **PASS** | Image may not match selected crop (Potato). Visual pathology aligns with Tomato  |
 | `CROSS_grape_rot_Bell Pepper` | C. Cross-Crop Constraint | grape_rot.jpg with 'Bell Pepper' hint | Bell Pepper | CROP_MISMATCH warning (never force wrong crop) | CROP_MISMATCH | 1.0000 (99%) | **PASS** | Image may not match selected crop (Bell Pepper). Visual pathology aligns with Gr |
 | `DEGRADE_BLUR_35x35` | D. Image Quality Degradation | corn_rust (Gaussian Blur k=35) | None | QUALITY_REJECTED (BLURRY) | QUALITY_REJECTED (BLURRY) | 0.0000 (0%) | **PASS** | Rejected blurry photo before ML feature extraction. |
 | `DEGRADE_DARK_UNDEREXPOSED` | D. Image Quality Degradation | uniform_dark_field (intensity=15) | None | QUALITY_REJECTED (UNDEREXPOSED or BLUR) | QUALITY_REJECTED (BLURRY) | 0.0000 (0%) | **PASS** | Dark underexposed photo rejected. |
@@ -36,7 +36,7 @@
 | `DEGRADE_LOW_RESOLUTION` | D. Image Quality Degradation | micro_thumbnail (50x50) | None | QUALITY_REJECTED (LOW_RESOLUTION) | QUALITY_REJECTED (LOW_RESOLUTION) | 0.0000 (0%) | **PASS** | Sub-threshold resolution rejected. |
 | `NON_LEAF_BLUE_PATTERN` | E. Non-Leaf Rejection | blue_textured_noise | None | QUALITY_REJECTED (NO_LEAF_DETECTED) | QUALITY_REJECTED (NO_LEAF_DETECTED) | 0.0000 (0%) | **PASS** | Non-vegetative blue surface rejected. |
 | `NON_LEAF_RED_BRICK` | E. Non-Leaf Rejection | red_brick_texture | None | QUALITY_REJECTED (NO_LEAF_DETECTED) | QUALITY_REJECTED (NO_LEAF_DETECTED) | 0.0000 (0%) | **PASS** | Red architectural non-plant surface rejected. |
-| `AMBIGUOUS_LEAF_LOW_CONF` | F. Ambiguity Handling | synthetic_ambiguous_foliage (dispersed votes) | None | LOW_CONFIDENCE (diseaseName: None) | SUCCESS (Healthy Corn Foliage) | 0.7830 (78%) | **FAIL** | Low confidence correctly refused to force a disease prediction. |
+| `AMBIGUOUS_LEAF_LOW_CONF` | F. Ambiguity Handling | synthetic_ambiguous_foliage (dispersed votes) | None | LOW_CONFIDENCE (diseaseName: None) | LOW_CONFIDENCE (None) | 0.0260 (2%) | **PASS** | Low confidence correctly refused to force a disease prediction. |
 
 ---
 

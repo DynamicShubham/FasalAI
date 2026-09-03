@@ -143,6 +143,53 @@ def validate_image_quality(img_bgr) -> Dict[str, Any]:
         "plantRatio": round(foliar_ratio, 3)
     }
 
+def extract_leaf_roi(img_bgr):
+    """
+    Intelligently isolates the affected leaf region:
+    - Removes peripheral laptop bezels, keyboards, desk wood, or user hands.
+    - Applies mild edge-preserving bilateral filtering to suppress LCD subpixel moiré.
+    - If image is a wide camera capture (16:9), isolates the foliar ROI so the model's
+      receptive field processes lesion pathology rather than surrounding desk clutter.
+    """
+    if img_bgr is None or img_bgr.size == 0:
+        return img_bgr
+    h, w = img_bgr.shape[:2]
+    aspect = max(w / max(1, h), h / max(1, w))
+    
+    # Bilateral filter suppresses screen moire while preserving sharp lesion borders
+    filtered = cv2.bilateralFilter(img_bgr, d=5, sigmaColor=30, sigmaSpace=30)
+    
+    hsv = cv2.cvtColor(filtered, cv2.COLOR_BGR2HSV)
+    mask = cv2.inRange(hsv, np.array([8, 18, 18]), np.array([95, 255, 255]))
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (15, 15))
+    mask_closed = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+    
+    contours, _ = cv2.findContours(mask_closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    if contours:
+        c = max(contours, key=cv2.contourArea)
+        area = cv2.contourArea(c)
+        if (w * h * 0.08) <= area <= (w * h * 0.88):
+            x, y, bw, bh = cv2.boundingRect(c)
+            pad_x = int(bw * 0.12)
+            pad_y = int(bh * 0.12)
+            x1 = max(0, x - pad_x)
+            y1 = max(0, y - pad_y)
+            x2 = min(w, x + bw + pad_x)
+            y2 = min(h, y + bh + pad_y)
+            return filtered[y1:y2, x1:x2]
+            
+    if aspect > 1.25:
+        if w > h:
+            crop_size = int(h * 0.96)
+            start_x = (w - crop_size) // 2
+            return filtered[:, start_x:start_x + crop_size]
+        else:
+            crop_size = int(w * 0.96)
+            start_y = (h - crop_size) // 2
+            return filtered[start_y:start_y + crop_size, :]
+            
+    return filtered
+
 def detect_lesion_bounding_boxes(img_bgr, max_boxes=3) -> List[Dict[str, Any]]:
     """
     Uses OpenCV contour detection to locate prominent fungal/bacterial lesion patches.
@@ -695,11 +742,14 @@ class CropDiseaseDetector:
                     "boundingBoxes": []
                 }
                 
-            # Step 3: Compute probabilities (MobileNetV3 deep model if available, else OpenCV RandomForest)
+            # Step 3: Extract Foliar Region of Interest (removing screen bezels / desk clutter)
+            roi_bgr = extract_leaf_roi(img_bgr)
+            
+            # Step 4: Compute probabilities (MobileNetV3 deep model if available, else OpenCV RandomForest)
             # If predict_proba is mocked in tests, honor the mock
             is_mocked = hasattr(self.model, "predict_proba") and type(self.model.predict_proba).__name__ in ("MagicMock", "Mock")
             if not is_mocked and self.mobilenet_model is not None:
-                rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+                rgb = cv2.cvtColor(roi_bgr, cv2.COLOR_BGR2RGB)
                 resized = cv2.resize(rgb, (224, 224), interpolation=cv2.INTER_LINEAR).astype(np.float32) / 255.0
                 mean = np.array([0.485, 0.456, 0.406], dtype=np.float32)
                 std = np.array([0.229, 0.224, 0.225], dtype=np.float32)
@@ -709,23 +759,23 @@ class CropDiseaseDetector:
                     logits = self.mobilenet_model(tensor)
                     probabilities = torch.softmax(logits, dim=1).squeeze(0).numpy()
             else:
-                features = extract_features_opencv(img_bgr)
+                features = extract_features_opencv(roi_bgr)
                 features_2d = features.reshape(1, -1)
                 probabilities = self.model.predict_proba(features_2d)[0]
             
-            # Extract Top-3 predictions with true uninflated probabilities
-            top_3_indices = np.argsort(probabilities)[::-1][:3]
-            top_3 = []
-            for idx in top_3_indices:
+            # Extract Top-5 predictions with true uninflated probabilities
+            top_5_indices = np.argsort(probabilities)[::-1][:5]
+            top_5 = []
+            for idx in top_5_indices:
                 cls_name = self.encoder.classes_[idx]
                 p = float(probabilities[idx])
-                top_3.append({
+                top_5.append({
                     "class": cls_name,
                     "probability": round(p, 4),
                     "percentage": f"{int(p * 100)}%"
                 })
                 
-            global_top_idx = int(top_3_indices[0])
+            global_top_idx = int(top_5_indices[0])
             global_class = self.encoder.classes_[global_top_idx]
             global_prob = float(probabilities[global_top_idx])
             
@@ -766,7 +816,7 @@ class CropDiseaseDetector:
                             "selectedCrop": crop_hint,
                             "globalPrediction": global_class,
                             "cropCompatiblePrediction": crop_best_class,
-                            "topKPredictions": top_3,
+                            "topKPredictions": top_5,
                             "boundingBoxes": []
                         }
                     else:
@@ -815,7 +865,7 @@ class CropDiseaseDetector:
                     "diseaseName": None,
                     "message": "FasalAI couldn't make a reliable diagnosis from this image. The visual features do not match trained pathology patterns with sufficient confidence.",
                     "guidance": "Please capture another photo in clear natural daylight, holding the camera steady and focusing directly on the affected leaf area.",
-                    "topKPredictions": top_3,
+                    "topKPredictions": top_5,
                     "boundingBoxes": [],
                     "disclaimer": "FasalAI never assigns a definitive disease when visual confidence is below reliable thresholds. Physical inspection by a local agronomist is recommended."
                 }
@@ -842,15 +892,18 @@ class CropDiseaseDetector:
                     "organicRemedy": details["organicRemedy"],
                     "chemicalRemedy": details["chemicalRemedy"],
                     "prevention": details["prevention"],
+                    "whatWeFound": details.get("symptoms", "Characteristic foliar tissue discoloration identified."),
+                    "whatToDo": f"Pluck heavily affected leaves, ensure morning sunlight, and apply {details.get('organicRemedy', 'organic neem formulation')}.",
+                    "whyDiagnosed": f"Identified visual lesion texture and contour patterns consistent with {details.get('diseaseName', detected_class)}.",
                     "treatmentDisclaimer": "Example treatment based on ICAR recommendations. Formulations and dosages are illustrative reference benchmarks. Always inspect product label for exact crop registration and statutory pre-harvest intervals (PHI).",
                     "boundingBoxes": boxes,
                     "imageResolution": f"{w}x{h}",
-                    "topKPredictions": top_3,
+                    "topKPredictions": top_5,
                     "debugInfo": {
                         "rawProbability": round(confidence, 4),
                         "selectedCrop": crop_hint or "Auto-Detect",
                         "globalPrediction": global_class,
-                        "top3": top_3
+                        "topCandidates": top_5
                     },
                     "disclaimer": "Moderate visual confidence. Symptoms resemble this pathology, but physical symptoms should be confirmed with an agricultural extension officer before applying intensive chemical fungicides."
                 }
@@ -877,15 +930,18 @@ class CropDiseaseDetector:
                     "organicRemedy": details["organicRemedy"],
                     "chemicalRemedy": details["chemicalRemedy"],
                     "prevention": details["prevention"],
+                    "whatWeFound": details.get("symptoms", "Clear visual symptoms and characteristic lesion morphology identified."),
+                    "whatToDo": f"Quarantine infected plants if necessary; apply {details.get('chemicalRemedy', 'recommended fungicide')} according to label directions.",
+                    "whyDiagnosed": f"High visual match with {details.get('diseaseName', detected_class)} foliar disease profile.",
                     "treatmentDisclaimer": "Example treatment based on ICAR recommendations. Formulations and dosages are illustrative reference benchmarks. Always inspect product label for exact crop registration and statutory pre-harvest intervals (PHI).",
                     "boundingBoxes": boxes,
                     "imageResolution": f"{w}x{h}",
-                    "topKPredictions": top_3,
+                    "topKPredictions": top_5,
                     "debugInfo": {
                         "rawProbability": round(confidence, 4),
                         "selectedCrop": crop_hint or "Auto-Detect",
                         "globalPrediction": global_class,
-                        "top3": top_3
+                        "topCandidates": top_5
                     },
                     "disclaimer": "Benchmark validation accuracy was measured under controlled dataset conditions. Field accuracy varies under ambient lighting, shadows, dust, and multi-pathogen complexes. Verify with local KVK agronomist before purchasing chemical pesticides."
                 }
