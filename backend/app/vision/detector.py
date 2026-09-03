@@ -711,8 +711,9 @@ class CropDiseaseDetector:
                 
                 # Check for strong conflict between global prediction and selected crop
                 if global_top_idx not in matching_indices:
-                    # If global model has high certainty (> 40%) and strongly beats the best crop candidate (> 2.5x)
-                    if global_prob >= 0.40 and global_prob >= 2.5 * max(0.01, crop_best_prob):
+                    # Flag mismatch if the global model has clear certainty (>= 50%) and strongly dominates (>= 3.0x)
+                    # e.g., Farmer selected 'Apple', but uploaded a Corn leaf with 95% Common Rust certainty vs Apple 1%
+                    if global_prob >= 0.50 and global_prob >= 3.0 * max(0.01, crop_best_prob):
                         detected_crop_name = global_class.split(" - ")[0] if " - " in global_class else "another crop"
                         logger.info(f"Crop mismatch: User chose '{crop_hint}', but model detected '{global_class}' ({global_prob:.2f} vs {crop_best_prob:.2f})")
                         return {
@@ -731,11 +732,12 @@ class CropDiseaseDetector:
                             "boundingBoxes": []
                         }
                     else:
-                        # Mild difference: prioritize global prediction with true probability
-                        detected_class = global_class
-                        confidence = global_prob
+                        # Constrain diagnosis to the farmer's stated crop!
+                        # Crucially: We do NOT renormalize! We return the true raw model probability crop_best_prob.
+                        detected_class = crop_best_class
+                        confidence = crop_best_prob
                 else:
-                    # Global top class directly matches the selected crop
+                    # Global top prediction is already within the selected crop
                     detected_class = global_class
                     confidence = global_prob
                     
