@@ -26,6 +26,11 @@ const CROP_OPTIONS = [
   "Cherry",
   "Peach",
   "Strawberry",
+  "Orange (Citrus)",
+  "Soybean",
+  "Squash",
+  "Blueberry",
+  "Raspberry",
   "Wheat",
 ];
 
@@ -33,6 +38,7 @@ export default function ScannerPage() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const fileInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
 
   const [cameraActive, setCameraActive] = useState(false);
   const [cameraFacing, setCameraFacing] = useState("environment");
@@ -45,23 +51,67 @@ export default function ScannerPage() {
   const startCamera = async () => {
     setErrorMsg("");
     try {
-      if (typeof window !== "undefined" && typeof navigator !== "undefined" && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: cameraFacing, width: { ideal: 1280 }, height: { ideal: 720 } },
-          audio: false,
-        });
-        if (videoRef.current) {
+      if (typeof window !== "undefined" && navigator?.mediaDevices?.getUserMedia) {
+        // Stop any running stream first
+        if (videoRef.current?.srcObject) {
+          const tracks = videoRef.current.srcObject.getTracks();
+          tracks.forEach((track) => track.stop());
+          videoRef.current.srcObject = null;
+        }
+
+        let stream = null;
+        try {
+          // Attempt 1: Preferred facingMode (ideal rather than strict constraint)
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+              facingMode: { ideal: cameraFacing },
+              width: { ideal: 1280 },
+              height: { ideal: 720 },
+            },
+            audio: false,
+          });
+        } catch (constraintErr) {
+          console.warn("Retrying camera with generic constraints:", constraintErr);
+          // Attempt 2: Fallback to any available system video stream (laptops/webcams)
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: false,
+          });
+        }
+
+        if (videoRef.current && stream) {
           videoRef.current.srcObject = stream;
-          videoRef.current.play().catch((e) => console.warn("Video play error:", e));
+          videoRef.current.setAttribute("playsinline", "true");
+          videoRef.current.setAttribute("autoplay", "true");
+          videoRef.current.muted = true;
+
+          // Ensure video dimensions have initialized
+          await new Promise((resolve) => {
+            if (videoRef.current.readyState >= 1) {
+              resolve();
+            } else {
+              videoRef.current.onloadedmetadata = () => resolve();
+            }
+          });
+
+          await videoRef.current.play().catch((e) => console.warn("Video play error:", e));
           setCameraActive(true);
+          setActivePreviewImage(null);
         }
       } else {
-        setErrorMsg("Camera access not available on this browser. You can upload a photo or use sample leaves.");
+        setCameraActive(false);
+        setErrorMsg("Live camera viewfinder not supported in this browser. Tap 'Take Photo' or 'Upload Photo'.");
       }
     } catch (err) {
       console.warn("Camera stream error:", err);
-      setErrorMsg("Camera permission not granted. You can upload a photo or use the sample leaves below.");
       setCameraActive(false);
+      let userMsg = "Live camera access unavailable. Tap 'Take Photo' to open your phone camera, or upload an image.";
+      if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+        userMsg = "Camera permission was not granted. Tap 'Take Photo' to capture a picture or allow camera in browser settings.";
+      } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+        userMsg = "No webcam detected on this device. You can tap 'Upload Photo' or test with sample leaves.";
+      }
+      setErrorMsg(userMsg);
     }
   };
 
@@ -83,21 +133,39 @@ export default function ScannerPage() {
 
   const captureAndScan = async () => {
     if (scanning) return;
-    setScanning(true);
     setErrorMsg("");
 
     let base64Data = "";
-    if (videoRef.current && canvasRef.current) {
+    if (cameraActive && videoRef.current && canvasRef.current) {
       const video = videoRef.current;
       const canvas = canvasRef.current;
-      canvas.width = video.videoWidth || 640;
-      canvas.height = video.videoHeight || 480;
+      const width = video.videoWidth || 640;
+      const height = video.videoHeight || 480;
+
+      if (width === 0 || height === 0) {
+        setErrorMsg("Camera stream is initializing. Please wait a second and tap Diagnose again.");
+        return;
+      }
+
+      canvas.width = width;
+      canvas.height = height;
       const ctx = canvas.getContext("2d");
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      base64Data = canvas.toDataURL("image/jpeg", 0.85);
+      ctx.drawImage(video, 0, 0, width, height);
+      base64Data = canvas.toDataURL("image/jpeg", 0.90);
       setActivePreviewImage(base64Data);
+    } else if (activePreviewImage) {
+      base64Data = activePreviewImage;
+    } else {
+      // If camera is not active, trigger native mobile camera
+      if (cameraInputRef.current) {
+        cameraInputRef.current.click();
+      } else if (fileInputRef.current) {
+        fileInputRef.current.click();
+      }
+      return;
     }
 
+    setScanning(true);
     try {
       const cropHint = selectedCrop.includes("Auto-Detect") ? "" : selectedCrop;
       const result = await scanCropImage(base64Data, cropHint);
@@ -111,7 +179,7 @@ export default function ScannerPage() {
   };
 
   const handleFileUpload = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
 
     setScanning(true);
@@ -126,7 +194,7 @@ export default function ScannerPage() {
         setScanResult(result);
       } catch (err) {
         console.error("Upload scan error:", err);
-        setErrorMsg("Failed to analyze uploaded photo.");
+        setErrorMsg("Failed to analyze photo.");
       } finally {
         setScanning(false);
       }
@@ -223,12 +291,19 @@ export default function ScannerPage() {
         {/* Viewfinder Camera Canvas Container */}
         <div className="relative w-full aspect-[4/3] md:aspect-[16/9] max-h-[420px] bg-stone-900 rounded-2xl overflow-hidden shadow-card border border-stone-300 flex items-center justify-center">
           {activePreviewImage && !cameraActive ? (
-            <img src={activePreviewImage} alt="Scanned Leaf" className="w-full h-full object-contain bg-black" />
+            <div className="relative w-full h-full bg-black flex items-center justify-center">
+              <img src={activePreviewImage} alt="Scanned Leaf" className="w-full h-full object-contain" />
+              <div className="absolute top-3 left-3 bg-stone-900/80 backdrop-blur-xs text-white text-[11px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 border border-white/20">
+                <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span>Photo Captured / Selected</span>
+              </div>
+            </div>
           ) : (
             <video
               ref={videoRef}
               playsInline
               muted
+              autoPlay
               className={`w-full h-full object-cover ${cameraActive ? "block" : "hidden"}`}
             />
           )}
@@ -239,15 +314,26 @@ export default function ScannerPage() {
             <div className="flex flex-col items-center justify-center text-center p-6 gap-3 text-white">
               <span className="material-symbols-outlined text-4xl text-stone-400">photo_camera</span>
               <p className="text-xs text-stone-300 max-w-sm">
-                Camera inactive. Use the sample leaves above or click Upload Photo below.
+                Tap below to open your camera or choose an image.
               </p>
-              <button
-                type="button"
-                onClick={startCamera}
-                className="px-4 py-1.5 bg-brand-800 hover:bg-brand-700 text-white text-xs font-semibold rounded-lg"
-              >
-                Enable Camera
-              </button>
+              <div className="flex flex-wrap items-center justify-center gap-2 mt-1">
+                <button
+                  type="button"
+                  onClick={() => cameraInputRef.current?.click()}
+                  className="px-4 py-2 bg-brand-800 hover:bg-brand-700 text-white text-xs font-bold rounded-lg flex items-center gap-1.5 shadow-sm transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[16px]">photo_camera</span>
+                  <span>Take Photo (Camera)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={startCamera}
+                  className="px-4 py-2 bg-stone-700 hover:bg-stone-600 text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[16px]">videocam</span>
+                  <span>Live Viewfinder</span>
+                </button>
+              </div>
             </div>
           )}
 
@@ -278,17 +364,67 @@ export default function ScannerPage() {
         </div>
 
         {/* Action Controls */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <button
-            type="button"
-            onClick={captureAndScan}
-            disabled={scanning || (!cameraActive && !activePreviewImage)}
-            className="w-full sm:w-auto px-8 py-3.5 bg-brand-900 hover:bg-brand-950 text-white font-bold text-sm rounded-full shadow-sm flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
-          >
-            <span className="material-symbols-outlined text-[20px]">center_focus_strong</span>
-            <span>{scanning ? "Analyzing Leaf..." : "Diagnose Leaf"}</span>
-          </button>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          {cameraActive ? (
+            <button
+              type="button"
+              onClick={captureAndScan}
+              disabled={scanning}
+              className="px-8 py-3.5 bg-brand-900 hover:bg-brand-950 text-white font-bold text-sm rounded-full shadow-sm flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+            >
+              <span className="material-symbols-outlined text-[20px]">photo_camera</span>
+              <span>{scanning ? "Analyzing Leaf..." : "Snap & Diagnose"}</span>
+            </button>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={() => cameraInputRef.current?.click()}
+                disabled={scanning}
+                className="px-7 py-3.5 bg-brand-900 hover:bg-brand-950 text-white font-bold text-sm rounded-full shadow-sm flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+              >
+                <span className="material-symbols-outlined text-[20px]">photo_camera</span>
+                <span>Take Photo</span>
+              </button>
 
+              <button
+                type="button"
+                onClick={startCamera}
+                disabled={scanning}
+                className="px-5 py-3.5 bg-stone-100 hover:bg-stone-200 text-content font-bold text-sm rounded-full border border-stone-300 shadow-subtle flex items-center justify-center gap-2 transition-colors"
+                title="Start Live Camera Viewfinder"
+              >
+                <span className="material-symbols-outlined text-[20px]">videocam</span>
+                <span>Live Viewfinder</span>
+              </button>
+            </>
+          )}
+
+          {activePreviewImage && (
+            <button
+              type="button"
+              onClick={() => {
+                setActivePreviewImage(null);
+                startCamera();
+              }}
+              className="px-5 py-3.5 bg-stone-100 hover:bg-stone-200 text-content font-bold text-sm rounded-full border border-stone-300 shadow-subtle flex items-center justify-center gap-2 transition-colors"
+            >
+              <span className="material-symbols-outlined text-[18px]">replay</span>
+              <span>Retake / Live View</span>
+            </button>
+          )}
+
+          {/* Native Camera input (direct hardware camera launch on mobile) */}
+          <input
+            ref={cameraInputRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={handleFileUpload}
+            className="hidden"
+          />
+
+          {/* File Upload input (gallery/storage) */}
           <input
             ref={fileInputRef}
             type="file"
@@ -301,7 +437,7 @@ export default function ScannerPage() {
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={scanning}
-            className="w-full sm:w-auto px-6 py-3.5 bg-white hover:bg-stone-50 text-content font-bold text-sm rounded-full border border-stone-300 shadow-subtle flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+            className="px-6 py-3.5 bg-white hover:bg-stone-50 text-content font-bold text-sm rounded-full border border-stone-300 shadow-subtle flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
           >
             <span className="material-symbols-outlined text-[20px]">upload_file</span>
             <span>Upload Photo</span>
@@ -310,9 +446,9 @@ export default function ScannerPage() {
           {cameraActive && (
             <button
               type="button"
-              onClick={() => setCameraFacing(cameraFacing === "environment" ? "user" : "environment")}
+              onClick={() => setCameraFacing((prev) => (prev === "environment" ? "user" : "environment"))}
               className="p-3 bg-white hover:bg-stone-50 text-content rounded-full border border-stone-300 shadow-subtle flex items-center justify-center transition-colors"
-              title="Switch Camera"
+              title="Flip Front / Rear Camera"
             >
               <span className="material-symbols-outlined text-lg">flip_camera_ios</span>
             </button>
