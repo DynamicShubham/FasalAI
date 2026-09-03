@@ -140,6 +140,7 @@ export default function ScannerPage() {
     if (!videoRef.current || !canvasRef.current) return;
     setErrorMsg("");
 
+    const video = videoRef.current;
     const vWidth = video.videoWidth;
     const vHeight = video.videoHeight;
 
