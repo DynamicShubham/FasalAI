@@ -140,22 +140,39 @@ export default function ScannerPage() {
     if (!videoRef.current || !canvasRef.current) return;
     setErrorMsg("");
 
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    const width = video.videoWidth || 1280;
-    const height = video.videoHeight || 720;
+    const vWidth = video.videoWidth;
+    const vHeight = video.videoHeight;
 
-    if (width === 0 || height === 0) {
+    if (!vWidth || !vHeight) {
       setErrorMsg("Camera stream is initializing. Please wait a second.");
       return;
     }
 
-    canvas.width = width;
-    canvas.height = height;
+    // Viewfinder container is 4:3 with object-cover.
+    // Calculate the exact 4:3 region displayed in the viewfinder to eliminate off-screen room borders:
+    const targetAspect = 4 / 3;
+    let sourceX = 0;
+    let sourceY = 0;
+    let sourceWidth = vWidth;
+    let sourceHeight = vHeight;
+
+    const videoAspect = vWidth / vHeight;
+    if (videoAspect > targetAspect) {
+      // Video is wider than 4:3 (e.g. 16:9 on phone camera)
+      sourceWidth = vHeight * targetAspect;
+      sourceX = (vWidth - sourceWidth) / 2;
+    } else {
+      // Video is taller than 4:3
+      sourceHeight = vWidth / targetAspect;
+      sourceY = (vHeight - sourceHeight) / 2;
+    }
+
+    canvas.width = sourceWidth;
+    canvas.height = sourceHeight;
     const ctx = canvas.getContext("2d");
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
-    ctx.drawImage(video, 0, 0, width, height);
+    ctx.drawImage(video, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, sourceWidth, sourceHeight);
 
     // High quality JPEG encoding (0.92)
     const base64Data = canvas.toDataURL("image/jpeg", 0.92);
