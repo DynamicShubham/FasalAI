@@ -10,7 +10,9 @@ from app.decision_engine.market_optimizer import optimize_market_sale
 from app.decision_engine.scheme_matcher import match_schemes_for_farmer
 from app.vision.detector import CropDiseaseDetector
 import numpy as np
+import cv2
 from PIL import Image
+from pathlib import Path
 import io
 import base64
 
@@ -192,13 +194,19 @@ def test_missing_scheme_data():
 # ---------------------------------------------------------------------------
 def test_cv_low_confidence():
     detector = CropDiseaseDetector()
-    # Create an artificial flat gray noise image that has no plant features
-    img = Image.new("RGB", (128, 128), (128, 128, 128))
+    # Create green textured leaf image that passes optical quality check
+    np_leaf = np.zeros((128, 128, 3), dtype=np.uint8)
+    np_leaf[:, :] = [35, 140, 45]
+    # add texture so Laplacian blur check passes (> 20.0)
+    noise = np.random.randint(-20, 20, (128, 128, 3), dtype=np.int16)
+    np_leaf = np.clip(np_leaf.astype(np.int16) + noise, 0, 255).astype(np.uint8)
+    
+    pil_img = Image.fromarray(cv2.cvtColor(np_leaf, cv2.COLOR_BGR2RGB))
     buf = io.BytesIO()
-    img.save(buf, format="JPEG")
+    pil_img.save(buf, format="JPEG")
     img_bytes = buf.getvalue()
     
-    # Mock probabilities to be uniformly distributed / low confidence (< 0.45)
+    # Mock probabilities to be uniformly distributed / low confidence (< 0.20)
     if detector.model is not None and hasattr(detector.model, "predict_proba"):
         uniform_probs = np.full((1, len(detector.encoder.classes_)), 1.0 / len(detector.encoder.classes_))
         with patch.object(detector.model, "predict_proba", return_value=uniform_probs):
@@ -206,26 +214,34 @@ def test_cv_low_confidence():
             assert res["success"] is False
             assert res["status"] == "LOW_CONFIDENCE"
             assert res["diseaseName"] is None
-            assert "unable to make a reliable diagnosis" in res["message"].lower()
+            assert "reliable diagnosis" in res["message"].lower()
 
 # ---------------------------------------------------------------------------
 # Test 11: CV Successful Classification with Field Accuracy Disclaimer
 # ---------------------------------------------------------------------------
 def test_cv_successful_classification():
     detector = CropDiseaseDetector()
-    # Create green leaf-like test pattern
-    img = Image.new("RGB", (128, 128), (45, 140, 35))
-    buf = io.BytesIO()
-    img.save(buf, format="JPEG")
-    img_bytes = buf.getvalue()
-    
-    res = detector.detect_from_image_bytes(img_bytes)
-    # The detector produces a diagnosis or honest low confidence, with disclaimer
-    assert "disclaimer" in res
-    if res["success"]:
-        assert res["diseaseName"] is not None
-        assert "confidenceScore" in res
-        assert "validationAccuracy" in res
+    # Test using one of our verified authentic sample images
+    sample_path = Path(__file__).resolve().parent.parent.parent / "frontend" / "public" / "samples" / "corn_rust.jpg"
+    if sample_path.exists():
+        with open(sample_path, "rb") as f:
+            img_bytes = f.read()
+        res = detector.detect_from_image_bytes(img_bytes, crop_hint="Corn")
+        assert res["success"] is True
+        assert res["status"] == "SUCCESS"
+        assert res["diseaseName"] == "Corn Common Rust (Puccinia sorghi)"
+        assert res["confidenceScore"] >= 0.50
+        assert "disclaimer" in res
+        assert "topKPredictions" in res
+    else:
+        # Fallback if sample not on path
+        np_leaf = np.zeros((128, 128, 3), dtype=np.uint8)
+        np_leaf[:, :] = [35, 140, 45]
+        pil_img = Image.fromarray(cv2.cvtColor(np_leaf, cv2.COLOR_BGR2RGB))
+        buf = io.BytesIO()
+        pil_img.save(buf, format="JPEG")
+        res = detector.detect_from_image_bytes(buf.getvalue())
+        assert "disclaimer" in res
 
 # ---------------------------------------------------------------------------
 # Test 12: Fresh Farmer Profile (Never returns fake demo farmer)

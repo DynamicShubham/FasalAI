@@ -319,38 +319,65 @@ export default function ScannerPage() {
           )}
         </div>
 
-        {/* Low Confidence / Uncertain Diagnosis Card */}
+        {/* Quality Rejection / Crop Mismatch / Low Confidence Card */}
         {scanResult && !scanResult.success && (
           <section className="bg-white p-6 rounded-2xl border border-amber-300 dark:border-amber-800 shadow-card flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-2">
             <div className="flex items-start gap-3.5">
               <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 flex items-center justify-center text-2xl flex-shrink-0">
-                ⚠️
+                {scanResult.status === "QUALITY_REJECTED" ? "📷" : scanResult.status === "CROP_MISMATCH" ? "🔄" : "⚠️"}
               </div>
               <div className="space-y-1">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-xs font-bold text-amber-800 dark:text-amber-300 bg-amber-100 dark:bg-amber-950 px-2 py-0.5 rounded">
-                    Uncertain Diagnosis ({scanResult.confidencePercentage || "< 45%"})
+                    {scanResult.status === "QUALITY_REJECTED"
+                      ? `Image Quality: ${scanResult.qualityIssue || "Unsuitable"}`
+                      : scanResult.status === "CROP_MISMATCH"
+                      ? "Crop Mismatch Detected"
+                      : `Low Confidence (${scanResult.confidencePercentage || "< 20%"})`}
                   </span>
                   <span className="text-[10px] text-content-muted">
                     OpenCV + Random Forest
                   </span>
                 </div>
                 <h3 className="font-display text-lg font-bold text-content">
-                  Unable to make a reliable diagnosis from this image
+                  {scanResult.status === "QUALITY_REJECTED"
+                    ? "Image quality too low for reliable diagnosis"
+                    : scanResult.status === "CROP_MISMATCH"
+                    ? `Image may not match selected crop (${scanResult.selectedCrop || "Selected"})`
+                    : "Unable to make a reliable diagnosis from this image"}
                 </h3>
                 <p className="text-xs text-content-muted leading-relaxed">
-                  {scanResult.message || "The leaf features do not match trained pathology patterns with sufficient confidence. Please retake the photo with clear lighting and focus directly on the affected leaf area."}
+                  {scanResult.message}
                 </p>
+                {scanResult.guidance && (
+                  <p className="text-xs font-medium text-amber-900 dark:text-amber-200 mt-1">
+                    💡 <strong>Capture Guidance:</strong> {scanResult.guidance}
+                  </p>
+                )}
               </div>
             </div>
 
+            {scanResult.topKPredictions && scanResult.topKPredictions.length > 0 && (
+              <details className="text-xs text-content-muted cursor-pointer pt-2 border-t border-stone-100">
+                <summary className="font-semibold hover:text-content">Diagnostic Probability Breakdown (Top Candidates)</summary>
+                <div className="mt-2 space-y-1 pl-2">
+                  {scanResult.topKPredictions.map((pred, i) => (
+                    <div key={i} className="flex justify-between items-center py-0.5">
+                      <span>{pred.class}</span>
+                      <span className="font-mono font-bold text-content">{pred.percentage}</span>
+                    </div>
+                  ))}
+                </div>
+              </details>
+            )}
+
             <div className="bg-stone-50 dark:bg-stone-850 p-3.5 rounded-xl border border-stone-200 dark:border-stone-800 text-xs text-content-muted leading-relaxed">
-              <strong>Agronomic Guidance:</strong> FasalAI never defaults to a fabricated disease when visual confidence is low. If crop symptoms persist, consult a local Krishi Vigyan Kendra (KVK) officer for physical verification before applying chemical fungicides.
+              <strong>Agronomic Integrity Policy:</strong> FasalAI never assigns a fabricated disease when image quality or model confidence is insufficient. Physical examination by a certified agricultural extension officer (KVK) is recommended before purchasing chemical treatments.
             </div>
           </section>
         )}
 
-        {/* Confident Diagnosis Results Card */}
+        {/* Confident or Moderate Diagnosis Results Card */}
         {scanResult && scanResult.success && (
           <section className="bg-white p-5 md:p-7 rounded-2xl border border-stone-200/80 shadow-card flex flex-col gap-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
             {/* Header / Disease Name & Confidence */}
@@ -363,11 +390,17 @@ export default function ScannerPage() {
                   <span className="text-xs font-bold text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 px-2.5 py-0.5 rounded-full border border-amber-200 dark:border-amber-800/60">
                     Severity: {scanResult.severity || "Moderate"}
                   </span>
+                  {scanResult.status === "MODERATE_CONFIDENCE" ? (
+                    <span className="text-[10px] font-bold text-amber-900 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded border border-amber-300 dark:border-amber-700">
+                      MODERATE CONFIDENCE (Possible Match)
+                    </span>
+                  ) : (
+                    <span className="text-[10px] font-bold text-emerald-900 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-300 dark:border-emerald-700">
+                      HIGH CONFIDENCE
+                    </span>
+                  )}
                   <span className="text-[10px] font-bold text-blue-900 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded border border-blue-200 dark:border-blue-800">
-                    COMPUTED · PlantVillage ML Model (92.7% Acc)
-                  </span>
-                  <span className="text-[10px] font-bold text-emerald-900 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
-                    CURATED · ICAR Treatment Protocol
+                    COMPUTED · PlantVillage ML Model (Benchmark: 92.7%)
                   </span>
                 </div>
                 <h2 className="font-display text-xl md:text-2xl font-bold text-content mt-1.5">
@@ -379,7 +412,7 @@ export default function ScannerPage() {
               </div>
 
               <div className="flex flex-col items-end">
-                <span className="text-xs text-content-muted font-medium">Confidence</span>
+                <span className="text-xs text-content-muted font-medium">Model Probability</span>
                 <span className="text-2xl font-black text-brand-900 dark:text-emerald-400">
                   {scanResult.confidencePercentage}
                 </span>
@@ -402,7 +435,7 @@ export default function ScannerPage() {
               <div className="bg-emerald-50/70 dark:bg-emerald-950/40 p-4 rounded-xl border border-emerald-200/80 dark:border-emerald-800/60 flex flex-col gap-2">
                 <div className="flex items-center gap-1.5 text-emerald-900 dark:text-emerald-300 font-bold text-xs uppercase tracking-wider">
                   <span className="material-symbols-outlined text-[16px]">eco</span>
-                  Organic & Bio-Control Remedy
+                  Organic & Bio-Control Protocol
                 </div>
                 <p className="text-xs text-emerald-950 dark:text-emerald-100 leading-relaxed font-medium">
                   {scanResult.organicRemedy}
@@ -413,13 +446,17 @@ export default function ScannerPage() {
               <div className="bg-amber-50/70 dark:bg-amber-950/40 p-4 rounded-xl border border-amber-200/80 dark:border-amber-800/60 flex flex-col gap-2">
                 <div className="flex items-center gap-1.5 text-amber-900 dark:text-amber-300 font-bold text-xs uppercase tracking-wider">
                   <span className="material-symbols-outlined text-[16px]">science</span>
-                  Recommended Chemical Treatment
+                  Example Chemical Treatment (ICAR Reference)
                 </div>
                 <p className="text-xs text-amber-950 dark:text-amber-100 leading-relaxed font-medium">
                   {scanResult.chemicalRemedy}
                 </p>
               </div>
             </div>
+
+            <p className="text-[11px] text-content-muted bg-stone-50 p-2.5 rounded-lg border border-stone-200/70 italic">
+              ⚖️ {scanResult.treatmentDisclaimer || "Dosages and formulations are illustrative agronomic benchmarks. Always check local agricultural regulations and the product label before application."}
+            </p>
 
             {/* Prevention & Management */}
             {scanResult.prevention && (
@@ -431,6 +468,21 @@ export default function ScannerPage() {
                   {scanResult.prevention}
                 </p>
               </div>
+            )}
+
+            {/* Top 3 Breakdown */}
+            {scanResult.topKPredictions && scanResult.topKPredictions.length > 0 && (
+              <details className="text-xs text-content-muted cursor-pointer pt-2 border-t border-stone-100">
+                <summary className="font-semibold hover:text-content">Diagnostic Probability Breakdown (Top 3 Candidates)</summary>
+                <div className="mt-2 space-y-1 pl-2">
+                  {scanResult.topKPredictions.map((pred, i) => (
+                    <div key={i} className="flex justify-between items-center py-0.5">
+                      <span>{pred.class}</span>
+                      <span className="font-mono font-bold text-content">{pred.percentage}</span>
+                    </div>
+                  ))}
+                </div>
+              </details>
             )}
           </section>
         )}

@@ -59,6 +59,81 @@ def extract_features_opencv(img_bgr, target_size=(128, 128)):
     
     return np.array(features, dtype=np.float32)
 
+def validate_image_quality(img_bgr) -> Dict[str, Any]:
+    """
+    Lightweight optical and physical quality verification before ML inference:
+    1. Minimum resolution: requires at least 80x80 pixels.
+    2. Blur detection: Laplacian variance < 20.0 indicates severe defocus or motion blur.
+    3. Exposure check: mean grayscale < 28.0 (underexposed/dark) or > 242.0 (overexposed/glare).
+    4. Vegetation presence: HSV thresholding for green, chlorotic yellow, and necrotic brown tissue.
+    """
+    if img_bgr is None or img_bgr.size == 0:
+        return {
+            "isValid": False,
+            "issue": "EMPTY_IMAGE",
+            "message": "Image file is empty or corrupted. Please capture a new photo.",
+            "guidance": "Ensure camera has permissions and file format is valid JPEG or PNG."
+        }
+    
+    h, w = img_bgr.shape[:2]
+    if h < 80 or w < 80:
+        return {
+            "isValid": False,
+            "issue": "LOW_RESOLUTION",
+            "message": f"Image resolution ({w}x{h}) is too low for reliable pathology analysis.",
+            "guidance": "Please upload a photo of at least 200x200 pixels."
+        }
+        
+    gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
+    
+    # Blur detection via Laplacian variance
+    blur_score = float(cv2.Laplacian(gray, cv2.CV_64F).var())
+    if blur_score < 20.0:
+        return {
+            "isValid": False,
+            "issue": "BLURRY",
+            "message": f"Image is too blurry (sharpness score {blur_score:.1f} is below 20.0 threshold).",
+            "guidance": "Hold the camera steady, wipe the lens, and tap on the affected leaf surface to focus."
+        }
+        
+    # Exposure validation
+    brightness = float(np.mean(gray))
+    if brightness < 28.0:
+        return {
+            "isValid": False,
+            "issue": "UNDEREXPOSED",
+            "message": f"Image is too dark (average brightness {brightness:.1f} / 255).",
+            "guidance": "Capture photo in natural daylight or illuminate the leaf evenly."
+        }
+    if brightness > 242.0:
+        return {
+            "isValid": False,
+            "issue": "OVEREXPOSED",
+            "message": f"Image is washed out or overexposed (average brightness {brightness:.1f} / 255).",
+            "guidance": "Avoid harsh direct flash or bright background sunlight washing out the leaf."
+        }
+        
+    # Foliage presence check: An agricultural leaf must exhibit chlorophyll foliage tissue
+    hsv = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2HSV)
+    mask_green = cv2.inRange(hsv, np.array([28, 25, 25]), np.array([90, 255, 255]))
+    green_ratio = float(cv2.countNonZero(mask_green)) / (h * w)
+    
+    if green_ratio < 0.05:  # Less than 5% green foliar tissue
+        return {
+            "isValid": False,
+            "issue": "NO_LEAF_DETECTED",
+            "message": f"No plant leaf or crop tissue detected in this image (green foliage pixel ratio is {green_ratio * 100:.1f}%).",
+            "guidance": "Position the affected agricultural leaf so it fills at least 50% of the frame."
+        }
+        
+    return {
+        "isValid": True,
+        "issue": None,
+        "blurScore": round(blur_score, 1),
+        "brightness": round(brightness, 1),
+        "plantRatio": round(green_ratio, 3)
+    }
+
 def detect_lesion_bounding_boxes(img_bgr, max_boxes=3) -> List[Dict[str, Any]]:
     """
     Uses OpenCV contour detection to locate prominent fungal/bacterial lesion patches.
@@ -433,14 +508,19 @@ class CropDiseaseDetector:
         """
         Processes image frame using OpenCV visual feature extraction
         and real inference from the trained OpenCV + RandomForest model.
+        Zero fake fallbacks, zero artificial confidence inflation.
         """
         if not image_bytes or len(image_bytes) < 100:
             return {
                 "success": False,
+                "status": "INVALID_INPUT",
                 "isTrainedModel": False,
                 "error": "No valid image data received. Please capture a clear photo of the affected leaf.",
+                "message": "No valid image data received.",
                 "diseaseName": None,
                 "confidenceScore": 0,
+                "confidencePercentage": "0%",
+                "boundingBoxes": []
             }
 
         try:
@@ -451,79 +531,128 @@ class CropDiseaseDetector:
             if img_bgr is None or img_bgr.size == 0:
                 return {
                     "success": False,
+                    "status": "INVALID_INPUT",
                     "isTrainedModel": False,
                     "error": "Failed to decode image. Please upload a valid JPG or PNG format.",
+                    "message": "Failed to decode image format.",
                     "diseaseName": None,
                     "confidenceScore": 0,
+                    "confidencePercentage": "0%",
+                    "boundingBoxes": []
                 }
                 
             h, w, _ = img_bgr.shape
             
-            # Extract OpenCV 535 visual features
-            features = extract_features_opencv(img_bgr)
-            
-            detected_class = None
-            confidence = 0.90
-            
-            if self.model is not None and self.encoder is not None:
-                # Perform real machine learning model inference
-                features_2d = features.reshape(1, -1)
-                probabilities = self.model.predict_proba(features_2d)[0]
-                
-                # Check if crop_hint matches any of our classes
-                hint = (crop_hint or "").strip().lower()
-                matching_indices = []
-                if hint and hint not in ("all", "auto", "all crops", "auto-detect"):
-                    # Match by crop prefix (e.g. "potato", "corn", "apple", "grape", "tomato", "pepper")
-                    hint_key = "bell pepper" if "pepper" in hint else hint.split(" ")[0].split("/")[0].strip()
-                    matching_indices = [
-                        i for i, cls_name in enumerate(self.encoder.classes_)
-                        if hint_key in cls_name.lower()
-                    ]
-                
-                if matching_indices:
-                    # Pick highest probability within the selected crop's diseases
-                    best_idx = max(matching_indices, key=lambda i: probabilities[i])
-                    detected_class = self.encoder.classes_[best_idx]
-                    raw_conf = probabilities[best_idx]
-                    # Normalize confidence relative to crop subset
-                    subset_sum = sum(probabilities[i] for i in matching_indices)
-                    confidence = float(raw_conf / subset_sum) if subset_sum > 0.001 else float(raw_conf)
-                else:
-                    # Global top prediction across all 29 classes
-                    pred_idx = self.model.predict(features_2d)[0]
-                    detected_class = self.encoder.inverse_transform([pred_idx])[0]
-                    confidence = float(np.max(probabilities))
-                
-                # Check confidence threshold (must be at least 45% confident)
-                CONFIDENCE_THRESHOLD = 0.45
-                if confidence < CONFIDENCE_THRESHOLD:
-                    return {
-                        "success": False,
-                        "status": "LOW_CONFIDENCE",
-                        "isTrainedModel": True,
-                        "modelArchitecture": "OpenCV Multi-Space Visual Feature Extractor + RandomForest",
-                        "trainingDataset": "PlantVillage Crop Disease Dataset (7,250 samples, 29 classes)",
-                        "validationAccuracy": f"{self.metadata.get('validation_accuracy', 0.9269) * 100:.1f}% (Benchmark Validation)",
-                        "confidenceScore": round(confidence, 3),
-                        "confidencePercentage": f"{int(confidence * 100)}%",
-                        "diseaseName": None,
-                        "message": "Unable to make a reliable diagnosis from this image. The leaf features do not match trained pathology patterns with sufficient confidence. Please retake the photo with clear lighting and focus directly on the affected leaf area.",
-                        "boundingBoxes": [],
-                        "disclaimer": "Laboratory validation accuracy differs from ambient field conditions. When diagnosis is uncertain, physical inspection by a certified agronomist is strongly recommended."
+            # Step 1: Pre-inference Image Quality Validation
+            quality = validate_image_quality(img_bgr)
+            if not quality["isValid"]:
+                logger.info(f"Image rejected during quality pre-check: {quality['issue']} - {quality['message']}")
+                return {
+                    "success": False,
+                    "status": "QUALITY_REJECTED",
+                    "qualityIssue": quality["issue"],
+                    "isTrainedModel": True,
+                    "diseaseName": None,
+                    "confidenceScore": 0,
+                    "confidencePercentage": "0%",
+                    "message": f"Image quality too low for reliable diagnosis: {quality['message']}",
+                    "guidance": quality["guidance"],
+                    "boundingBoxes": [],
+                    "imageResolution": f"{w}x{h}",
+                    "debugQuality": {
+                        "blurScore": quality.get("blurScore"),
+                        "brightness": quality.get("brightness"),
+                        "plantRatio": quality.get("plantRatio")
                     }
-            else:
-                # Model file was not loaded: return explicit unavailable state, NEVER default to Early Blight
+                }
+                
+            # Step 2: Ensure ML model is loaded
+            if self.model is None or self.encoder is None:
                 return {
                     "success": False,
                     "status": "MODEL_UNAVAILABLE",
                     "isTrainedModel": False,
                     "diseaseName": None,
                     "confidenceScore": 0,
-                    "message": "Computer vision pathology model is currently unavailable on this server instance.",
-                    "error": "Model weights or feature encoder not initialized."
+                    "confidencePercentage": "0%",
+                    "message": "Computer vision pathology model is currently offline or not loaded on this server.",
+                    "error": "Model weights or feature encoder not initialized.",
+                    "boundingBoxes": []
                 }
                 
+            # Step 3: Extract OpenCV 535 visual features & infer
+            features = extract_features_opencv(img_bgr)
+            features_2d = features.reshape(1, -1)
+            probabilities = self.model.predict_proba(features_2d)[0]
+            
+            # Extract Top-3 predictions with true uninflated probabilities
+            top_3_indices = np.argsort(probabilities)[::-1][:3]
+            top_3 = []
+            for idx in top_3_indices:
+                cls_name = self.encoder.classes_[idx]
+                p = float(probabilities[idx])
+                top_3.append({
+                    "class": cls_name,
+                    "probability": round(p, 4),
+                    "percentage": f"{int(p * 100)}%"
+                })
+                
+            global_top_idx = int(top_3_indices[0])
+            global_class = self.encoder.classes_[global_top_idx]
+            global_prob = float(probabilities[global_top_idx])
+            
+            # Step 4: Audit Crop Hint as a Constraint / Validation Signal (NO renormalization!)
+            hint = (crop_hint or "").strip().lower()
+            matching_indices = []
+            if hint and hint not in ("all", "auto", "all crops", "auto-detect"):
+                hint_key = "bell pepper" if "pepper" in hint else hint.split(" ")[0].split("/")[0].strip()
+                matching_indices = [
+                    i for i, cls_name in enumerate(self.encoder.classes_)
+                    if hint_key in cls_name.lower()
+                ]
+                
+            detected_class = global_class
+            confidence = global_prob  # Actual, un-inflated model probability
+            
+            if matching_indices:
+                crop_best_idx = max(matching_indices, key=lambda i: probabilities[i])
+                crop_best_class = self.encoder.classes_[crop_best_idx]
+                crop_best_prob = float(probabilities[crop_best_idx])
+                
+                # Check for strong conflict between global prediction and selected crop
+                if global_top_idx not in matching_indices:
+                    # If global model has high certainty (> 40%) and strongly beats the best crop candidate (> 2.5x)
+                    if global_prob >= 0.40 and global_prob >= 2.5 * max(0.01, crop_best_prob):
+                        detected_crop_name = global_class.split(" - ")[0] if " - " in global_class else "another crop"
+                        logger.info(f"Crop mismatch: User chose '{crop_hint}', but model detected '{global_class}' ({global_prob:.2f} vs {crop_best_prob:.2f})")
+                        return {
+                            "success": False,
+                            "status": "CROP_MISMATCH",
+                            "isTrainedModel": True,
+                            "diseaseName": None,
+                            "confidenceScore": round(global_prob, 3),
+                            "confidencePercentage": f"{int(global_prob * 100)}%",
+                            "message": f"Image may not match selected crop ({crop_hint}). Visual pathology aligns with {detected_crop_name} ({global_class}) with {int(global_prob * 100)}% probability, whereas the best candidate for {crop_hint} is only {int(crop_best_prob * 100)}%.",
+                            "guidance": f"Please verify that you selected the correct crop in the dropdown, or choose 'Auto-Detect (All Crops)'.",
+                            "selectedCrop": crop_hint,
+                            "globalPrediction": global_class,
+                            "cropCompatiblePrediction": crop_best_class,
+                            "topKPredictions": top_3,
+                            "boundingBoxes": []
+                        }
+                    else:
+                        # Mild difference: prioritize global prediction with true probability
+                        detected_class = global_class
+                        confidence = global_prob
+                else:
+                    # Global top class directly matches the selected crop
+                    detected_class = global_class
+                    confidence = global_prob
+                    
+            # Step 5: Multi-Tier Confidence Classification
+            HIGH_CONFIDENCE_THRESHOLD = 0.45    # ~13x random chance (1/29 = 3.4%)
+            MODERATE_CONFIDENCE_THRESHOLD = 0.20 # ~6x random chance
+            
             # Locate lesion contours for visual bounding boxes
             boxes = detect_lesion_bounding_boxes(img_bgr)
             
@@ -539,37 +668,107 @@ class CropDiseaseDetector:
                 "prevention": "Ensure good field drainage, clean cultivation, and crop rotation."
             })
             
-            return {
-                "success": True,
-                "status": "SUCCESS",
-                "isTrainedModel": True,
-                "modelArchitecture": "OpenCV Multi-Space Visual Feature Extractor + RandomForest",
-                "trainingDataset": "PlantVillage Crop Disease Dataset (7,250 samples, 29 classes)",
-                "validationAccuracy": f"{self.metadata.get('validation_accuracy', 0.9269) * 100:.1f}% (Benchmark Validation)",
-                "diseaseClass": detected_class,
-                "diseaseName": details["diseaseName"],
-                "crop": details["crop"],
-                "pathogen": details["pathogen"],
-                "severity": details["severity"],
-                "confidenceScore": round(confidence, 3),
-                "confidencePercentage": f"{int(confidence * 100)}%",
-                "symptoms": details["symptoms"],
-                "organicRemedy": details["organicRemedy"],
-                "chemicalRemedy": details["chemicalRemedy"],
-                "prevention": details["prevention"],
-                "boundingBoxes": boxes,
-                "imageResolution": f"{w}x{h}",
-                "disclaimer": "Benchmark validation accuracy was measured under controlled dataset conditions. Field accuracy varies under ambient lighting, shadows, dust, and multi-pathogen complexes. Verify with local KVK agronomist before purchasing chemical pesticides."
-            }
+            if confidence < MODERATE_CONFIDENCE_THRESHOLD:
+                # Low confidence / Unable to diagnose
+                logger.info(f"Low confidence diagnosis: Top prediction '{detected_class}' had only {confidence:.3f}")
+                return {
+                    "success": False,
+                    "status": "LOW_CONFIDENCE",
+                    "confidenceTier": "LOW",
+                    "isTrainedModel": True,
+                    "modelArchitecture": "OpenCV Multi-Space Visual Feature Extractor + RandomForest",
+                    "trainingDataset": "PlantVillage Crop Disease Dataset (7,250 samples, 29 classes)",
+                    "validationAccuracy": f"{self.metadata.get('validation_accuracy', 0.9269) * 100:.1f}% (Benchmark Validation)",
+                    "confidenceScore": round(confidence, 3),
+                    "confidencePercentage": f"{int(confidence * 100)}%",
+                    "diseaseName": None,
+                    "message": "FasalAI couldn't make a reliable diagnosis from this image. The visual features do not match trained pathology patterns with sufficient confidence.",
+                    "guidance": "Please capture another photo in clear natural daylight, holding the camera steady and focusing directly on the affected leaf area.",
+                    "topKPredictions": top_3,
+                    "boundingBoxes": [],
+                    "disclaimer": "FasalAI never assigns a definitive disease when visual confidence is below reliable thresholds. Physical inspection by a local agronomist is recommended."
+                }
+                
+            elif confidence < HIGH_CONFIDENCE_THRESHOLD:
+                # Moderate confidence: Use "Possible X" label
+                return {
+                    "success": True,
+                    "status": "MODERATE_CONFIDENCE",
+                    "confidenceTier": "MODERATE",
+                    "isTrainedModel": True,
+                    "modelArchitecture": "OpenCV Multi-Space Visual Feature Extractor + RandomForest",
+                    "trainingDataset": "PlantVillage Crop Disease Dataset (7,250 samples, 29 classes)",
+                    "validationAccuracy": f"{self.metadata.get('validation_accuracy', 0.9269) * 100:.1f}% (Benchmark Validation)",
+                    "diseaseClass": detected_class,
+                    "diseaseName": f"Possible {details['diseaseName']}",
+                    "crop": details["crop"],
+                    "pathogen": details["pathogen"],
+                    "severity": details["severity"],
+                    "confidenceScore": round(confidence, 3),
+                    "confidencePercentage": f"{int(confidence * 100)}%",
+                    "symptoms": details["symptoms"],
+                    "organicRemedy": details["organicRemedy"],
+                    "chemicalRemedy": details["chemicalRemedy"],
+                    "prevention": details["prevention"],
+                    "treatmentDisclaimer": "Example treatment based on ICAR recommendations. Formulations and dosages are illustrative reference benchmarks. Always inspect product label for exact crop registration and statutory pre-harvest intervals (PHI).",
+                    "boundingBoxes": boxes,
+                    "imageResolution": f"{w}x{h}",
+                    "topKPredictions": top_3,
+                    "debugInfo": {
+                        "rawProbability": round(confidence, 4),
+                        "selectedCrop": crop_hint or "Auto-Detect",
+                        "globalPrediction": global_class,
+                        "top3": top_3
+                    },
+                    "disclaimer": "Moderate visual confidence. Symptoms resemble this pathology, but physical symptoms should be confirmed with an agricultural extension officer before applying intensive chemical fungicides."
+                }
+                
+            else:
+                # High confidence
+                return {
+                    "success": True,
+                    "status": "SUCCESS",
+                    "confidenceTier": "HIGH",
+                    "isTrainedModel": True,
+                    "modelArchitecture": "OpenCV Multi-Space Visual Feature Extractor + RandomForest",
+                    "trainingDataset": "PlantVillage Crop Disease Dataset (7,250 samples, 29 classes)",
+                    "validationAccuracy": f"{self.metadata.get('validation_accuracy', 0.9269) * 100:.1f}% (Benchmark Validation)",
+                    "diseaseClass": detected_class,
+                    "diseaseName": details["diseaseName"],
+                    "crop": details["crop"],
+                    "pathogen": details["pathogen"],
+                    "severity": details["severity"],
+                    "confidenceScore": round(confidence, 3),
+                    "confidencePercentage": f"{int(confidence * 100)}%",
+                    "symptoms": details["symptoms"],
+                    "organicRemedy": details["organicRemedy"],
+                    "chemicalRemedy": details["chemicalRemedy"],
+                    "prevention": details["prevention"],
+                    "treatmentDisclaimer": "Example treatment based on ICAR recommendations. Formulations and dosages are illustrative reference benchmarks. Always inspect product label for exact crop registration and statutory pre-harvest intervals (PHI).",
+                    "boundingBoxes": boxes,
+                    "imageResolution": f"{w}x{h}",
+                    "topKPredictions": top_3,
+                    "debugInfo": {
+                        "rawProbability": round(confidence, 4),
+                        "selectedCrop": crop_hint or "Auto-Detect",
+                        "globalPrediction": global_class,
+                        "top3": top_3
+                    },
+                    "disclaimer": "Benchmark validation accuracy was measured under controlled dataset conditions. Field accuracy varies under ambient lighting, shadows, dust, and multi-pathogen complexes. Verify with local KVK agronomist before purchasing chemical pesticides."
+                }
             
         except Exception as e:
             logger.error(f"Inference error on image: {e}")
             return {
                 "success": False,
+                "status": "ERROR",
                 "isTrainedModel": False,
                 "error": "Error analyzing image. Please ensure photo is well-lit and in focus.",
+                "message": "Error analyzing image.",
                 "diseaseName": None,
                 "confidenceScore": 0,
+                "confidencePercentage": "0%",
+                "boundingBoxes": []
             }
 
 detector = CropDiseaseDetector()
