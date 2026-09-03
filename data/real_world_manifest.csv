@@ -1,0 +1,41 @@
+image_path,dataset_source,crop,disease,normalized_class,provenance_source,original_title
+data/real_world_test/Alternaria_solani_2.jpg,wikimedia_commons_field,Tomato,Early Blight,Tomato - Early Blight,Wikimedia Commons (In-field photo),Alternaria_solani_2.jpg
+data/real_world_test/Alternaria_solani___leaf_lesions.jpg,wikimedia_commons_field,Tomato,Early Blight,Tomato - Early Blight,Wikimedia Commons (In-field photo),Alternaria_solani___leaf_lesions.jpg
+data/real_world_test/Puccinia_sorghi_01.jpg,wikimedia_commons_field,Corn (Maize),Common Rust,Corn (Maize) - Common Rust,Wikimedia Commons (In-field photo),Puccinia_sorghi_01.jpg
+data/real_world_test/Puccinia_sorghi_02.jpg,wikimedia_commons_field,Corn (Maize),Common Rust,Corn (Maize) - Common Rust,Wikimedia Commons (In-field photo),Puccinia_sorghi_02.jpg
+data/real_world_test/Puccinia_sorghi_05.jpg,wikimedia_commons_field,Corn (Maize),Common Rust,Corn (Maize) - Common Rust,Wikimedia Commons (In-field photo),Puccinia_sorghi_05.jpg
+data/real_world_test/Puccinia_sorghi_06.jpg,wikimedia_commons_field,Corn (Maize),Common Rust,Corn (Maize) - Common Rust,Wikimedia Commons (In-field photo),Puccinia_sorghi_06.jpg
+data/real_world_test/Puccinia_sorghi_08.jpg,wikimedia_commons_field,Corn (Maize),Common Rust,Corn (Maize) - Common Rust,Wikimedia Commons (In-field photo),Puccinia_sorghi_08.jpg
+data/real_world_test/AppleCedarRust1.JPG,independent_held_out_benchmark,Apple,Cedar Apple Rust,Apple - Cedar Apple Rust,NewPlantDiseasesDataset Test Set (Never in Train/Val),AppleCedarRust1.JPG
+data/real_world_test/AppleCedarRust2.JPG,independent_held_out_benchmark,Apple,Cedar Apple Rust,Apple - Cedar Apple Rust,NewPlantDiseasesDataset Test Set (Never in Train/Val),AppleCedarRust2.JPG
+data/real_world_test/AppleCedarRust3.JPG,independent_held_out_benchmark,Apple,Cedar Apple Rust,Apple - Cedar Apple Rust,NewPlantDiseasesDataset Test Set (Never in Train/Val),AppleCedarRust3.JPG
+data/real_world_test/AppleCedarRust4.JPG,independent_held_out_benchmark,Apple,Cedar Apple Rust,Apple - Cedar Apple Rust,NewPlantDiseasesDataset Test Set (Never in Train/Val),AppleCedarRust4.JPG
+data/real_world_test/AppleScab1.JPG,independent_held_out_benchmark,Apple,Apple Scab,Apple - Apple Scab,NewPlantDiseasesDataset Test Set (Never in Train/Val),AppleScab1.JPG
+data/real_world_test/AppleScab2.JPG,independent_held_out_benchmark,Apple,Apple Scab,Apple - Apple Scab,NewPlantDiseasesDataset Test Set (Never in Train/Val),AppleScab2.JPG
+data/real_world_test/AppleScab3.JPG,independent_held_out_benchmark,Apple,Apple Scab,Apple - Apple Scab,NewPlantDiseasesDataset Test Set (Never in Train/Val),AppleScab3.JPG
+data/real_world_test/CornCommonRust1.JPG,independent_held_out_benchmark,Corn (Maize),Common Rust,Corn (Maize) - Common Rust,NewPlantDiseasesDataset Test Set (Never in Train/Val),CornCommonRust1.JPG
+data/real_world_test/CornCommonRust2.JPG,independent_held_out_benchmark,Corn (Maize),Common Rust,Corn (Maize) - Common Rust,NewPlantDiseasesDataset Test Set (Never in Train/Val),CornCommonRust2.JPG
+data/real_world_test/CornCommonRust3.JPG,independent_held_out_benchmark,Corn (Maize),Common Rust,Corn (Maize) - Common Rust,NewPlantDiseasesDataset Test Set (Never in Train/Val),CornCommonRust3.JPG
+data/real_world_test/PotatoEarlyBlight1.JPG,independent_held_out_benchmark,Potato,Early Blight,Potato - Early Blight,NewPlantDiseasesDataset Test Set (Never in Train/Val),PotatoEarlyBlight1.JPG
+data/real_world_test/PotatoEarlyBlight2.JPG,independent_held_out_benchmark,Potato,Early Blight,Potato - Early Blight,NewPlantDiseasesDataset Test Set (Never in Train/Val),PotatoEarlyBlight2.JPG
+data/real_world_test/PotatoEarlyBlight3.JPG,independent_held_out_benchmark,Potato,Early Blight,Potato - Early Blight,NewPlantDiseasesDataset Test Set (Never in Train/Val),PotatoEarlyBlight3.JPG
+data/real_world_test/PotatoEarlyBlight4.JPG,independent_held_out_benchmark,Potato,Early Blight,Potato - Early Blight,NewPlantDiseasesDataset Test Set (Never in Train/Val),PotatoEarlyBlight4.JPG
+data/real_world_test/PotatoEarlyBlight5.JPG,independent_held_out_benchmark,Potato,Early Blight,Potato - Early Blight,NewPlantDiseasesDataset Test Set (Never in Train/Val),PotatoEarlyBlight5.JPG
+data/real_world_test/PotatoHealthy1.JPG,independent_held_out_benchmark,Potato,Healthy,Potato - Healthy,NewPlantDiseasesDataset Test Set (Never in Train/Val),PotatoHealthy1.JPG
+data/real_world_test/PotatoHealthy2.JPG,independent_held_out_benchmark,Potato,Healthy,Potato - Healthy,NewPlantDiseasesDataset Test Set (Never in Train/Val),PotatoHealthy2.JPG
+data/real_world_test/TomatoEarlyBlight1.JPG,independent_held_out_benchmark,Tomato,Early Blight,Tomato - Early Blight,NewPlantDiseasesDataset Test Set (Never in Train/Val),TomatoEarlyBlight1.JPG
+data/real_world_test/TomatoEarlyBlight2.JPG,independent_held_out_benchmark,Tomato,Early Blight,Tomato - Early Blight,NewPlantDiseasesDataset Test Set (Never in Train/Val),TomatoEarlyBlight2.JPG
+data/real_world_test/TomatoEarlyBlight3.JPG,independent_held_out_benchmark,Tomato,Early Blight,Tomato - Early Blight,NewPlantDiseasesDataset Test Set (Never in Train/Val),TomatoEarlyBlight3.JPG
+data/real_world_test/TomatoEarlyBlight4.JPG,independent_held_out_benchmark,Tomato,Early Blight,Tomato - Early Blight,NewPlantDiseasesDataset Test Set (Never in Train/Val),TomatoEarlyBlight4.JPG
+data/real_world_test/TomatoEarlyBlight5.JPG,independent_held_out_benchmark,Tomato,Early Blight,Tomato - Early Blight,NewPlantDiseasesDataset Test Set (Never in Train/Val),TomatoEarlyBlight5.JPG
+data/real_world_test/TomatoEarlyBlight6.JPG,independent_held_out_benchmark,Tomato,Early Blight,Tomato - Early Blight,NewPlantDiseasesDataset Test Set (Never in Train/Val),TomatoEarlyBlight6.JPG
+data/real_world_test/TomatoHealthy1.JPG,independent_held_out_benchmark,Tomato,Healthy,Tomato - Healthy,NewPlantDiseasesDataset Test Set (Never in Train/Val),TomatoHealthy1.JPG
+data/real_world_test/TomatoHealthy2.JPG,independent_held_out_benchmark,Tomato,Healthy,Tomato - Healthy,NewPlantDiseasesDataset Test Set (Never in Train/Val),TomatoHealthy2.JPG
+data/real_world_test/TomatoHealthy3.JPG,independent_held_out_benchmark,Tomato,Healthy,Tomato - Healthy,NewPlantDiseasesDataset Test Set (Never in Train/Val),TomatoHealthy3.JPG
+data/real_world_test/TomatoHealthy4.JPG,independent_held_out_benchmark,Tomato,Healthy,Tomato - Healthy,NewPlantDiseasesDataset Test Set (Never in Train/Val),TomatoHealthy4.JPG
+data/real_world_test/TomatoYellowCurlVirus1.JPG,independent_held_out_benchmark,Tomato,Yellow Leaf Curl Virus,Tomato - Yellow Leaf Curl Virus,NewPlantDiseasesDataset Test Set (Never in Train/Val),TomatoYellowCurlVirus1.JPG
+data/real_world_test/TomatoYellowCurlVirus2.JPG,independent_held_out_benchmark,Tomato,Yellow Leaf Curl Virus,Tomato - Yellow Leaf Curl Virus,NewPlantDiseasesDataset Test Set (Never in Train/Val),TomatoYellowCurlVirus2.JPG
+data/real_world_test/TomatoYellowCurlVirus3.JPG,independent_held_out_benchmark,Tomato,Yellow Leaf Curl Virus,Tomato - Yellow Leaf Curl Virus,NewPlantDiseasesDataset Test Set (Never in Train/Val),TomatoYellowCurlVirus3.JPG
+data/real_world_test/TomatoYellowCurlVirus4.JPG,independent_held_out_benchmark,Tomato,Yellow Leaf Curl Virus,Tomato - Yellow Leaf Curl Virus,NewPlantDiseasesDataset Test Set (Never in Train/Val),TomatoYellowCurlVirus4.JPG
+data/real_world_test/TomatoYellowCurlVirus5.JPG,independent_held_out_benchmark,Tomato,Yellow Leaf Curl Virus,Tomato - Yellow Leaf Curl Virus,NewPlantDiseasesDataset Test Set (Never in Train/Val),TomatoYellowCurlVirus5.JPG
+data/real_world_test/TomatoYellowCurlVirus6.JPG,independent_held_out_benchmark,Tomato,Yellow Leaf Curl Virus,Tomato - Yellow Leaf Curl Virus,NewPlantDiseasesDataset Test Set (Never in Train/Val),TomatoYellowCurlVirus6.JPG
