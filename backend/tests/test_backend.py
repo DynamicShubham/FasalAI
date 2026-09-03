@@ -57,11 +57,20 @@ def test_vision_scan_valid_image():
     import base64
     from PIL import Image
     import io
-    # Create a small test image (green leaf-like)
-    img = Image.new("RGB", (100, 100), (80, 140, 60))
-    buf = io.BytesIO()
-    img.save(buf, format="JPEG")
-    b64 = base64.b64encode(buf.getvalue()).decode()
+    from pathlib import Path
+    sample_path = Path(__file__).resolve().parent.parent.parent / "frontend" / "public" / "samples" / "tomato_curl.jpg"
+    if sample_path.exists():
+        with open(sample_path, "rb") as f:
+            b64 = base64.b64encode(f.read()).decode()
+    else:
+        import numpy as np
+        arr = np.full((128, 128, 3), [40, 140, 50], dtype=np.uint8)
+        noise = np.random.randint(-20, 20, (128, 128, 3), dtype=np.int16)
+        arr = np.clip(arr.astype(np.int16) + noise, 0, 255).astype(np.uint8)
+        img = Image.fromarray(arr)
+        buf = io.BytesIO()
+        img.save(buf, format="JPEG")
+        b64 = base64.b64encode(buf.getvalue()).decode()
     
     response = client.post("/api/v1/vision/scan-frame", json={"imageBase64": b64, "cropHint": "Tomato"})
     assert response.status_code == 200

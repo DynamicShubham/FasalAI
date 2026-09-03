@@ -1,0 +1,344 @@
+[
+  {
+    "id": "apple_scab",
+    "crop": "Apple",
+    "disease": "Apple Scab",
+    "display": "Apple - Apple Scab",
+    "healthy": false,
+    "old": "Apple - Apple Scab",
+    "new": "Apple___Apple_scab"
+  },
+  {
+    "id": "apple_black_rot",
+    "crop": "Apple",
+    "disease": "Black Rot",
+    "display": "Apple - Black Rot",
+    "healthy": false,
+    "old": "Apple - Black Rot",
+    "new": "Apple___Black_rot"
+  },
+  {
+    "id": "apple_cedar_rust",
+    "crop": "Apple",
+    "disease": "Cedar Apple Rust",
+    "display": "Apple - Cedar Apple Rust",
+    "healthy": false,
+    "old": "Apple - Cedar Apple Rust",
+    "new": "Apple___Cedar_apple_rust"
+  },
+  {
+    "id": "apple_healthy",
+    "crop": "Apple",
+    "disease": "Healthy",
+    "display": "Apple - Healthy",
+    "healthy": true,
+    "old": "Apple - Healthy",
+    "new": "Apple___healthy"
+  },
+  {
+    "id": "blueberry_healthy",
+    "crop": "Blueberry",
+    "disease": "Healthy",
+    "display": "Blueberry - Healthy",
+    "healthy": true,
+    "old": null,
+    "new": "Blueberry___healthy"
+  },
+  {
+    "id": "cherry_powdery_mildew",
+    "crop": "Cherry",
+    "disease": "Powdery Mildew",
+    "display": "Cherry - Powdery Mildew",
+    "healthy": false,
+    "old": "Cherry - Powdery Mildew",
+    "new": "Cherry_(including_sour)___Powdery_mildew"
+  },
+  {
+    "id": "cherry_healthy",
+    "crop": "Cherry",
+    "disease": "Healthy",
+    "display": "Cherry - Healthy",
+    "healthy": true,
+    "old": "Cherry - Healthy",
+    "new": "Cherry_(including_sour)___healthy"
+  },
+  {
+    "id": "corn_cercospora",
+    "crop": "Corn (Maize)",
+    "disease": "Cercospora Leaf Spot (Gray Leaf Spot)",
+    "display": "Corn (Maize) - Cercospora Leaf Spot",
+    "healthy": false,
+    "old": "Corn (Maize) - Cercospora Leaf Spot",
+    "new": "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot"
+  },
+  {
+    "id": "corn_common_rust",
+    "crop": "Corn (Maize)",
+    "disease": "Common Rust",
+    "display": "Corn (Maize) - Common Rust",
+    "healthy": false,
+    "old": "Corn (Maize) - Common Rust",
+    "new": "Corn_(maize)___Common_rust_"
+  },
+  {
+    "id": "corn_northern_blight",
+    "crop": "Corn (Maize)",
+    "disease": "Northern Leaf Blight",
+    "display": "Corn (Maize) - Northern Leaf Blight",
+    "healthy": false,
+    "old": "Corn (Maize) - Northern Leaf Blight",
+    "new": "Corn_(maize)___Northern_Leaf_Blight"
+  },
+  {
+    "id": "corn_healthy",
+    "crop": "Corn (Maize)",
+    "disease": "Healthy",
+    "display": "Corn (Maize) - Healthy",
+    "healthy": true,
+    "old": "Corn (Maize) - Healthy",
+    "new": "Corn_(maize)___healthy"
+  },
+  {
+    "id": "grape_black_rot",
+    "crop": "Grape",
+    "disease": "Black Rot",
+    "display": "Grape - Black Rot",
+    "healthy": false,
+    "old": "Grape - Black Rot",
+    "new": "Grape___Black_rot"
+  },
+  {
+    "id": "grape_esca",
+    "crop": "Grape",
+    "disease": "Esca (Black Measles)",
+    "display": "Grape - Esca (Black Measles)",
+    "healthy": false,
+    "old": "Grape - Esca (Black Measles)",
+    "new": "Grape___Esca_(Black_Measles)"
+  },
+  {
+    "id": "grape_leaf_blight",
+    "crop": "Grape",
+    "disease": "Leaf Blight (Isariopsis)",
+    "display": "Grape - Leaf Blight",
+    "healthy": false,
+    "old": "Grape - Leaf Blight",
+    "new": "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)"
+  },
+  {
+    "id": "grape_healthy",
+    "crop": "Grape",
+    "disease": "Healthy",
+    "display": "Grape - Healthy",
+    "healthy": true,
+    "old": "Grape - Healthy",
+    "new": "Grape___healthy"
+  },
+  {
+    "id": "orange_citrus_greening",
+    "crop": "Orange",
+    "disease": "Huanglongbing (Citrus Greening)",
+    "display": "Orange - Citrus Greening",
+    "healthy": false,
+    "old": null,
+    "new": "Orange___Haunglongbing_(Citrus_greening)"
+  },
+  {
+    "id": "peach_bacterial_spot",
+    "crop": "Peach",
+    "disease": "Bacterial Spot",
+    "display": "Peach - Bacterial Spot",
+    "healthy": false,
+    "old": "Peach - Bacterial Spot",
+    "new": "Peach___Bacterial_spot"
+  },
+  {
+    "id": "peach_healthy",
+    "crop": "Peach",
+    "disease": "Healthy",
+    "display": "Peach - Healthy",
+    "healthy": true,
+    "old": "Peach - Healthy",
+    "new": "Peach___healthy"
+  },
+  {
+    "id": "bell_pepper_bacterial_spot",
+    "crop": "Bell Pepper",
+    "disease": "Bacterial Spot",
+    "display": "Bell Pepper - Bacterial Spot",
+    "healthy": false,
+    "old": "Bell Pepper - Bacterial Spot",
+    "new": "Pepper,_bell___Bacterial_spot"
+  },
+  {
+    "id": "bell_pepper_healthy",
+    "crop": "Bell Pepper",
+    "disease": "Healthy",
+    "display": "Bell Pepper - Healthy",
+    "healthy": true,
+    "old": "Bell Pepper - Healthy",
+    "new": "Pepper,_bell___healthy"
+  },
+  {
+    "id": "potato_early_blight",
+    "crop": "Potato",
+    "disease": "Early Blight",
+    "display": "Potato - Early Blight",
+    "healthy": false,
+    "old": "Potato - Early Blight",
+    "new": "Potato___Early_blight"
+  },
+  {
+    "id": "potato_late_blight",
+    "crop": "Potato",
+    "disease": "Late Blight",
+    "display": "Potato - Late Blight",
+    "healthy": false,
+    "old": "Potato - Late Blight",
+    "new": "Potato___Late_blight"
+  },
+  {
+    "id": "potato_healthy",
+    "crop": "Potato",
+    "disease": "Healthy",
+    "display": "Potato - Healthy",
+    "healthy": true,
+    "old": "Potato - Healthy",
+    "new": "Potato___healthy"
+  },
+  {
+    "id": "raspberry_healthy",
+    "crop": "Raspberry",
+    "disease": "Healthy",
+    "display": "Raspberry - Healthy",
+    "healthy": true,
+    "old": null,
+    "new": "Raspberry___healthy"
+  },
+  {
+    "id": "soybean_healthy",
+    "crop": "Soybean",
+    "disease": "Healthy",
+    "display": "Soybean - Healthy",
+    "healthy": true,
+    "old": null,
+    "new": "Soybean___healthy"
+  },
+  {
+    "id": "squash_powdery_mildew",
+    "crop": "Squash",
+    "disease": "Powdery Mildew",
+    "display": "Squash - Powdery Mildew",
+    "healthy": false,
+    "old": null,
+    "new": "Squash___Powdery_mildew"
+  },
+  {
+    "id": "strawberry_leaf_scorch",
+    "crop": "Strawberry",
+    "disease": "Leaf Scorch",
+    "display": "Strawberry - Leaf Scorch",
+    "healthy": false,
+    "old": "Strawberry - Leaf Scorch",
+    "new": "Strawberry___Leaf_scorch"
+  },
+  {
+    "id": "strawberry_healthy",
+    "crop": "Strawberry",
+    "disease": "Healthy",
+    "display": "Strawberry - Healthy",
+    "healthy": true,
+    "old": "Strawberry - Healthy",
+    "new": "Strawberry___healthy"
+  },
+  {
+    "id": "tomato_bacterial_spot",
+    "crop": "Tomato",
+    "disease": "Bacterial Spot",
+    "display": "Tomato - Bacterial Spot",
+    "healthy": false,
+    "old": "Tomato - Bacterial Spot",
+    "new": "Tomato___Bacterial_spot"
+  },
+  {
+    "id": "tomato_early_blight",
+    "crop": "Tomato",
+    "disease": "Early Blight",
+    "display": "Tomato - Early Blight",
+    "healthy": false,
+    "old": "Tomato - Early Blight",
+    "new": "Tomato___Early_blight"
+  },
+  {
+    "id": "tomato_late_blight",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "display": "Tomato - Late Blight",
+    "healthy": false,
+    "old": "Tomato - Late Blight",
+    "new": "Tomato___Late_blight"
+  },
+  {
+    "id": "tomato_leaf_mold",
+    "crop": "Tomato",
+    "disease": "Leaf Mold",
+    "display": "Tomato - Leaf Mold",
+    "healthy": false,
+    "old": null,
+    "new": "Tomato___Leaf_Mold"
+  },
+  {
+    "id": "tomato_septoria",
+    "crop": "Tomato",
+    "disease": "Septoria Leaf Spot",
+    "display": "Tomato - Septoria Leaf Spot",
+    "healthy": false,
+    "old": "Tomato - Septoria Leaf Spot",
+    "new": "Tomato___Septoria_leaf_spot"
+  },
+  {
+    "id": "tomato_spider_mites",
+    "crop": "Tomato",
+    "disease": "Spider Mites (Two-Spotted)",
+    "display": "Tomato - Spider Mites",
+    "healthy": false,
+    "old": null,
+    "new": "Tomato___Spider_mites Two-spotted_spider_mite"
+  },
+  {
+    "id": "tomato_target_spot",
+    "crop": "Tomato",
+    "disease": "Target Spot",
+    "display": "Tomato - Target Spot",
+    "healthy": false,
+    "old": null,
+    "new": "Tomato___Target_Spot"
+  },
+  {
+    "id": "tomato_curl_virus",
+    "crop": "Tomato",
+    "disease": "Yellow Leaf Curl Virus",
+    "display": "Tomato - Yellow Leaf Curl Virus",
+    "healthy": false,
+    "old": "Tomato - Yellow Leaf Curl Virus",
+    "new": "Tomato___Tomato_Yellow_Leaf_Curl_Virus"
+  },
+  {
+    "id": "tomato_mosaic_virus",
+    "crop": "Tomato",
+    "disease": "Mosaic Virus",
+    "display": "Tomato - Mosaic Virus",
+    "healthy": false,
+    "old": null,
+    "new": "Tomato___Tomato_mosaic_virus"
+  },
+  {
+    "id": "tomato_healthy",
+    "crop": "Tomato",
+    "disease": "Healthy",
+    "display": "Tomato - Healthy",
+    "healthy": true,
+    "old": "Tomato - Healthy",
+    "new": "Tomato___healthy"
+  }
+]
