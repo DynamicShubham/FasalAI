@@ -48,48 +48,85 @@ export default function AlertsPage() {
           </span>
         </section>
 
-        {/* Alerts List */}
-        <div className="flex flex-col gap-3">
-          {alerts.map((a) => (
-            <div
-              key={a.id}
-              className="bg-white p-4 md:p-5 rounded-2xl border border-stone-200/80 shadow-card flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"
-            >
-              <div className="flex items-start gap-3">
-                <div
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0 ${
-                    a.severity === "CRITICAL"
-                      ? "bg-red-50 text-red-700 border border-red-200"
-                      : a.severity === "WARNING"
-                      ? "bg-amber-50 text-amber-800 border border-amber-200"
-                      : "bg-emerald-50 text-emerald-800 border border-emerald-200"
-                  }`}
-                >
-                  <span className="material-symbols-outlined">
-                    {a.type === "WEATHER" ? "thunderstorm" : a.type === "DISEASE_RISK" ? "bug_report" : "trending_up"}
-                  </span>
-                </div>
-
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-bold text-content text-sm">{a.title}</h3>
-                    <span className="text-[11px] text-content-muted">{a.timestamp}</span>
+        {/* Loading State */}
+        {loading && (
+          <div className="flex flex-col gap-3 animate-pulse">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white p-5 rounded-2xl border border-stone-200/80 shadow-card flex justify-between items-center gap-4">
+                <div className="flex items-center gap-3 w-full">
+                  <div className="w-10 h-10 rounded-xl bg-stone-200 flex-shrink-0"></div>
+                  <div className="space-y-2 flex-grow">
+                    <div className="h-4 bg-stone-200 rounded w-1/3"></div>
+                    <div className="h-3 bg-stone-100 rounded w-3/4"></div>
                   </div>
-                  <p className="text-xs text-content-muted mt-0.5 leading-relaxed max-w-lg">
-                    {a.message}
-                  </p>
                 </div>
+                <div className="h-8 w-24 bg-stone-100 rounded-xl flex-shrink-0"></div>
               </div>
+            ))}
+          </div>
+        )}
 
-              <Link
-                href={a.type === "DISEASE_RISK" ? "/scanner" : a.type === "MARKET" ? "/market" : "/dashboard"}
-                className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-brand-900 font-semibold text-xs rounded-xl border border-stone-200 transition-colors whitespace-nowrap self-end sm:self-center"
+        {/* Empty State */}
+        {!loading && alerts.length === 0 && (
+          <div className="bg-white p-12 rounded-2xl border border-stone-200/80 shadow-subtle text-center flex flex-col items-center gap-3">
+            <span className="material-symbols-outlined text-4xl text-emerald-600">check_circle</span>
+            <h3 className="font-display font-bold text-content text-base">You're All Caught Up</h3>
+            <p className="text-xs text-content-muted max-w-sm">
+              There are no active critical alerts for your district right now. Check back when weather or market conditions change.
+            </p>
+            <Link
+              href="/dashboard"
+              className="mt-2 px-5 py-2.5 bg-brand-900 text-white text-xs font-semibold rounded-full shadow-sm"
+            >
+              Return to Dashboard
+            </Link>
+          </div>
+        )}
+
+        {/* Alerts List */}
+        {!loading && alerts.length > 0 && (
+          <div className="flex flex-col gap-3">
+            {alerts.map((a) => (
+              <div
+                key={a.id}
+                className="bg-white p-4 md:p-5 rounded-2xl border border-stone-200/80 shadow-card flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"
               >
-                {a.action} →
-              </Link>
-            </div>
-          ))}
-        </div>
+                <div className="flex items-start gap-3">
+                  <div
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0 ${
+                      a.severity === "CRITICAL"
+                        ? "bg-red-50 text-red-700 border border-red-200"
+                        : a.severity === "WARNING"
+                        ? "bg-amber-50 text-amber-800 border border-amber-200"
+                        : "bg-emerald-50 text-emerald-800 border border-emerald-200"
+                    }`}
+                  >
+                    <span className="material-symbols-outlined">
+                      {a.type === "WEATHER" ? "thunderstorm" : a.type === "DISEASE_RISK" ? "bug_report" : "trending_up"}
+                    </span>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-bold text-content text-sm">{a.title}</h3>
+                      <span className="text-[11px] text-content-muted">{a.timestamp}</span>
+                    </div>
+                    <p className="text-xs text-content-muted mt-0.5 leading-relaxed max-w-lg">
+                      {a.message}
+                    </p>
+                  </div>
+                </div>
+
+                <Link
+                  href={a.type === "DISEASE_RISK" ? "/scanner" : a.type === "MARKET" ? "/market" : "/dashboard"}
+                  className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-brand-900 font-semibold text-xs rounded-xl border border-stone-200 transition-colors whitespace-nowrap self-end sm:self-center"
+                >
+                  {a.action} →
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
       </main>
 
       <BottomNav />

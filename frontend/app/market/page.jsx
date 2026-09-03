@@ -66,7 +66,7 @@ export default function MarketPage() {
         </section>
 
         {/* Data Provenance & Freshness Banner */}
-        <div className="bg-stone-50 dark:bg-stone-900 px-4 py-2.5 rounded-xl border border-stone-200/80 dark:border-stone-800 flex flex-wrap items-center justify-between text-xs text-content-muted gap-2">
+        <div className="bg-stone-50 dark:bg-stone-900 px-3 sm:px-4 py-2.5 rounded-xl border border-stone-200/80 dark:border-stone-800 flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs text-content-muted gap-2">
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-bold uppercase tracking-wider bg-brand-50 dark:bg-emerald-950/60 text-brand-900 dark:text-emerald-300 px-2 py-0.5 rounded border border-brand-200 dark:border-emerald-800">
               OFFICIAL AGMARKNET BULLETIN
@@ -161,10 +161,10 @@ export default function MarketPage() {
                   {marketData.allMandis.map((mandi) => (
                     <div
                       key={mandi.mandiId}
-                      className="bg-stone-50 p-4 rounded-xl border border-stone-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"
+                      className="bg-stone-50 p-3 sm:p-4 rounded-xl border border-stone-200 flex flex-col gap-3"
                     >
                       <div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-1.5">
                           <h4 className="font-bold text-content text-sm">{mandi.mandiName}</h4>
                           <span className="text-xs text-content-muted">
                             ({mandi.distanceKm} km away)
@@ -180,7 +180,7 @@ export default function MarketPage() {
                         </p>
                       </div>
 
-                      <div className="flex items-center gap-4 self-end sm:self-center">
+                      <div className="flex items-center gap-3 sm:gap-4">
                         <div className="text-right">
                           <p className="text-[11px] text-content-muted">Net Rate / Quintal</p>
                           <p className="text-sm font-bold text-brand-900">₹{mandi.netPricePerQuintal}/q</p>

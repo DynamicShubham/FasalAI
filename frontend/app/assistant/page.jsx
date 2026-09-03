@@ -104,6 +104,13 @@ export default function AssistantPage() {
       setMessages((prev) => [...prev, botMsg]);
     } catch (e) {
       console.error("Chat error:", e);
+      const fallbackMsg = {
+        id: (Date.now() + 1).toString(),
+        sender: "assistant",
+        text: "I couldn't reach the advisor service right now. Please check your internet connection or ask again shortly.",
+        time: "Now",
+      };
+      setMessages((prev) => [...prev, fallbackMsg]);
     } finally {
       setLoading(false);
     }

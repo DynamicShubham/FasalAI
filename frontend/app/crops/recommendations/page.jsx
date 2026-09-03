@@ -77,9 +77,9 @@ export default function CropRecommendationsPage() {
           </div>
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-bold uppercase tracking-wider bg-blue-50 dark:bg-blue-950/60 text-blue-900 dark:text-blue-300 px-2 py-0.5 rounded border border-blue-200 dark:border-blue-800">
-              COMPUTED SUITABILITY
+              FIELD MATCHED
             </span>
-            <span>Multi-Criteria Decision Engine (Soil pH, Texture, Irrigation & Season)</span>
+            <span>Calculated from your soil pH, texture, water availability & season</span>
           </div>
         </div>
 

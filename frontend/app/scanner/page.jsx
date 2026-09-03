@@ -246,11 +246,11 @@ export default function ScannerPage() {
         {/* Header Title */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-2 border-b border-stone-200/80">
           <div>
-            <h1 className="font-display text-2xl md:text-3xl font-bold text-content">
-              Plant Doctor & Disease Diagnostic
+            <h1 className="font-display text-xl md:text-3xl font-bold text-content">
+              Plant Doctor
             </h1>
-            <p className="text-xs md:text-sm text-content-muted mt-0.5">
-              MobileNetV3 Deep Transfer Learning + Foliar ROI Extractor (82.5% Field Accuracy)
+            <p className="text-[11px] md:text-sm text-content-muted mt-0.5">
+              Instant Leaf Health & Crop Disease Diagnosis
             </p>
           </div>
 
@@ -271,8 +271,8 @@ export default function ScannerPage() {
         </div>
 
         {/* Phase 15: Demo Test Library Tray */}
-        <div className="bg-white p-4 rounded-2xl border border-stone-200/80 shadow-subtle flex flex-col gap-2">
-          <div className="flex justify-between items-center">
+        <div className="bg-white p-3 sm:p-4 rounded-2xl border border-stone-200/80 shadow-subtle flex flex-col gap-2">
+          <div className="flex flex-wrap justify-between items-center gap-2">
             <span className="text-xs font-bold text-content uppercase tracking-wider flex items-center gap-1.5">
               <span className="material-symbols-outlined text-[16px] text-brand-900">science</span>
               Verified Test Samples:
@@ -287,19 +287,19 @@ export default function ScannerPage() {
             </button>
           </div>
 
-          <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 pt-1">
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 sm:gap-2 pt-1">
             {SAMPLE_LEAVES.map((s) => (
               <button
                 key={s.id}
                 type="button"
                 onClick={() => testWithSample(s)}
                 disabled={scanning}
-                className="p-2 rounded-xl bg-stone-50 hover:bg-brand-50 border border-stone-200 hover:border-brand-700 transition-all flex flex-col items-center text-center gap-1.5 group disabled:opacity-50"
+                className="p-1.5 sm:p-2 rounded-xl bg-stone-50 hover:bg-brand-50 border border-stone-200 hover:border-brand-700 transition-all flex flex-col items-center text-center gap-1 group disabled:opacity-50"
               >
-                <div className="w-10 h-10 rounded-lg overflow-hidden border border-stone-200 bg-white flex items-center justify-center text-xl shadow-xs">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg overflow-hidden border border-stone-200 bg-white flex items-center justify-center text-xl shadow-xs">
                   <img src={s.src} alt={s.name} className="w-full h-full object-cover" />
                 </div>
-                <span className="text-[11px] font-semibold text-content group-hover:text-brand-900 line-clamp-1">
+                <span className="text-[10px] sm:text-[11px] font-semibold text-content group-hover:text-brand-900 line-clamp-1">
                   {s.name}
                 </span>
               </button>
@@ -345,13 +345,13 @@ export default function ScannerPage() {
         </div>
 
         {/* Viewfinder / Preview Container */}
-        <div className="relative w-full aspect-[4/3] md:aspect-[16/9] max-h-[440px] bg-stone-900 rounded-2xl overflow-hidden shadow-card border border-stone-300 flex items-center justify-center">
+        <div className="relative w-full aspect-[4/3] max-h-[50vh] sm:max-h-[440px] bg-stone-900 rounded-2xl overflow-hidden shadow-card border border-stone-300 flex items-center justify-center">
           {activePreviewImage ? (
             <div className="relative w-full h-full bg-black flex items-center justify-center">
               <img src={activePreviewImage} alt="Captured Leaf" className="w-full h-full object-contain" />
               <div className="absolute top-3 left-3 bg-stone-900/85 backdrop-blur-xs text-white text-[11px] font-semibold px-3 py-1.5 rounded-full flex items-center gap-2 border border-white/20 shadow-sm">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>Captured Leaf Preview · Review Focus & Framing</span>
+                <span>Captured Leaf Preview</span>
               </div>
             </div>
           ) : (
@@ -365,7 +365,7 @@ export default function ScannerPage() {
           )}
           <canvas ref={canvasRef} className="hidden" />
 
-          {/* Viewfinder Target Reticle & Guidance (Phase 13) */}
+          {/* Viewfinder Target Reticle & Guidance */}
           {cameraActive && !activePreviewImage && !scanning && (
             <div className="absolute inset-6 sm:inset-10 border-2 border-dashed border-emerald-400/80 rounded-2xl pointer-events-none flex flex-col justify-between p-4 bg-emerald-950/5">
               <div className="flex justify-between">
@@ -389,145 +389,112 @@ export default function ScannerPage() {
           {scanning && (
             <div className="absolute inset-0 bg-stone-900/70 backdrop-blur-xs flex flex-col items-center justify-center gap-3 text-white z-20">
               <div className="w-12 h-12 border-3 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
-              <p className="text-sm font-bold tracking-wide">Analyzing leaf symptoms with MobileNetV3...</p>
-              <p className="text-xs text-stone-300">Extracting foliar ROI & filtering screen moiré</p>
+              <p className="text-sm font-bold tracking-wide">Analyzing leaf symptoms...</p>
+              <p className="text-xs text-stone-300">Extracting foliar ROI & running diagnostic models</p>
             </div>
           )}
 
-          {/* Fallback Display if camera not active and no preview image */}
+          {/* Clean Camera Placeholder before Camera Starts */}
           {!cameraActive && !activePreviewImage && (
             <div className="flex flex-col items-center justify-center text-center p-6 gap-3 text-white">
               <span className="material-symbols-outlined text-4xl text-stone-400">photo_camera</span>
-              <p className="text-xs text-stone-300 max-w-sm">
-                Tap below to open your camera or choose an image.
-              </p>
-              <div className="flex flex-wrap items-center justify-center gap-2 mt-1">
-                <button
-                  type="button"
-                  onClick={() => cameraInputRef.current?.click()}
-                  className="px-4 py-2 bg-brand-800 hover:bg-brand-700 text-white text-xs font-bold rounded-lg flex items-center gap-1.5 shadow-sm transition-colors"
-                >
-                  <span className="material-symbols-outlined text-[16px]">photo_camera</span>
-                  <span>Take Photo (Camera)</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={startCamera}
-                  className="px-4 py-2 bg-stone-700 hover:bg-stone-600 text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors"
-                >
-                  <span className="material-symbols-outlined text-[16px]">videocam</span>
-                  <span>Live Viewfinder</span>
-                </button>
+              <div>
+                <h3 className="text-sm font-bold text-white">Camera Ready</h3>
+                <p className="text-xs text-stone-300 mt-0.5 max-w-sm">
+                  Allow camera access to frame and scan an affected crop leaf
+                </p>
               </div>
+              <button
+                type="button"
+                onClick={startCamera}
+                className="mt-1 px-5 py-2.5 bg-brand-800 hover:bg-brand-700 text-white text-xs font-bold rounded-full flex items-center gap-2 shadow-sm transition-colors cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-[18px]">videocam</span>
+                <span>Start Camera</span>
+              </button>
             </div>
           )}
         </div>
 
-        {/* Phase 4 & Phase 2 Action Controls */}
+        {/* Action Controls */}
         <div className="flex flex-col items-center gap-3">
-          {/* Main Action Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-3 w-full">
-            {/* Live Camera Mode: Capture Photo */}
-            {cameraActive && !activePreviewImage && (
+          {/* Main Action Buttons: Take Photo & Upload Photo */}
+          {!activePreviewImage ? (
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-4 w-full">
               <button
                 type="button"
-                onClick={captureFrameForPreview}
-                className="px-8 py-3.5 bg-brand-900 hover:bg-brand-950 text-white font-bold text-sm rounded-full shadow-md flex items-center justify-center gap-2 transition-transform hover:scale-105 active:scale-95"
+                onClick={cameraActive ? captureFrameForPreview : startCamera}
+                disabled={scanning}
+                className="w-full sm:w-auto px-7 py-3 bg-brand-900 hover:bg-brand-950 text-white font-bold text-sm rounded-full shadow-md flex items-center justify-center gap-2 transition-transform active:scale-95 disabled:opacity-50 cursor-pointer"
               >
-                <span className="material-symbols-outlined text-[22px]">camera</span>
-                <span>Capture Photo</span>
+                <span className="material-symbols-outlined text-[20px]">photo_camera</span>
+                <span>Take Photo</span>
               </button>
-            )}
 
-            {/* Frozen Preview Mode: Retake, Download Exact Image, and Analyze */}
-            {activePreviewImage && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActivePreviewImage(null);
-                    setScanResult(null);
-                    startCamera();
-                  }}
-                  disabled={scanning}
-                  className="px-5 py-3.5 bg-stone-100 hover:bg-stone-200 text-content font-bold text-sm rounded-full border border-stone-300 shadow-subtle flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
-                >
-                  <span className="material-symbols-outlined text-[18px]">replay</span>
-                  <span>Retake Photo</span>
-                </button>
-
-                {/* Phase 2: Developer Download Exact Bytes */}
-                <button
-                  type="button"
-                  onClick={downloadCapturedImage}
-                  className="px-4 py-3.5 bg-stone-100 hover:bg-stone-200 text-content-muted hover:text-content text-xs font-semibold rounded-full border border-stone-300 shadow-subtle flex items-center justify-center gap-1.5 transition-colors"
-                  title="Download exact JPEG bytes sent to backend"
-                >
-                  <span className="material-symbols-outlined text-[16px]">download</span>
-                  <span>Save Exact Image</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={analyzeActiveImage}
-                  disabled={scanning}
-                  className="px-8 py-3.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm rounded-full shadow-md flex items-center justify-center gap-2 transition-transform hover:scale-105 active:scale-95 disabled:opacity-50"
-                >
-                  <span className="material-symbols-outlined text-[20px]">diagnostics</span>
-                  <span>{scanning ? "Diagnosing..." : "Analyze Leaf Now →"}</span>
-                </button>
-              </>
-            )}
-
-            {/* If camera is not running and no preview image, show direct triggers */}
-            {!cameraActive && !activePreviewImage && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => cameraInputRef.current?.click()}
-                  disabled={scanning}
-                  className="px-7 py-3.5 bg-brand-900 hover:bg-brand-950 text-white font-bold text-sm rounded-full shadow-sm flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
-                >
-                  <span className="material-symbols-outlined text-[20px]">photo_camera</span>
-                  <span>Take Photo</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={startCamera}
-                  disabled={scanning}
-                  className="px-5 py-3.5 bg-stone-100 hover:bg-stone-200 text-content font-bold text-sm rounded-full border border-stone-300 shadow-subtle flex items-center justify-center gap-2 transition-colors"
-                >
-                  <span className="material-symbols-outlined text-[20px]">videocam</span>
-                  <span>Live Viewfinder</span>
-                </button>
-              </>
-            )}
-
-            {/* Gallery Upload Option */}
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={scanning}
-              className="px-6 py-3.5 bg-white hover:bg-stone-50 text-content font-bold text-sm rounded-full border border-stone-300 shadow-subtle flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
-            >
-              <span className="material-symbols-outlined text-[20px]">upload_file</span>
-              <span>Upload Photo</span>
-            </button>
-
-            {cameraActive && (
               <button
                 type="button"
-                onClick={() => setCameraFacing((prev) => (prev === "environment" ? "user" : "environment"))}
-                className="p-3 bg-white hover:bg-stone-50 text-content rounded-full border border-stone-300 shadow-subtle flex items-center justify-center transition-colors"
-                title="Flip Front / Rear Camera"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={scanning}
+                className="w-full sm:w-auto px-6 py-3 bg-white hover:bg-stone-50 text-content font-bold text-sm rounded-full border border-stone-300 shadow-subtle flex items-center justify-center gap-2 transition-colors disabled:opacity-50 cursor-pointer"
               >
-                <span className="material-symbols-outlined text-lg">flip_camera_ios</span>
+                <span className="material-symbols-outlined text-[20px]">upload_file</span>
+                <span>Upload Photo</span>
               </button>
-            )}
-          </div>
 
-          {/* Camera Instructions Guide Pill */}
+              {cameraActive && (
+                <button
+                  type="button"
+                  onClick={() => setCameraFacing((prev) => (prev === "environment" ? "user" : "environment"))}
+                  className="p-3 bg-white hover:bg-stone-50 text-content rounded-full border border-stone-300 shadow-subtle flex items-center justify-center transition-colors cursor-pointer self-center"
+                  title="Flip Front / Rear Camera"
+                >
+                  <span className="material-symbols-outlined text-lg">flip_camera_ios</span>
+                </button>
+              )}
+            </div>
+          ) : (
+            /* Review Mode: Retake & Analyze */
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-4 w-full">
+              <button
+                type="button"
+                onClick={() => {
+                  setActivePreviewImage(null);
+                  setScanResult(null);
+                  startCamera();
+                }}
+                disabled={scanning}
+                className="w-full sm:w-auto px-5 py-3 bg-stone-100 hover:bg-stone-200 text-content font-bold text-sm rounded-full border border-stone-300 shadow-subtle flex items-center justify-center gap-2 transition-colors disabled:opacity-50 cursor-pointer"
+              >
+                <svg className="w-4 h-4 flex-shrink-0 fill-current" viewBox="0 0 24 24">
+                  <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+                </svg>
+                <span>Retake Photo</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={analyzeActiveImage}
+                disabled={scanning}
+                className="w-full sm:w-auto px-7 py-3 bg-brand-900 hover:bg-brand-950 text-white font-bold text-sm rounded-full shadow-md flex items-center justify-center gap-2.5 transition-transform active:scale-95 disabled:opacity-60 cursor-pointer"
+              >
+                {scanning ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Diagnosing Leaf...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5 flex-shrink-0 fill-current" viewBox="0 0 24 24">
+                      <path d="M4 4h3V2H4c-1.1 0-2 .9-2 2v3h2V4zm0 13H2v3c0 1.1.9 2 2 2h3v-2H4v-3zm16 3h-3v2h3c1.1 0 2-.9 2-2v-3h-2v3zm0-16h-3V2h3c1.1 0 2 .9 2 2v3h-2V4zM12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>
+                    </svg>
+                    <span>Analyze Leaf Now →</span>
+                  </>
+                )}
+              </button>
+            </div>
+          )}
+
+          {/* Camera Guidance Instructions */}
           <div className="text-center text-[11px] text-content-muted flex items-center gap-3 flex-wrap justify-center pt-1">
             <span className="flex items-center gap-1">
               <span className="material-symbols-outlined text-[14px] text-emerald-600">crop_free</span>
@@ -567,12 +534,12 @@ export default function ScannerPage() {
 
         {/* Quality Rejection / Crop Mismatch / Low Confidence Card */}
         {scanResult && !scanResult.success && (
-          <section className="bg-white p-6 rounded-2xl border border-amber-300 shadow-card flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-2">
+          <section className="bg-white p-4 sm:p-6 rounded-2xl border border-amber-300 shadow-card flex flex-col gap-3 sm:gap-4 animate-in fade-in slide-in-from-bottom-2">
             <div className="flex items-start gap-3.5">
-              <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center text-2xl flex-shrink-0">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center text-xl sm:text-2xl flex-shrink-0">
                 {scanResult.status === "QUALITY_REJECTED" ? "📷" : scanResult.status === "CROP_MISMATCH" ? "🔄" : "⚠️"}
               </div>
-              <div className="space-y-1">
+              <div className="space-y-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-xs font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded">
                     {scanResult.status === "QUALITY_REJECTED"
@@ -582,10 +549,10 @@ export default function ScannerPage() {
                         : `Low Confidence (${scanResult.confidencePercentage || "< 20%"})`}
                   </span>
                   <span className="text-[10px] text-content-muted">
-                    MobileNetV3 + OpenCV Pathology
+                    Agronomic Diagnostics
                   </span>
                 </div>
-                <h3 className="font-display text-lg font-bold text-content">
+                <h3 className="font-display text-base sm:text-lg font-bold text-content">
                   {scanResult.status === "QUALITY_REJECTED"
                     ? "Image quality too low for reliable diagnosis"
                     : scanResult.status === "CROP_MISMATCH"
@@ -637,39 +604,47 @@ export default function ScannerPage() {
 
         {/* Phase 20: Confident or Moderate Diagnosis Results Card */}
         {scanResult && scanResult.success && (
-          <section className="bg-white p-5 md:p-7 rounded-2xl border border-stone-200/80 shadow-card flex flex-col gap-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <section className="bg-white p-4 sm:p-5 md:p-7 rounded-2xl border border-stone-200/80 shadow-card flex flex-col gap-4 sm:gap-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
             {/* Header / Disease Name & Confidence */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-stone-100">
-              <div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs font-bold text-brand-900 bg-brand-50 px-2.5 py-0.5 rounded-full border border-brand-100 uppercase">
-                    {scanResult.crop || "Crop"} Pathology
+              <div className="w-full sm:w-auto">
+                <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                  <span className="text-[10px] sm:text-xs font-bold text-brand-900 bg-brand-50 px-2 py-0.5 rounded-full border border-brand-100 uppercase">
+                    {scanResult.crop || "Crop"} Health
                   </span>
-                  <span className="text-xs font-bold text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
+                  <span className="text-[10px] sm:text-xs font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
                     Severity: {scanResult.severity || "Moderate"}
                   </span>
                   {scanResult.status === "MODERATE_CONFIDENCE" ? (
                     <span className="text-[10px] font-bold text-amber-900 bg-amber-50 px-2 py-0.5 rounded border border-amber-300">
-                      MODERATE CONFIDENCE (Possible Match)
+                      Possible Match
                     </span>
                   ) : (
                     <span className="text-[10px] font-bold text-emerald-900 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-300">
-                      HIGH CONFIDENCE
+                      High Confidence
                     </span>
                   )}
                   <span className="text-[10px] font-bold text-blue-900 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                    MobileNetV3 Deep Model (82.5% Field Benchmark)
+                    Verified Pathology
                   </span>
                 </div>
-                <h2 className="font-display text-xl md:text-2xl font-bold text-content mt-1.5">
-                  {scanResult.diseaseName}
-                </h2>
+                <div className="flex items-baseline justify-between gap-2 mt-2">
+                  <h2 className="font-display text-lg sm:text-xl md:text-2xl font-bold text-content leading-tight">
+                    {scanResult.diseaseName}
+                  </h2>
+                  <div className="sm:hidden text-right flex-shrink-0">
+                    <span className="text-xl font-black font-mono text-emerald-600 block leading-none">
+                      {scanResult.confidencePercentage}
+                    </span>
+                    <span className="text-[9px] text-content-muted">Probability</span>
+                  </div>
+                </div>
                 <p className="text-xs text-content-muted mt-0.5">
                   Pathogen: {scanResult.pathogen}
                 </p>
               </div>
 
-              <div className="flex flex-col items-end">
+              <div className="hidden sm:flex flex-col items-end flex-shrink-0">
                 <div className="text-2xl md:text-3xl font-black font-mono text-emerald-600">
                   {scanResult.confidencePercentage}
                 </div>

@@ -104,7 +104,7 @@ export default function OnboardingPage() {
               <p className="text-xs text-content-muted mt-0.5">Select the language you prefer for advisory</p>
             </div>
 
-            <div className="grid grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-3 gap-2">
               {[
                 { code: "English", label: "English", sub: "English" },
                 { code: "Hindi", label: "हिंदी", sub: "Hindi" },

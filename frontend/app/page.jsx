@@ -63,7 +63,7 @@ export default function LandingPage() {
             FasalAI · Simple Daily Farm Decisions
           </div>
 
-          <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-content leading-[1.2] tracking-tight">
+          <h1 className="font-display text-2xl sm:text-3xl lg:text-5xl font-extrabold text-content leading-[1.2] tracking-tight">
             Clear, actionable farming decisions for <span className="text-brand-900 dark:text-emerald-400">your land.</span>
           </h1>
 
@@ -91,18 +91,18 @@ export default function LandingPage() {
           </div>
 
           {/* Practical Value Points */}
-          <div className="grid grid-cols-3 gap-4 pt-6 border-t border-stone-200 text-center lg:text-left">
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 pt-6 border-t border-stone-200 text-center lg:text-left">
             <div>
-              <p className="text-xl font-bold text-brand-900 dark:text-emerald-400">30+ Diseases</p>
-              <p className="text-xs text-content-muted">Instant leaf diagnosis</p>
+              <p className="text-base sm:text-xl font-bold text-brand-900 dark:text-emerald-400">30+ Diseases</p>
+              <p className="text-[10px] sm:text-xs text-content-muted">Instant leaf diagnosis</p>
             </div>
             <div>
-              <p className="text-xl font-bold text-brand-900 dark:text-emerald-400">Live Mandis</p>
-              <p className="text-xs text-content-muted">Net profit comparison</p>
+              <p className="text-base sm:text-xl font-bold text-brand-900 dark:text-emerald-400">Live Mandis</p>
+              <p className="text-[10px] sm:text-xs text-content-muted">Net profit comparison</p>
             </div>
             <div>
-              <p className="text-xl font-bold text-brand-900 dark:text-emerald-400">Daily Checklist</p>
-              <p className="text-xs text-content-muted">Stage-wise farm plan</p>
+              <p className="text-base sm:text-xl font-bold text-brand-900 dark:text-emerald-400">Daily Checklist</p>
+              <p className="text-[10px] sm:text-xs text-content-muted">Stage-wise farm plan</p>
             </div>
           </div>
         </div>

@@ -304,7 +304,7 @@ export default function DashboardPage() {
               {/* Weather Widget */}
               {/* Weather Widget */}
               <div className="bg-white p-5 md:p-6 rounded-2xl border border-stone-200/80 shadow-subtle flex flex-col justify-between gap-4">
-                <div className="flex justify-between items-center pb-2 border-b border-stone-100">
+                <div className="flex flex-wrap justify-between items-start gap-2 pb-2 border-b border-stone-100">
                   <span className="text-xs font-bold text-content-muted uppercase tracking-wider flex items-center gap-1">
                     <span className="material-symbols-outlined text-[16px] text-amber-600">wb_sunny</span>
                     Weather
@@ -381,11 +381,11 @@ export default function DashboardPage() {
             <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Best Nearby Market */}
               <div className="bg-white p-5 md:p-6 rounded-2xl border border-stone-200/80 shadow-subtle flex flex-col justify-between gap-4">
-                <div className="flex justify-between items-center pb-2 border-b border-stone-100">
-                  <div className="flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-[16px] text-brand-800 dark:text-emerald-400">storefront</span>
-                    <span className="text-xs font-bold text-content-muted uppercase tracking-wider">Nearby APMC Markets</span>
-                    <span className="text-[9px] font-semibold text-stone-500 dark:text-stone-400 bg-stone-100 dark:bg-stone-800 px-1.5 py-0.5 rounded">
+              <div className="flex flex-col sm:flex-row justify-between items-start gap-2 pb-2 border-b border-stone-100">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <span className="material-symbols-outlined text-[16px] text-brand-800 dark:text-emerald-400 flex-shrink-0">storefront</span>
+                    <span className="text-xs font-bold text-content-muted uppercase tracking-wider truncate">Nearby APMC Markets</span>
+                    <span className="text-[9px] font-semibold text-stone-500 dark:text-stone-400 bg-stone-100 dark:bg-stone-800 px-1.5 py-0.5 rounded flex-shrink-0 hidden sm:inline">
                       AGMARKNET {market?.source_record_date ? `· ${market.source_record_date}` : ""}
                     </span>
                   </div>

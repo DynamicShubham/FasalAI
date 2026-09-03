@@ -189,3 +189,59 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #506859;
 }
+
+/* ===========================
+   MOBILE RESPONSIVENESS
+   =========================== */
+
+/* Prevent accidental horizontal scrolling on mobile */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* But allow internal scroll containers to work */
+.overflow-x-auto {
+  overflow-x: auto !important;
+}
+
+/* Safe area insets for notch/gesture-nav phones */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Hide scrollbar on quick-question chips / horizontal trays */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Minimum touch target for interactive elements on mobile */
+@media (pointer: coarse) {
+  button, a, [role="button"], select {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  /* Exceptions for tiny inline elements */
+  .touch-target-auto {
+    min-height: auto;
+    min-width: auto;
+  }
+}
+
+/* Ensure images never cause overflow */
+img, video, canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Viewport-width safety: prevent any child from exceeding viewport */
+main, section, article, aside, nav, header, footer {
+  max-width: 100vw;
+  box-sizing: border-box;
+}

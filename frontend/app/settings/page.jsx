@@ -104,7 +104,7 @@ export default function SettingsPage() {
         {/* Language Selection */}
         <div className="bg-white p-5 rounded-2xl border border-stone-200/80 shadow-subtle flex flex-col gap-3">
           <h3 className="font-bold text-content text-sm">{t.preferredLanguage || "Preferred Language"}</h3>
-          <div className="grid grid-cols-3 gap-2.5">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             {["English", "Hindi", "Marathi"].map((l) => (
               <button
                 key={l}
