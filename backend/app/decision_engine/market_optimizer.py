@@ -82,5 +82,8 @@ def optimize_market_sale(
         "quantityQuintals": quantity_quintals,
         "bestMandi": best_option,
         "allMandis": comparisons,
-        "recommendationText": decision_summary
+        "recommendationText": decision_summary,
+        "dataSource": "Agmarknet APMC Reference Benchmarks (Curated)",
+        "calculationMethod": "Distance-weighted freight deduction (Computed)",
+        "provenanceNote": "Mandi rates are based on official APMC modal reference data. Net profit is computed dynamically after deducting transport logistics costs."
     }

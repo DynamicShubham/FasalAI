@@ -308,9 +308,17 @@ export default function DashboardPage() {
                     <span className="material-symbols-outlined text-[16px] text-amber-600">wb_sunny</span>
                     Weather
                   </span>
-                  <span className="text-xs text-content-muted flex items-center gap-1">
-                    {farmData.district}
-                  </span>
+                  {weather?.isLive ? (
+                    <span className="text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800/60 flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                      LIVE · OpenWeather
+                    </span>
+                  ) : (
+                    <span className="text-[10px] font-semibold bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800/60 flex items-center gap-1" title="Historical regional agro-climatic model used when live weather API is unreachable">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                      ESTIMATED · Agro-Climatic Model
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -357,10 +365,11 @@ export default function DashboardPage() {
               {/* Best Nearby Market */}
               <div className="bg-white p-5 md:p-6 rounded-2xl border border-stone-200/80 shadow-subtle flex flex-col justify-between gap-4">
                 <div className="flex justify-between items-center pb-2 border-b border-stone-100">
-                  <span className="text-xs font-bold text-content-muted uppercase tracking-wider flex items-center gap-1">
+                  <div className="flex items-center gap-1.5">
                     <span className="material-symbols-outlined text-[16px] text-brand-800 dark:text-emerald-400">storefront</span>
-                    Nearby APMC Markets
-                  </span>
+                    <span className="text-xs font-bold text-content-muted uppercase tracking-wider">Nearby APMC Markets</span>
+                    <span className="text-[9px] font-semibold text-stone-500 dark:text-stone-400 bg-stone-100 dark:bg-stone-800 px-1.5 py-0.5 rounded">Benchmark</span>
+                  </div>
                   <Link href="/market" className="text-xs text-brand-800 dark:text-emerald-400 font-semibold hover:underline">
                     View All Markets →
                   </Link>

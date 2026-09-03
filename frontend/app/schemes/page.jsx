@@ -56,6 +56,22 @@ export default function SchemesPage() {
           </div>
         </section>
 
+        {/* Provenance Banner */}
+        <div className="bg-stone-50 dark:bg-stone-900 px-4 py-2.5 rounded-xl border border-stone-200/80 dark:border-stone-800 flex flex-wrap items-center justify-between text-xs text-content-muted gap-2">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-wider bg-purple-50 dark:bg-purple-950/60 text-purple-900 dark:text-purple-300 px-2 py-0.5 rounded border border-purple-200 dark:border-purple-800">
+              CURATED GUIDELINES
+            </span>
+            <span>Ministry of Agriculture Statutory Guidelines</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-wider bg-blue-50 dark:bg-blue-950/60 text-blue-900 dark:text-blue-300 px-2 py-0.5 rounded border border-blue-200 dark:border-blue-800">
+              COMPUTED MATCH
+            </span>
+            <span>Eligibility scored against your registered landholding</span>
+          </div>
+        </div>
+
         {loading ? (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-pulse w-full">
             <div className="flex flex-col gap-3">

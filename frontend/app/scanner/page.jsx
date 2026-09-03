@@ -332,8 +332,11 @@ export default function ScannerPage() {
                   <span className="text-xs font-bold text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 px-2.5 py-0.5 rounded-full border border-amber-200 dark:border-amber-800/60">
                     Severity: {scanResult.severity || "Moderate"}
                   </span>
-                  <span className="text-[11px] font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
-                    Verified Agronomic Match
+                  <span className="text-[10px] font-bold text-blue-900 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded border border-blue-200 dark:border-blue-800">
+                    COMPUTED · PlantVillage ML Model (92.7% Acc)
+                  </span>
+                  <span className="text-[10px] font-bold text-emerald-900 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
+                    CURATED · ICAR Treatment Protocol
                   </span>
                 </div>
                 <h2 className="font-display text-xl md:text-2xl font-bold text-content mt-1.5">

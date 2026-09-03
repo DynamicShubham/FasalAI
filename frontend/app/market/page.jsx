@@ -65,6 +65,22 @@ export default function MarketPage() {
           </div>
         </section>
 
+        {/* Data Provenance & Freshness Banner */}
+        <div className="bg-stone-50 dark:bg-stone-900 px-4 py-2.5 rounded-xl border border-stone-200/80 dark:border-stone-800 flex flex-wrap items-center justify-between text-xs text-content-muted gap-2">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-wider bg-brand-50 dark:bg-emerald-950/60 text-brand-900 dark:text-emerald-300 px-2 py-0.5 rounded border border-brand-200 dark:border-emerald-800">
+              CURATED BENCHMARK DATA
+            </span>
+            <span>Agmarknet / APMC Official Reference Rates</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-wider bg-blue-50 dark:bg-blue-950/60 text-blue-900 dark:text-blue-300 px-2 py-0.5 rounded border border-blue-200 dark:border-blue-800">
+              COMPUTED REALIZATION
+            </span>
+            <span>Net in-hand = Modal Price − (Distance × Freight Rate)</span>
+          </div>
+        </div>
+
         {loading ? (
           <div className="flex flex-col gap-5 animate-pulse w-full">
             <div className="bg-white p-6 rounded-2xl border border-stone-200/80 shadow-card flex flex-col sm:flex-row justify-between gap-4">
